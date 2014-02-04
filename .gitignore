@@ -1,0 +1,13 @@
+eclipse/assets
+eclipse/bin
+eclipse/gen
+eclipse/libs/*
+!eclipse/libs/README
+eclipse/.settings
+studio/app/build
+studio/app/libs/*
+!studio/app/libs/README
+studio/gradle
+studio/.gradle
+studio/.idea
+studio/local.properties

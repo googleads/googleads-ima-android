@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Android SDK Demo</string>
+    <string name="play">Play</string>
+    <string name="request_ad">Req. Ad</string>
+    <string name="language">Language</string>
+    <string name="companionPlaceholder">Companion Slot</string>
+    <string name="leaderboardCompanionPlaceholder">Leaderboard Companion Slot</string>
+    <string-array name="default_ad_tag_labels">
+        <item>Instream 1</item>
+        <item>Instream 2</item>
+        <item>AdSense skippable</item>
+        <item>Wrapper</item>
+        <item>Ads List</item>
+        <item>Custom Tag</item>
+    </string-array>
+    <string-array name="default_ad_tags">
+        <item><![CDATA[http://pubads.g.doubleclick.net/gampad/ads?sz=400x300&iu=%2F6062%2Fhanna_MA_group%2Fvideo_comp_app&ciu_szs=&impl=s&gdfp_req=1&env=vp&output=xml_vast2&unviewed_position_start=1&m_ast=vast&url=[referrer_url]&correlator=[timestamp]]]></item>
+        <item><![CDATA[http://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=%2F6062%2Fhanna_MA_group%2Fvideo_m3u8&ciu_szs=&impl=s&gdfp_req=1&env=vp&output=xml_vast2&unviewed_position_start=1&m_ast=vast&url=[referrer_url]&correlator=[timestamp]]]></item>
+        <item><![CDATA[http://googleads.g.doubleclick.net/pagead/ads?eid=41351061&ad_type=skippablevideo&client=ca-video-pub-4975756195050566&videoad_start_delay=0&description_url=http%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DSS7HCA9U0hQ&max_ad_duration=60000]]></item>
+        <item><![CDATA[http://pubads.g.doubleclick.net/gampad/ads?sz=400x300&iu=%2F6062%2Fhanna_MA_group%2Fwrapper_with_comp&ciu_szs=728x90&impl=s&gdfp_req=1&env=vp&output=xml_vast2&unviewed_position_start=1&m_ast=vast&url=[referrer_url]&correlator=[timestamp]]]></item>
+        <item><![CDATA[http://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=%2F15018773%2Feverything2&ciu_szs=300x250%2C468x60%2C728x90&impl=s&gdfp_req=1&env=vp&output=xml_vast2&unviewed_position_start=1&url=[referrer_url]&correlator=[timestamp]&cmsid=133&vid=10XWSh7W4so&ad_rule=1]]></item>
+    </string-array>
+</resources>

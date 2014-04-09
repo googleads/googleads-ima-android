@@ -101,6 +101,13 @@ public class TrackingVideoView extends VideoView implements OnCompletionListener
 
   @Override
   public void onCompletion(MediaPlayer mp) {
+    // Reset the MediaPlayer.
+    // This prevents a race condition which occasionally results in the media
+    // player crashing between ads and content.
+    mp.setDisplay(null);
+    mp.reset();
+    mp.setDisplay(getHolder());
+
     onStop();
     for (VideoAdPlayerCallback callback : adCallbacks) {
       callback.onEnded();

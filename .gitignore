@@ -11,3 +11,4 @@ studio/gradle
 studio/.gradle
 studio/.idea
 studio/local.properties
+eclipse/res/values/version.xml

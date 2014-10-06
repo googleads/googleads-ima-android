@@ -1,0 +1,266 @@
+// Copyright 2014 Google Inc. All Rights Reserved.
+
+package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+
+import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
+import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
+import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.VideoPlayer;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Video player that can play content video and ads.
+ */
+public class VideoPlayerWithAdPlayback extends RelativeLayout {
+
+    /** Interface for alerting caller of video completion. */
+    public interface OnContentCompleteListener {
+        public void onContentComplete();
+    }
+
+    // The wrapped video player.
+    private VideoPlayer mVideoPlayer;
+
+    // The SDK will render ad playback UI elements into this ViewGroup.
+    private ViewGroup mAdUiContainer;
+
+    // Used to track if the current video is an ad (as opposed to a content video).
+    private boolean mIsAdPlaying;
+
+    // Used to track the current content video URL to resume content playback.
+    private String mContentVideoUrl;
+
+    // The saved position in the content to resume to after ad playback.
+    private int mSavedContentVideoPosition;
+
+    // Called when the content is completed.
+    private OnContentCompleteListener mOnContentCompleteListener;
+
+    // VideoAdPlayer interface implementation for the SDK to send ad play/pause type events.
+    private VideoAdPlayer mVideoAdPlayer;
+
+    private final List<VideoAdPlayer.VideoAdPlayerCallback> mAdCallbacks =
+            new ArrayList<VideoAdPlayer.VideoAdPlayerCallback>(1);
+
+    public VideoPlayerWithAdPlayback(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
+
+    public VideoPlayerWithAdPlayback(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public VideoPlayerWithAdPlayback(Context context) {
+        super(context);
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        init();
+    }
+
+    private void init() {
+        mIsAdPlaying = false;
+        mSavedContentVideoPosition = 0;
+        mVideoPlayer = (VideoPlayer) this.getRootView().findViewById(R.id.videoPlayer);
+        mAdUiContainer = (ViewGroup) this.getRootView().findViewById(R.id.adUiContainer);
+
+        // Define VideoAdPlayer connector.
+        mVideoAdPlayer = new VideoAdPlayer() {
+            @Override
+            public void playAd() {
+                mIsAdPlaying = true;
+                mVideoPlayer.play();
+            }
+
+            @Override
+            public void loadAd(String url) {
+                mVideoPlayer.setVideoPath(url);
+            }
+
+            @Override
+            public void stopAd() {
+                mVideoPlayer.stopPlayback();
+            }
+
+            @Override
+            public void pauseAd() {
+                mVideoPlayer.pause();
+            }
+
+            @Override
+            public void resumeAd() {
+                playAd();
+            }
+
+            @Override
+            public void addCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
+                mAdCallbacks.add(videoAdPlayerCallback);
+            }
+
+            @Override
+            public void removeCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
+                mAdCallbacks.remove(videoAdPlayerCallback);
+            }
+
+            @Override
+            public VideoProgressUpdate getProgress() {
+                int durationMs = mVideoPlayer.getDuration();
+
+                if (durationMs <= 0) {
+                    return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
+                }
+                return new VideoProgressUpdate(
+                        mVideoPlayer.getCurrentPosition(), durationMs);
+            }
+        };
+
+        // Set player callbacks for delegating major video events.
+        mVideoPlayer.addPlayerCallback(new VideoPlayer.PlayerCallback(){
+            @Override
+            public void onPlay() {
+                if (mIsAdPlaying) {
+                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                        callback.onPlay();
+                    }
+                }
+            }
+
+            @Override
+            public void onPause() {
+                if (mIsAdPlaying) {
+                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                        callback.onPause();
+                    }
+                }
+            }
+
+            @Override
+            public void onResume() {
+                if (mIsAdPlaying) {
+                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                        callback.onResume();
+                    }
+                }
+            }
+
+            @Override
+            public void onError() {
+                if (mIsAdPlaying) {
+                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                        callback.onError();
+                    }
+                }
+            }
+
+            @Override
+            public void onCompleted() {
+                if (mIsAdPlaying) {
+                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                        callback.onEnded();
+                    }
+                } else {
+                    // Alert an external listener that our content video is complete.
+                    if (mOnContentCompleteListener != null) {
+                        mOnContentCompleteListener.onContentComplete();
+                    }
+                }
+            }
+        });
+
+        // If VideoPlayer is touchable, allow pause/resume during ad play instead of seeking.
+        if (mVideoPlayer instanceof View) {
+            ((View) mVideoPlayer).setOnTouchListener(
+                    new View.OnTouchListener() {
+                        public boolean onTouch(View view, MotionEvent event) {
+                            if (mIsAdPlaying && event.getAction() == MotionEvent.ACTION_DOWN) {
+                                // If an ad is playing, touching it will just pause/play the ad.
+                                mVideoPlayer.togglePlayback();
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+            );
+        }
+    }
+
+    /**
+     * Set a listener to be triggered when the content (non-ad) video completes.
+     */
+    public void setOnContentCompleteListener(OnContentCompleteListener listener) {
+        this.mOnContentCompleteListener = listener;
+    }
+
+    /**
+     * Set the path of the video to be played as content.
+     */
+    public void setContentVideoPath(String contentVideoUrl) {
+        mContentVideoUrl = contentVideoUrl;
+    }
+
+    /**
+     * Save the playback progress state of the currently playing video.
+     */
+    public void savePosition() {
+        mSavedContentVideoPosition = mVideoPlayer.getCurrentPosition();
+    }
+
+    /**
+     * Restore the currently loaded video to its previously saved playback progress state.
+     */
+    public void restorePosition() {
+        mVideoPlayer.seekTo(mSavedContentVideoPosition);
+    }
+
+    /**
+     * Pause the currently playing content video in preparation for an ad to play, and disables
+     * the media controller.
+     */
+    public void pauseContentForAdPlayback() {
+        mSavedContentVideoPosition = mVideoPlayer.getCurrentPosition();
+        mVideoPlayer.stopPlayback();
+        mVideoPlayer.disablePlaybackControls();
+    }
+
+    /**
+     * Resume the content video from its previous playback progress position after
+     * an ad finishes playing. Re-enables the media controller.
+     */
+    public void resumeContentAfterAdPlayback() {
+        if (mContentVideoUrl == null || mContentVideoUrl.isEmpty()) {
+            Log.w("ImaExample", "No content URL specified.");
+            return;
+        }
+        mIsAdPlaying = false;
+        mVideoPlayer.setVideoPath(mContentVideoUrl);
+        mVideoPlayer.enablePlaybackControls();
+        mVideoPlayer.seekTo(mSavedContentVideoPosition);
+        mVideoPlayer.play();
+    }
+
+    /**
+     * Returns the UI element for rendering video ad elements.
+     */
+    public ViewGroup getAdUiContainer() {
+        return mAdUiContainer;
+    }
+
+    /**
+     * Returns an implementation of the SDK's VideoAdPlayer interface.
+     */
+    public VideoAdPlayer getVideoAdPlayer() {
+        return mVideoAdPlayer;
+    }
+}

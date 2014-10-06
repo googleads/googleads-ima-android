@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MyActivity"
+    tools:ignore="MergeRootFrame">
+
+    <fragment
+        android:name="com.google.ads.interactivemedia.v3.samples.videoplayerapp.MyActivity$VideoFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.4" />
+
+    <fragment
+        android:name="com.google.ads.interactivemedia.v3.samples.videoplayerapp.MyActivity$VideoDescriptionFragment"
+        android:id="@+id/videoDescription"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.6" />
+</LinearLayout>

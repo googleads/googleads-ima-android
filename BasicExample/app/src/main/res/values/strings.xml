@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">IMA Basic Example</string>
+    <string name="action_settings">Settings</string>
+    <string name="video_description">Android Promotional Video (with video ad)</string>
+    <string name="content_url"><![CDATA[http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4]]></string>
+    <string name="ad_tag_url"><![CDATA[http://pubads.g.doubleclick.net/gampad/ads?sz=640x360&iu=/6062/iab_vast_samples/skippable&ciu_szs=300x250,728x90&impl=s&gdfp_req=1&env=vp&output=xml_vast3&unviewed_position_start=1&url=[referrer_url]&correlator=[timestamp]]]></string>
+
+</resources>

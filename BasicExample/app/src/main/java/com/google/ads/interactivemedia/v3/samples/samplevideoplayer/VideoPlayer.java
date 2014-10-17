@@ -84,11 +84,6 @@ public interface VideoPlayer {
     void setVideoPath(String videoUrl);
 
     /**
-     * Pause the video if currently playing, or play the video if currently paused.
-     */
-    void togglePlayback();
-
-    /**
      * Provide the player with a callback for major video events (pause, complete, resume, etc).
      */
     void addPlayerCallback(PlayerCallback callback);

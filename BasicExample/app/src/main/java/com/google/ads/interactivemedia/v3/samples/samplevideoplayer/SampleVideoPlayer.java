@@ -151,15 +151,6 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     }
 
     @Override
-    public void togglePlayback() {
-        if (mPlaybackState == PlaybackState.PAUSED) {
-            play();
-        } else if (mPlaybackState == PlaybackState.PLAYING) {
-            pause();
-        }
-    }
-
-    @Override
     public void addPlayerCallback(PlayerCallback callback) {
         mVideoPlayerCallbacks.add(callback);
     }

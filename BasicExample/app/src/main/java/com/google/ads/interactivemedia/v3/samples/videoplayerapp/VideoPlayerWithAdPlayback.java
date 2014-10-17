@@ -5,11 +5,10 @@ package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
 import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.VideoPlayer;
@@ -34,7 +33,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     private ViewGroup mAdUiContainer;
 
     // Used to track if the current video is an ad (as opposed to a content video).
-    private boolean mIsAdPlaying;
+    private boolean mIsAdDisplayed;
 
     // Used to track the current content video URL to resume content playback.
     private String mContentVideoUrl;
@@ -47,6 +46,9 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
     // VideoAdPlayer interface implementation for the SDK to send ad play/pause type events.
     private VideoAdPlayer mVideoAdPlayer;
+
+    // ContentProgressProvider interface implementation for the SDK to check content progress.
+    private ContentProgressProvider mContentProgressProvider;
 
     private final List<VideoAdPlayer.VideoAdPlayerCallback> mAdCallbacks =
             new ArrayList<VideoAdPlayer.VideoAdPlayerCallback>(1);
@@ -70,7 +72,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     }
 
     private void init() {
-        mIsAdPlaying = false;
+        mIsAdDisplayed = false;
         mSavedContentVideoPosition = 0;
         mVideoPlayer = (VideoPlayer) this.getRootView().findViewById(R.id.videoPlayer);
         mAdUiContainer = (ViewGroup) this.getRootView().findViewById(R.id.adUiContainer);
@@ -79,12 +81,14 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
         mVideoAdPlayer = new VideoAdPlayer() {
             @Override
             public void playAd() {
-                mIsAdPlaying = true;
+                mIsAdDisplayed = true;
+                mVideoPlayer.disablePlaybackControls();
                 mVideoPlayer.play();
             }
 
             @Override
             public void loadAd(String url) {
+                mIsAdDisplayed = true;
                 mVideoPlayer.setVideoPath(url);
             }
 
@@ -114,22 +118,31 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
             }
 
             @Override
-            public VideoProgressUpdate getProgress() {
-                int durationMs = mVideoPlayer.getDuration();
-
-                if (durationMs <= 0) {
+            public VideoProgressUpdate getAdProgress() {
+                if (!mIsAdDisplayed || mVideoPlayer.getDuration() <= 0) {
                     return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
                 }
-                return new VideoProgressUpdate(
-                        mVideoPlayer.getCurrentPosition(), durationMs);
+                return new VideoProgressUpdate(mVideoPlayer.getCurrentPosition(),
+                        mVideoPlayer.getDuration());
+            }
+        };
+
+        mContentProgressProvider = new ContentProgressProvider() {
+            @Override
+            public VideoProgressUpdate getContentProgress() {
+                if (mIsAdDisplayed || mVideoPlayer.getDuration() <= 0) {
+                    return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
+                }
+                return new VideoProgressUpdate(mVideoPlayer.getCurrentPosition(),
+                        mVideoPlayer.getDuration());
             }
         };
 
         // Set player callbacks for delegating major video events.
-        mVideoPlayer.addPlayerCallback(new VideoPlayer.PlayerCallback(){
+        mVideoPlayer.addPlayerCallback(new VideoPlayer.PlayerCallback() {
             @Override
             public void onPlay() {
-                if (mIsAdPlaying) {
+                if (mIsAdDisplayed) {
                     for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
                         callback.onPlay();
                     }
@@ -138,7 +151,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
             @Override
             public void onPause() {
-                if (mIsAdPlaying) {
+                if (mIsAdDisplayed) {
                     for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
                         callback.onPause();
                     }
@@ -147,7 +160,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
             @Override
             public void onResume() {
-                if (mIsAdPlaying) {
+                if (mIsAdDisplayed) {
                     for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
                         callback.onResume();
                     }
@@ -156,7 +169,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
             @Override
             public void onError() {
-                if (mIsAdPlaying) {
+                if (mIsAdDisplayed) {
                     for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
                         callback.onError();
                     }
@@ -165,7 +178,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
             @Override
             public void onCompleted() {
-                if (mIsAdPlaying) {
+                if (mIsAdDisplayed) {
                     for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
                         callback.onEnded();
                     }
@@ -177,30 +190,13 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
                 }
             }
         });
-
-        // If VideoPlayer is touchable, allow pause/resume during ad play instead of seeking.
-        if (mVideoPlayer instanceof View) {
-            ((View) mVideoPlayer).setOnTouchListener(
-                    new View.OnTouchListener() {
-                        public boolean onTouch(View view, MotionEvent event) {
-                            if (mIsAdPlaying && event.getAction() == MotionEvent.ACTION_DOWN) {
-                                // If an ad is playing, touching it will just pause/play the ad.
-                                mVideoPlayer.togglePlayback();
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
-            );
-        }
     }
 
     /**
      * Set a listener to be triggered when the content (non-ad) video completes.
      */
     public void setOnContentCompleteListener(OnContentCompleteListener listener) {
-        this.mOnContentCompleteListener = listener;
+        mOnContentCompleteListener = listener;
     }
 
     /**
@@ -231,7 +227,6 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     public void pauseContentForAdPlayback() {
         mSavedContentVideoPosition = mVideoPlayer.getCurrentPosition();
         mVideoPlayer.stopPlayback();
-        mVideoPlayer.disablePlaybackControls();
     }
 
     /**
@@ -243,7 +238,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
             Log.w("ImaExample", "No content URL specified.");
             return;
         }
-        mIsAdPlaying = false;
+        mIsAdDisplayed = false;
         mVideoPlayer.setVideoPath(mContentVideoUrl);
         mVideoPlayer.enablePlaybackControls();
         mVideoPlayer.seekTo(mSavedContentVideoPosition);
@@ -262,5 +257,9 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
      */
     public VideoAdPlayer getVideoAdPlayer() {
         return mVideoAdPlayer;
+    }
+
+    public ContentProgressProvider getContentProgressProvider() {
+        return mContentProgressProvider;
     }
 }

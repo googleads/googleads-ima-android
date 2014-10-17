@@ -88,9 +88,10 @@ public class MyActivity extends ActionBarActivity {
         protected void initUi(View rootView) {
             VideoPlayerWithAdPlayback mVideoPlayerWithAdPlayback = (VideoPlayerWithAdPlayback)
                     rootView.findViewById(R.id.videoPlayerWithAdPlayback);
-            View mPlayButton = rootView.findViewById(R.id.playButton);
+            View playButton = rootView.findViewById(R.id.playButton);
+            View playPauseToggle = rootView.findViewById(R.id.videoOverlay);
             mVideoPlayerController = new VideoPlayerController(this.getActivity(),
-                    mVideoPlayerWithAdPlayback, mPlayButton);
+                    mVideoPlayerWithAdPlayback, playButton, playPauseToggle);
             mVideoPlayerController.setContentVideo(getString(R.string.content_url));
         }
 

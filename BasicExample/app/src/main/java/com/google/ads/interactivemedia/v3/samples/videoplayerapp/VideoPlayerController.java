@@ -4,6 +4,7 @@ package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
@@ -43,12 +44,21 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
     // Default VAST ad tag; more complex apps might select ad tag based on content video criteria.
     private String mDefaultAdTagUrl;
 
+    // Whether an ad is playing, independent of what ad video player the SDK is using.
+    private boolean mIsAdPlaying;
+
+    // View that handles taps to toggle ad pause/resume during video playback.
+    private View mPlayPauseToggle;
+
     public VideoPlayerController(Context context,
-            VideoPlayerWithAdPlayback videoPlayerWithAdPlayback, View playButton) {
+            VideoPlayerWithAdPlayback videoPlayerWithAdPlayback, View playButton,
+            View playPauseToggle) {
         mVideoPlayerWithAdPlayback = videoPlayerWithAdPlayback;
         mPlayButton = playButton;
+        mPlayPauseToggle = playPauseToggle;
         mVideoPlayerWithAdPlayback.setOnContentCompleteListener(this);
         mDefaultAdTagUrl = context.getString(R.string.ad_tag_url);
+        mIsAdPlaying = false;
 
         // Create an AdsLoader.
         mSdkFactory = ImaSdkFactory.getInstance();
@@ -87,6 +97,7 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
         AdsRequest request = mSdkFactory.createAdsRequest();
         request.setAdTagUrl(adTagUrl);
         request.setAdDisplayContainer(mAdDisplayContainer);
+        request.setContentProgressProvider(mVideoPlayerWithAdPlayback.getContentProgressProvider());
 
         // Request the ad. After the ad is loaded, onAdsManagerLoaded() will be called.
         mAdsLoader.requestAds(request);
@@ -114,8 +125,8 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
     public void onAdEvent(AdEvent adEvent) {
         Log.i("ImaExample", "Event: " + adEvent.getType());
 
-        // These are the required event types to handle. For full list of all ad event types,
-        // including CLICK and COMPLETE see the documentation for AdEvent.AdEventType.
+        // These are the suggested event types to handle. For full list of all ad event types,
+        // see the documentation for AdEvent.AdEventType.
         switch (adEvent.getType()) {
             case LOADED:
                 // AdEventType.LOADED will be fired when ads are ready to be played.
@@ -127,15 +138,63 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
                 // AdEventType.CONTENT_PAUSE_REQUESTED is fired immediately before a video ad is
                 // played.
                 mVideoPlayerWithAdPlayback.pauseContentForAdPlayback();
+                mIsAdPlaying = true;
+                setPlayPauseOnAdTouch();
                 break;
             case CONTENT_RESUME_REQUESTED:
                 // AdEventType.CONTENT_RESUME_REQUESTED is fired when the ad is completed and you
                 // should start playing your content.
                 mVideoPlayerWithAdPlayback.resumeContentAfterAdPlayback();
+                mIsAdPlaying = false;
+                removePlayPauseOnAdTouch();
+                break;
+            case PAUSED:
+                mIsAdPlaying = false;
+                break;
+            case RESUMED:
+                mIsAdPlaying = true;
+                break;
+            case ALL_ADS_COMPLETED:
+                if (mAdsManager != null) {
+                    mAdsManager.destroy();
+                    mAdsManager = null;
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    /**
+     * Touch to toggle play/pause during ad play instead of seeking.
+     */
+    private void setPlayPauseOnAdTouch() {
+        // Use AdsManager pause/resume methods instead of the video player pause/resume methods
+        // in case the SDK is using a different, SDK-created video player for ad playback.
+        mPlayPauseToggle.setOnTouchListener(
+                new View.OnTouchListener() {
+                    public boolean onTouch(View view, MotionEvent event) {
+                        // If an ad is playing, touching it will toggle playback.
+                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                            if (mIsAdPlaying) {
+                                mAdsManager.pause();
+                            } else {
+                                mAdsManager.resume();
+                            }
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+        );
+    }
+
+    /**
+     * Remove the play/pause on touch behavior.
+     */
+    private void removePlayPauseOnAdTouch() {
+        mPlayPauseToggle.setOnTouchListener(null);
     }
 
     /**
@@ -144,6 +203,7 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
     @Override
     public void onAdError(AdErrorEvent adErrorEvent) {
         Log.e("ImaExample", "Ad Error: " + adErrorEvent.getError().getMessage());
+        mIsAdPlaying = false;
         mVideoPlayerWithAdPlayback.resumeContentAfterAdPlayback();
     }
 

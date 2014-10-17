@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MyActivity$VideoFragment">
+    tools:context=".MyActivity$VideoFragment"
+    android:id="@+id/videoOverlay">
 
     <com.google.ads.interactivemedia.v3.samples.videoplayerapp.VideoPlayerWithAdPlayback
         android:id="@+id/videoPlayerWithAdPlayback"

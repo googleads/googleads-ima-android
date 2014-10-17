@@ -56,9 +56,10 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
                 // Reset the MediaPlayer.
                 // This prevents a race condition which occasionally results in the media
                 // player crashing when switching between videos.
-                mediaPlayer.setDisplay(null);
+                disablePlaybackControls();
                 mediaPlayer.reset();
                 mediaPlayer.setDisplay(getHolder());
+                enablePlaybackControls();
                 mPlaybackState = PlaybackState.STOPPED;
 
                 for (PlayerCallback callback : mVideoPlayerCallbacks) {
@@ -147,15 +148,6 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     @Override
     public void enablePlaybackControls() {
         setMediaController(mMediaController);
-    }
-
-    @Override
-    public void togglePlayback() {
-        if (mPlaybackState == PlaybackState.PAUSED) {
-            play();
-        } else if (mPlaybackState == PlaybackState.PLAYING) {
-            pause();
-        }
     }
 
     @Override

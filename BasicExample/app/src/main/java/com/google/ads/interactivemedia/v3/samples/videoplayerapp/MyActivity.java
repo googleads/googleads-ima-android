@@ -64,6 +64,7 @@ public class MyActivity extends ActionBarActivity {
         }
     }
 
+
     /**
      * The main fragment for displaying video content.
      */
@@ -111,6 +112,7 @@ public class MyActivity extends ActionBarActivity {
             }
         }
     }
+
 
     /**
      * The fragment for displaying any video title or other non-video content.

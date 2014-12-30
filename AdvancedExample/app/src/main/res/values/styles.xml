@@ -1,0 +1,21 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Title" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">18dp</item>
+    </style>
+
+    <style name="ListTitle" parent="Title">
+        <item name="android:textColor">#DDDDDD</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+    <style name="VideoTitle" parent="Title">
+        <item name="android:textColor">#888888</item>
+        <item name="android:textSize">12dp</item>
+    </style>
+</resources>

@@ -1,0 +1,85 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/videoExampleLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MyActivity$VideoFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:id="@+id/companionAdSlot"
+        android:background="#DDDDDD">
+
+        <TextView
+            android:id="@+id/companionPlaceholder"
+            android:text="@string/companionPlaceholder"
+            android:textAlignment="center"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/font_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".5"
+        android:background="#000000"
+        android:orientation="vertical"
+        android:id="@+id/videoContainer">
+
+        <com.google.ads.interactivemedia.v3.samples.videoplayerapp.VideoPlayerWithAdPlayback
+            android:id="@+id/videoPlayerWithAdPlayback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.ads.interactivemedia.v3.samples.samplevideoplayer.SampleVideoPlayer
+                android:id="@+id/videoPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true" />
+            <FrameLayout
+                android:id="@+id/adUiContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <ImageButton
+                android:id="@+id/playButton"
+                android:contentDescription="Play Button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_action_play_over_video"
+                android:background="@null" />
+        </com.google.ads.interactivemedia.v3.samples.videoplayerapp.VideoPlayerWithAdPlayback>
+    </LinearLayout>
+
+    <!-- Video title/description area -->
+    <TextView
+        android:id="@+id/video_title"
+        android:text=""
+        style="@style/Title"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1" />
+
+    <!-- UI element for viewing SDK event log -->
+    <ScrollView
+        android:id="@+id/logScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.4"
+        android:padding="5dp"
+        android:background="#DDDDDD">
+
+        <TextView
+            android:id="@+id/logText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </TextView>
+    </ScrollView>
+
+</LinearLayout>

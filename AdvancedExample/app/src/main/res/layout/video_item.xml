@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:orientation="horizontal"
+    android:gravity="center_horizontal"
+    android:textAlignment="center"
+    android:padding="5dp">
+
+    <ImageView
+        android:id="@+id/videoItemImage"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight=".25"
+        android:adjustViewBounds="true">
+    </ImageView>
+
+    <TextView
+        android:id="@+id/videoItemText"
+        style="@style/VideoTitle"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_weight=".75"
+        android:layout_marginLeft="15dp">
+    </TextView>
+
+</LinearLayout>

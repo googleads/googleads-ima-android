@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MyActivity$VideoListFragment">
+
+    <TextView
+        android:id="@+id/otherVideos"
+        android:text="@string/other_videos"
+        style="@style/ListTitle"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:background="#333333"
+        android:padding="10dp" />
+
+    <ListView
+        android:id="@+id/videoListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:numColumns="1"
+        android:verticalSpacing="10dp"
+        android:layout_centerHorizontal="true"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth" />
+
+</LinearLayout>

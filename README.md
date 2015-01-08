@@ -4,7 +4,7 @@ Google Ads Android IMA SDK
 This project hosts samples for the [Android IMA SDK](https://developers.google.com/interactive-media-ads/docs/sdks/android/v3/).
 
 ### Requirements
-  * Android Studio
+  * Android Studio 1.0 or newer
   * IMA Android SDK .jar (see app/libs/README)
 
 ### Installation Instructions

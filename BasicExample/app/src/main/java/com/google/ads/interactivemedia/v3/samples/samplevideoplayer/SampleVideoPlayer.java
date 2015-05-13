@@ -46,7 +46,6 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
         mPlaybackState = PlaybackState.STOPPED;
         mMediaController = new MediaController(getContext());
         mMediaController.setAnchorView(this);
-        enablePlaybackControls();
 
         // Set OnCompletionListener to notify our callbacks when the video is completed.
         super.setOnCompletionListener(new OnCompletionListener() {
@@ -56,10 +55,8 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
                 // Reset the MediaPlayer.
                 // This prevents a race condition which occasionally results in the media
                 // player crashing when switching between videos.
-                disablePlaybackControls();
                 mediaPlayer.reset();
                 mediaPlayer.setDisplay(getHolder());
-                enablePlaybackControls();
                 mPlaybackState = PlaybackState.STOPPED;
 
                 for (PlayerCallback callback : mVideoPlayerCallbacks) {
@@ -115,22 +112,8 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
                     callback.onPlay();
                 }
                 break;
-            case PAUSED:
-                for (PlayerCallback callback : mVideoPlayerCallbacks) {
-                    callback.onResume();
-                }
-                break;
             default:
                 // Already playing; do nothing.
-        }
-    }
-
-    @Override
-    public void pause() {
-        super.pause();
-        mPlaybackState = PlaybackState.PAUSED;
-        for (PlayerCallback callback : mVideoPlayerCallbacks) {
-            callback.onPause();
         }
     }
 
@@ -141,22 +124,7 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     }
 
     @Override
-    public void disablePlaybackControls() {
-        setMediaController(null);
-    }
-
-    @Override
-    public void enablePlaybackControls() {
-        setMediaController(mMediaController);
-    }
-
-    @Override
     public void addPlayerCallback(PlayerCallback callback) {
         mVideoPlayerCallbacks.add(callback);
-    }
-
-    @Override
-    public void removePlayerCallback(PlayerCallback callback) {
-        mVideoPlayerCallbacks.remove(callback);
     }
 }

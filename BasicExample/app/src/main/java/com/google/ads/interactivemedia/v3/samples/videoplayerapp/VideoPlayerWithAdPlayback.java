@@ -2,11 +2,8 @@
 
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
-import android.content.Context;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
@@ -19,7 +16,7 @@ import java.util.List;
 /**
  * Video player that can play content video and ads.
  */
-public class VideoPlayerWithAdPlayback extends RelativeLayout {
+public class VideoPlayerWithAdPlayback {
 
     /** Interface for alerting caller of video completion. */
     public interface OnContentCompleteListener {
@@ -53,36 +50,24 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     private final List<VideoAdPlayer.VideoAdPlayerCallback> mAdCallbacks =
             new ArrayList<VideoAdPlayer.VideoAdPlayerCallback>(1);
 
-    public VideoPlayerWithAdPlayback(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    // Check if the content video is complete
+    private boolean mIsContentComplete;
+
+    public VideoPlayerWithAdPlayback(VideoPlayer videoPlayer, ViewGroup adUiContainer) {
+        mVideoPlayer = videoPlayer;
+        mAdUiContainer = adUiContainer;
     }
 
-    public VideoPlayerWithAdPlayback(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public VideoPlayerWithAdPlayback(Context context) {
-        super(context);
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        init();
-    }
-
-    private void init() {
+    public void init() {
         mIsAdDisplayed = false;
         mSavedContentVideoPosition = 0;
-        mVideoPlayer = (VideoPlayer) this.getRootView().findViewById(R.id.videoPlayer);
-        mAdUiContainer = (ViewGroup) this.getRootView().findViewById(R.id.adUiContainer);
+        mIsContentComplete = false;
 
         // Define VideoAdPlayer connector.
         mVideoAdPlayer = new VideoAdPlayer() {
             @Override
             public void playAd() {
                 mIsAdDisplayed = true;
-                mVideoPlayer.disablePlaybackControls();
                 mVideoPlayer.play();
             }
 
@@ -126,7 +111,9 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
                         mVideoPlayer.getDuration());
             }
         };
+        // [END init_region]
 
+        // [START content_progress_provider_region]
         mContentProgressProvider = new ContentProgressProvider() {
             @Override
             public VideoProgressUpdate getContentProgress() {
@@ -137,7 +124,9 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
                         mVideoPlayer.getDuration());
             }
         };
+        // [END content_progress_provider_region]
 
+        // [START video_player_callback_region]
         // Set player callbacks for delegating major video events.
         mVideoPlayer.addPlayerCallback(new VideoPlayer.PlayerCallback() {
             @Override
@@ -145,24 +134,6 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
                 if (mIsAdDisplayed) {
                     for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
                         callback.onPlay();
-                    }
-                }
-            }
-
-            @Override
-            public void onPause() {
-                if (mIsAdDisplayed) {
-                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                        callback.onPause();
-                    }
-                }
-            }
-
-            @Override
-            public void onResume() {
-                if (mIsAdDisplayed) {
-                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                        callback.onResume();
                     }
                 }
             }
@@ -187,9 +158,11 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
                     if (mOnContentCompleteListener != null) {
                         mOnContentCompleteListener.onContentComplete();
                     }
+                    mIsContentComplete = true;
                 }
             }
         });
+        // [END video_player_callback_region]
     }
 
     /**
@@ -221,6 +194,28 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     }
 
     /**
+     * Returns the UI element for rendering video ad elements.
+     */
+    public ViewGroup getAdUiContainer() {
+        return mAdUiContainer;
+    }
+
+    /**
+     * Returns an implementation of the SDK's VideoAdPlayer interface.
+     */
+    public VideoAdPlayer getVideoAdPlayer() {
+        return mVideoAdPlayer;
+    }
+
+    public VideoPlayer getVideoPlayer() {
+        return mVideoPlayer;
+    }
+
+    public ContentProgressProvider getContentProgressProvider() {
+        return mContentProgressProvider;
+    }
+
+    /**
      * Pause the currently playing content video in preparation for an ad to play, and disables
      * the media controller.
      */
@@ -238,28 +233,14 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
             Log.w("ImaExample", "No content URL specified.");
             return;
         }
+
         mIsAdDisplayed = false;
         mVideoPlayer.setVideoPath(mContentVideoUrl);
-        mVideoPlayer.enablePlaybackControls();
         restorePosition();
-        mVideoPlayer.play();
-    }
-
-    /**
-     * Returns the UI element for rendering video ad elements.
-     */
-    public ViewGroup getAdUiContainer() {
-        return mAdUiContainer;
-    }
-
-    /**
-     * Returns an implementation of the SDK's VideoAdPlayer interface.
-     */
-    public VideoAdPlayer getVideoAdPlayer() {
-        return mVideoAdPlayer;
-    }
-
-    public ContentProgressProvider getContentProgressProvider() {
-        return mContentProgressProvider;
+        if (!mIsContentComplete) {
+            mVideoPlayer.play();
+        } else {
+            mVideoPlayer.stopPlayback();
+        }
     }
 }

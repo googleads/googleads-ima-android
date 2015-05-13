@@ -1,5 +1,7 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
+import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.VideoPlayer;
+
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +18,14 @@ import android.view.ViewGroup;
  * Main Activity.
  */
 public class MyActivity extends ActionBarActivity {
+
+    // The video player.
+    private static VideoPlayer mVideoPlayer;
+    // The container for the ad's UI.
+    private static ViewGroup mAdUIContainer;
+    // The play button to trigger the ad request.
+    private static View mPlayButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +85,18 @@ public class MyActivity extends ActionBarActivity {
         @Override
         public void onActivityCreated(Bundle bundle) {
             super.onActivityCreated(bundle);
+            mVideoPlayerController = new VideoPlayerController(this.getActivity(), mVideoPlayer,
+                    mAdUIContainer);
+            mVideoPlayerController.setContentVideo(getString(R.string.content_url));
+
+            // When Play is clicked, request ads and hide the button.
+            mPlayButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mVideoPlayerController.play();
+                    view.setVisibility(View.GONE);
+                }
+            });
         }
 
         @Override
@@ -82,34 +104,26 @@ public class MyActivity extends ActionBarActivity {
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_video, container, false);
 
-            initUi(rootView);
+            mVideoPlayer = (VideoPlayer) rootView.findViewById(R.id.sampleVideoPlayer);
+            mAdUIContainer = (ViewGroup) rootView.findViewById(R.id.videoPlayerWithAdPlayback);
+            mPlayButton = rootView.findViewById(R.id.playButton);
+
             return rootView;
-        }
-
-        protected void initUi(View rootView) {
-            VideoPlayerWithAdPlayback mVideoPlayerWithAdPlayback = (VideoPlayerWithAdPlayback)
-                    rootView.findViewById(R.id.videoPlayerWithAdPlayback);
-            View playButton = rootView.findViewById(R.id.playButton);
-            View playPauseToggle = rootView.findViewById(R.id.videoOverlay);
-            mVideoPlayerController = new VideoPlayerController(this.getActivity(),
-                    mVideoPlayerWithAdPlayback, playButton, playPauseToggle);
-            mVideoPlayerController.setContentVideo(getString(R.string.content_url));
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            if (mVideoPlayerController != null) {
-                mVideoPlayerController.savePosition();
-            }
         }
 
         @Override
         public void onResume() {
-            super.onResume();
             if (mVideoPlayerController != null) {
-                mVideoPlayerController.restorePosition();
+                mVideoPlayerController.resume();
             }
+            super.onResume();
+        }
+        @Override
+        public void onPause() {
+            if (mVideoPlayerController != null) {
+                mVideoPlayerController.pause();
+            }
+            super.onPause();
         }
     }
 

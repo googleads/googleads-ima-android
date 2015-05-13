@@ -6,19 +6,15 @@
     tools:context=".MyActivity$VideoFragment"
     android:id="@+id/videoOverlay">
 
-    <com.google.ads.interactivemedia.v3.samples.videoplayerapp.VideoPlayerWithAdPlayback
+    <RelativeLayout
         android:id="@+id/videoPlayerWithAdPlayback"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.google.ads.interactivemedia.v3.samples.samplevideoplayer.SampleVideoPlayer
-            android:id="@+id/videoPlayer"
+            android:id="@+id/sampleVideoPlayer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true" />
-        <FrameLayout
-            android:id="@+id/adUiContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
         <ImageButton
             android:id="@+id/playButton"
             android:contentDescription="Play Button"
@@ -26,6 +22,6 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_play_over_video"
             android:background="@null" />
-    </com.google.ads.interactivemedia.v3.samples.videoplayerapp.VideoPlayerWithAdPlayback>
+    </RelativeLayout>
 
 </LinearLayout>

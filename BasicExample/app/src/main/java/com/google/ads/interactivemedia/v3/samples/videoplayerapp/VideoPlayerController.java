@@ -1,11 +1,9 @@
 // Copyright 2014 Google Inc. All Rights Reserved.
-
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
@@ -15,6 +13,7 @@ import com.google.ads.interactivemedia.v3.api.AdsManager;
 import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent;
 import com.google.ads.interactivemedia.v3.api.AdsRequest;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
+import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.VideoPlayer;
 
 /**
  * Ads logic for handling the IMA SDK integration code and events.
@@ -38,42 +37,21 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
     // Ad-enabled video player.
     private VideoPlayerWithAdPlayback mVideoPlayerWithAdPlayback;
 
-    // Button the user taps to begin video playback and ad request.
-    private View mPlayButton;
-
     // Default VAST ad tag; more complex apps might select ad tag based on content video criteria.
     private String mDefaultAdTagUrl;
 
-    // Whether an ad is playing, independent of what ad video player the SDK is using.
-    private boolean mIsAdPlaying;
-
-    // View that handles taps to toggle ad pause/resume during video playback.
-    private View mPlayPauseToggle;
-
-    public VideoPlayerController(Context context,
-            VideoPlayerWithAdPlayback videoPlayerWithAdPlayback, View playButton,
-            View playPauseToggle) {
-        mVideoPlayerWithAdPlayback = videoPlayerWithAdPlayback;
-        mPlayButton = playButton;
-        mPlayPauseToggle = playPauseToggle;
+    public VideoPlayerController(Context context, VideoPlayer videoPlayer,
+            ViewGroup adUiContainer) {
+        mVideoPlayerWithAdPlayback = new VideoPlayerWithAdPlayback(videoPlayer, adUiContainer);
+        mVideoPlayerWithAdPlayback.init();
         mVideoPlayerWithAdPlayback.setOnContentCompleteListener(this);
         mDefaultAdTagUrl = context.getString(R.string.ad_tag_url);
-        mIsAdPlaying = false;
 
         // Create an AdsLoader.
         mSdkFactory = ImaSdkFactory.getInstance();
         mAdsLoader = mSdkFactory.createAdsLoader(context);
         mAdsLoader.addAdErrorListener(this);
         mAdsLoader.addAdsLoadedListener(this);
-
-        // When Play is clicked, request ads and hide the button.
-        mPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                requestAds();
-                mPlayButton.setVisibility(View.GONE);
-            }
-        });
     }
 
     /**
@@ -138,21 +116,11 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
                 // AdEventType.CONTENT_PAUSE_REQUESTED is fired immediately before a video ad is
                 // played.
                 mVideoPlayerWithAdPlayback.pauseContentForAdPlayback();
-                mIsAdPlaying = true;
-                setPlayPauseOnAdTouch();
                 break;
             case CONTENT_RESUME_REQUESTED:
                 // AdEventType.CONTENT_RESUME_REQUESTED is fired when the ad is completed and you
                 // should start playing your content.
                 mVideoPlayerWithAdPlayback.resumeContentAfterAdPlayback();
-                mIsAdPlaying = false;
-                removePlayPauseOnAdTouch();
-                break;
-            case PAUSED:
-                mIsAdPlaying = false;
-                break;
-            case RESUMED:
-                mIsAdPlaying = true;
                 break;
             case ALL_ADS_COMPLETED:
                 if (mAdsManager != null) {
@@ -166,44 +134,11 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
     }
 
     /**
-     * Touch to toggle play/pause during ad play instead of seeking.
-     */
-    private void setPlayPauseOnAdTouch() {
-        // Use AdsManager pause/resume methods instead of the video player pause/resume methods
-        // in case the SDK is using a different, SDK-created video player for ad playback.
-        mPlayPauseToggle.setOnTouchListener(
-                new View.OnTouchListener() {
-                    public boolean onTouch(View view, MotionEvent event) {
-                        // If an ad is playing, touching it will toggle playback.
-                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                            if (mIsAdPlaying) {
-                                mAdsManager.pause();
-                            } else {
-                                mAdsManager.resume();
-                            }
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                }
-        );
-    }
-
-    /**
-     * Remove the play/pause on touch behavior.
-     */
-    private void removePlayPauseOnAdTouch() {
-        mPlayPauseToggle.setOnTouchListener(null);
-    }
-
-    /**
      * An event raised when there is an error loading or playing ads.
      */
     @Override
     public void onAdError(AdErrorEvent adErrorEvent) {
         Log.e("ImaExample", "Ad Error: " + adErrorEvent.getError().getMessage());
-        mIsAdPlaying = false;
         mVideoPlayerWithAdPlayback.resumeContentAfterAdPlayback();
     }
 
@@ -224,18 +159,26 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
     }
 
     /**
-     * Save position of the video, whether content or ad. Can be called when the app is
-     * paused, for example.
+     * Starts ad playback
      */
-    public void savePosition() {
-        mVideoPlayerWithAdPlayback.savePosition();
+    public void play() {
+        requestAds();
     }
 
     /**
-     * Restore the previously saved progress location of the video. Can be called when
-     * the app is resumed.
+     * Resumes ad playback
      */
-    public void restorePosition() {
+    public void resume() {
         mVideoPlayerWithAdPlayback.restorePosition();
+        if (mAdsManager != null) {
+            mAdsManager.resume();
+        }
+    }
+
+    /**
+     * Pauses ad playback
+     */
+    public void pause() {
+        mVideoPlayerWithAdPlayback.savePosition();
     }
 }

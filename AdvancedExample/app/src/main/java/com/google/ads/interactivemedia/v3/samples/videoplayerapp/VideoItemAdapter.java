@@ -42,7 +42,7 @@ public class VideoItemAdapter extends ArrayAdapter<VideoItem> {
         VideoItem item = getItem(position);
 
         videoItemHolder.title.setText(item.getTitle());
-        videoItemHolder.image.setImageBitmap(item.getImage());
+        videoItemHolder.image.setImageResource(item.getImageResource());
 
         return row;
     }

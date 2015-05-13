@@ -3,10 +3,6 @@ package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,7 +20,7 @@ import java.util.List;
  */
 public class VideoListFragment extends Fragment {
 
-    private OnVideoSelectedListener mCallback;
+    private OnVideoSelectedListener mSelectedCallback;
 
     /**
      * Listener called when the user selects a video from the list.
@@ -34,14 +30,30 @@ public class VideoListFragment extends Fragment {
         public void onVideoSelected(VideoItem videoItem);
     }
 
+    private OnVideoListFragmentResumedListener mResumeCallback;
+
+    /**
+     * Listener called when the video list fragment resumes.
+     */
+    public interface OnVideoListFragmentResumedListener {
+        public void onVideoListFragmentResumed();
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (OnVideoSelectedListener) activity;
+            mSelectedCallback = (OnVideoSelectedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnVideoSelectedListener");
+                    + " must implement " + OnVideoSelectedListener.class.getName());
+        }
+
+        try {
+            mResumeCallback = (OnVideoListFragmentResumedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement " + OnVideoListFragmentResumedListener.class.getName());
         }
     }
 
@@ -58,7 +70,7 @@ public class VideoListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                if (mCallback != null) {
+                if (mSelectedCallback != null) {
                     VideoItem selectedVideo = (VideoItem) listView.getItemAtPosition(position);
 
                     // If applicable, prompt the user to input a custom ad tag.
@@ -66,7 +78,7 @@ public class VideoListFragment extends Fragment {
                             R.string.custom_ad_tag_value))) {
                         getCustomAdTag(selectedVideo);
                     } else {
-                        mCallback.onVideoSelected(selectedVideo);
+                        mSelectedCallback.onVideoSelected(selectedVideo);
                     }
                 }
             }
@@ -87,10 +99,10 @@ public class VideoListFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String customAdTagUrl = txtUrl.getText().toString();
                         VideoItem customAdTagVideoItem = new VideoItem(videoItem.getVideoUrl(),
-                                videoItem.getTitle(), customAdTagUrl, videoItem.getImage());
+                                videoItem.getTitle(), customAdTagUrl, videoItem.getImageResource());
 
-                        if (mCallback != null) {
-                            mCallback.onVideoSelected(customAdTagVideoItem);
+                        if (mSelectedCallback != null) {
+                            mSelectedCallback.onVideoSelected(customAdTagVideoItem);
                         }
                     }
                 })
@@ -103,20 +115,22 @@ public class VideoListFragment extends Fragment {
 
     private List<VideoItem> getVideoItems() {
         final List<VideoItem> videoItems = new ArrayList<VideoItem>();
-        // Build our Video item objects.
-        Resources resources = getActivity().getResources();
-        String[] videoTitles = resources.getStringArray(R.array.video_titles);
-        String[] videoUrls = resources.getStringArray(R.array.video_urls);
-        String[] adTags = resources.getStringArray(R.array.video_ad_tags);
-        TypedArray videoThumbnails = getActivity().getResources().
-                obtainTypedArray(R.array.video_thumbnails);
 
-        for (int i = 0; i < videoTitles.length; i++) {
-            Bitmap bitmap = BitmapFactory.decodeResource(getActivity().getResources(),
-                    videoThumbnails.getResourceId(i, -1));
-            videoItems.add(new VideoItem(videoUrls[i], videoTitles[i], adTags[i], bitmap));
+        // Iterate through the videos' metadata and add video items to list.
+        for (int i = 0; i < VideoMetadata.APP_VIDEOS.size(); i++) {
+            VideoMetadata videoMetadata = VideoMetadata.APP_VIDEOS.get(i);
+            videoItems.add(new VideoItem(videoMetadata.videoUrl, videoMetadata.title,
+                    videoMetadata.adTagUrl, videoMetadata.thumbnail));
         }
 
         return videoItems;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mResumeCallback != null) {
+            mResumeCallback.onVideoListFragmentResumed();
+        }
     }
 }

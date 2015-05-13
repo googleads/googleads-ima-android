@@ -18,16 +18,6 @@ public interface VideoPlayer {
         void onPlay();
 
         /**
-         * Called when the current video pauses playback.
-         */
-        void onPause();
-
-        /**
-         * Called when the current video resumes playing from a paused state.
-         */
-        void onResume();
-
-        /**
          * Called when the current video has completed playback to the end of the video.
          */
         void onCompleted();
@@ -69,16 +59,6 @@ public interface VideoPlayer {
     void stopPlayback();
 
     /**
-     * Prevent the media controller (playback controls) from appearing.
-     */
-    void disablePlaybackControls();
-
-    /**
-     * Allow the media controller (playback controls) to appear when appropriate.
-     */
-    void enablePlaybackControls();
-
-    /**
      * Set the URL or path of the video to play.
      */
     void setVideoPath(String videoUrl);
@@ -87,9 +67,4 @@ public interface VideoPlayer {
      * Provide the player with a callback for major video events (pause, complete, resume, etc).
      */
     void addPlayerCallback(PlayerCallback callback);
-
-    /**
-     * Remove a player callback from getting notified on video events.
-     */
-    void removePlayerCallback(PlayerCallback callback);
 }

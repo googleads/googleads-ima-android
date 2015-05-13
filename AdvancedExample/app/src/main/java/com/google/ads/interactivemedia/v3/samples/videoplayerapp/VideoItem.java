@@ -1,30 +1,28 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
-import android.graphics.Bitmap;
-
 /**
  * Information about a video playlist item that the user will select in a playlist.
  */
 public final class VideoItem {
 
-    private final Bitmap mThumbnail;
+    private final int mThumbnailResourceId;
     private final String mTitle;
     private final String mVideoUrl;
     private final String mAdTagUrl;
 
-    public VideoItem(String videoUrl, String title,  String adTagUrl, Bitmap thumbnail) {
+    public VideoItem(String videoUrl, String title,  String adTagUrl, int thumbnailResourceId) {
         super();
-        mThumbnail = thumbnail;
+        mThumbnailResourceId = thumbnailResourceId;
         mTitle = title;
         mAdTagUrl = adTagUrl;
         mVideoUrl = videoUrl;
     }
 
     /**
-     * Returns the video thumbnail image.
+     * Returns the video thumbnail image resource.
      */
-    public Bitmap getImage() {
-        return mThumbnail;
+    public int getImageResource() {
+        return mThumbnailResourceId;
     }
 
     /**

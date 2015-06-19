@@ -159,26 +159,29 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
     }
 
     /**
-     * Starts ad playback
+     * Starts ad playback.
      */
     public void play() {
         requestAds();
     }
 
     /**
-     * Resumes ad playback
+     * Resumes video playback.
      */
     public void resume() {
         mVideoPlayerWithAdPlayback.restorePosition();
-        if (mAdsManager != null) {
+        if (mAdsManager != null && mVideoPlayerWithAdPlayback.getIsAdDisplayed()) {
             mAdsManager.resume();
         }
     }
 
     /**
-     * Pauses ad playback
+     * Pauses video playback.
      */
     public void pause() {
         mVideoPlayerWithAdPlayback.savePosition();
+        if (mAdsManager != null && mVideoPlayerWithAdPlayback.getIsAdDisplayed()) {
+            mAdsManager.pause();
+        }
     }
 }

@@ -26,6 +26,16 @@ public interface VideoPlayer {
          * Called when an error occurs during video playback.
          */
         void onError();
+
+        /**
+         * Called when the video is paused.
+         */
+        void onPause();
+
+        /**
+         * Called when the video is resumed.
+         */
+        void onResume();
     }
 
     /**

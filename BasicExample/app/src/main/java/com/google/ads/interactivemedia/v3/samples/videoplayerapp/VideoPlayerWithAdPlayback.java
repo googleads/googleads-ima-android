@@ -36,7 +36,7 @@ public class VideoPlayerWithAdPlayback {
     private String mContentVideoUrl;
 
     // The saved position in the content to resume to after ad playback.
-    private int mSavedContentVideoPosition;
+    private int mSavedVideoPosition;
 
     // Called when the content is completed.
     private OnContentCompleteListener mOnContentCompleteListener;
@@ -60,7 +60,7 @@ public class VideoPlayerWithAdPlayback {
 
     public void init() {
         mIsAdDisplayed = false;
-        mSavedContentVideoPosition = 0;
+        mSavedVideoPosition = 0;
         mIsContentComplete = false;
 
         // Define VideoAdPlayer connector.
@@ -139,6 +139,24 @@ public class VideoPlayerWithAdPlayback {
             }
 
             @Override
+            public void onPause() {
+                if (mIsAdDisplayed) {
+                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                        callback.onPause();
+                    }
+                }
+            }
+
+            @Override
+            public void onResume() {
+                if (mIsAdDisplayed) {
+                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                        callback.onResume();
+                    }
+                }
+            }
+
+            @Override
             public void onError() {
                 if (mIsAdDisplayed) {
                     for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
@@ -183,14 +201,14 @@ public class VideoPlayerWithAdPlayback {
      * Save the playback progress state of the currently playing video.
      */
     public void savePosition() {
-        mSavedContentVideoPosition = mVideoPlayer.getCurrentPosition();
+        mSavedVideoPosition = mVideoPlayer.getCurrentPosition();
     }
 
     /**
      * Restore the currently loaded video to its previously saved playback progress state.
      */
     public void restorePosition() {
-        mVideoPlayer.seekTo(mSavedContentVideoPosition);
+        mVideoPlayer.seekTo(mSavedVideoPosition);
     }
 
     /**
@@ -207,10 +225,16 @@ public class VideoPlayerWithAdPlayback {
         return mVideoAdPlayer;
     }
 
-    public VideoPlayer getVideoPlayer() {
-        return mVideoPlayer;
+    /**
+     * Returns if an ad is displayed.
+     */
+    public boolean getIsAdDisplayed() {
+        return mIsAdDisplayed;
     }
 
+    /**
+     * Returns the content progress provider.
+     */
     public ContentProgressProvider getContentProgressProvider() {
         return mContentProgressProvider;
     }

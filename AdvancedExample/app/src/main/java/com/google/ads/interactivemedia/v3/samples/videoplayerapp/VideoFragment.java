@@ -131,7 +131,7 @@ public class VideoFragment extends Fragment {
     @Override
     public void onPause() {
         if (mVideoPlayerController != null) {
-            mVideoPlayerController.savePosition();
+            mVideoPlayerController.pause();
         }
         super.onPause();
     }
@@ -139,7 +139,7 @@ public class VideoFragment extends Fragment {
     @Override
     public void onResume() {
         if (mVideoPlayerController != null) {
-            mVideoPlayerController.restorePosition();
+            mVideoPlayerController.resume();
         }
         super.onResume();
     }

@@ -293,15 +293,21 @@ public class VideoPlayerController {
      * Save position of the video, whether content or ad. Can be called when the app is
      * paused, for example.
      */
-    public void savePosition() {
+    public void pause() {
         mVideoPlayerWithAdPlayback.savePosition();
+        if (mAdsManager != null && mVideoPlayerWithAdPlayback.getIsAdDisplayed()) {
+            mAdsManager.pause();
+        }
     }
 
     /**
      * Restore the previously saved progress location of the video. Can be called when
      * the app is resumed.
      */
-    public void restorePosition() {
+    public void resume() {
         mVideoPlayerWithAdPlayback.restorePosition();
+        if (mAdsManager != null && mVideoPlayerWithAdPlayback.getIsAdDisplayed()) {
+            mAdsManager.resume();
+        }
     }
 }

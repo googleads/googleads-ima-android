@@ -39,7 +39,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     private String mContentVideoUrl;
 
     // The saved position in the content to resume to after ad playback.
-    private int mSavedContentVideoPosition;
+    private int mSavedVideoPosition;
 
     // Called when the content is completed.
     private OnContentCompleteListener mOnContentCompleteListener;
@@ -73,7 +73,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
     private void init() {
         mIsAdDisplayed = false;
-        mSavedContentVideoPosition = 0;
+        mSavedVideoPosition = 0;
         mVideoPlayer = (VideoPlayer) this.getRootView().findViewById(R.id.videoPlayer);
         mAdUiContainer = (ViewGroup) this.getRootView().findViewById(R.id.adUiContainer);
 
@@ -209,14 +209,14 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
      * Save the playback progress state of the currently playing video.
      */
     public void savePosition() {
-        mSavedContentVideoPosition = mVideoPlayer.getCurrentPosition();
+        mSavedVideoPosition = mVideoPlayer.getCurrentPosition();
     }
 
     /**
      * Restore the currently loaded video to its previously saved playback progress state.
      */
     public void restorePosition() {
-        mVideoPlayer.seekTo(mSavedContentVideoPosition);
+        mVideoPlayer.seekTo(mSavedVideoPosition);
     }
 
     /**
@@ -257,6 +257,13 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
      */
     public VideoAdPlayer getVideoAdPlayer() {
         return mVideoAdPlayer;
+    }
+
+    /**
+     * Returns if an ad is displayed.
+     */
+    public boolean getIsAdDisplayed() {
+        return mIsAdDisplayed;
     }
 
     public ContentProgressProvider getContentProgressProvider() {

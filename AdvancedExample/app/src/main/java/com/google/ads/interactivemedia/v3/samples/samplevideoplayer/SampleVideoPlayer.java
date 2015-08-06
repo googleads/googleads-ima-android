@@ -105,9 +105,7 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     @Override
     public void start() {
         super.start();
-        PlaybackState oldPlaybackState = mPlaybackState;
-        mPlaybackState = PlaybackState.PLAYING;
-        switch (oldPlaybackState) {
+        switch (mPlaybackState) {
             case STOPPED:
                 for (PlayerCallback callback : mVideoPlayerCallbacks) {
                     callback.onPlay();
@@ -122,6 +120,7 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
                 // Already playing; do nothing.
                 break;
         }
+        mPlaybackState = PlaybackState.PLAYING;
     }
 
     @Override

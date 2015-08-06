@@ -105,10 +105,13 @@ public class VideoPlayerWithAdPlayback {
             @Override
             public VideoProgressUpdate getAdProgress() {
                 if (!mIsAdDisplayed || mVideoPlayer.getDuration() <= 0) {
+                    Log.d("debug", "VideoProgressUpdate (ad) -> VIDEO_TIME_NOT_READY");
                     return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
                 }
-                return new VideoProgressUpdate(mVideoPlayer.getCurrentPosition(),
+                VideoProgressUpdate videoProgressUpdate = new VideoProgressUpdate(mVideoPlayer.getCurrentPosition(),
                         mVideoPlayer.getDuration());
+                Log.d("debug", "VideoProgressUpdate (ad) -> " + videoProgressUpdate);
+                return videoProgressUpdate;
             }
         };
         // [END init_region]
@@ -118,10 +121,13 @@ public class VideoPlayerWithAdPlayback {
             @Override
             public VideoProgressUpdate getContentProgress() {
                 if (mIsAdDisplayed || mVideoPlayer.getDuration() <= 0) {
+                    Log.d("debug", "VideoProgressUpdate (content) -> VIDEO_TIME_NOT_READY");
                     return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
                 }
-                return new VideoProgressUpdate(mVideoPlayer.getCurrentPosition(),
+                VideoProgressUpdate videoProgressUpdate = new VideoProgressUpdate(mVideoPlayer.getCurrentPosition(),
                         mVideoPlayer.getDuration());
+                Log.d("debug", "VideoProgressUpdate (content) -> " + videoProgressUpdate);
+                return videoProgressUpdate;
             }
         };
         // [END content_progress_provider_region]
@@ -179,6 +185,8 @@ public class VideoPlayerWithAdPlayback {
                     mIsContentComplete = true;
                 }
             }
+
+
         });
         // [END video_player_callback_region]
     }

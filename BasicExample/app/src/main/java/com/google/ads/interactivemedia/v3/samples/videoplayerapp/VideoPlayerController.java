@@ -45,7 +45,7 @@ public class VideoPlayerController implements AdErrorEvent.AdErrorListener,
         mVideoPlayerWithAdPlayback = new VideoPlayerWithAdPlayback(videoPlayer, adUiContainer);
         mVideoPlayerWithAdPlayback.init();
         mVideoPlayerWithAdPlayback.setOnContentCompleteListener(this);
-        mDefaultAdTagUrl = context.getString(R.string.ad_tag_url);
+        mDefaultAdTagUrl = context.getString(R.string.ad_tag_url_vmap);
 
         // Create an AdsLoader.
         mSdkFactory = ImaSdkFactory.getInstance();

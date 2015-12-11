@@ -11,7 +11,7 @@ public enum VideoMetadata {
     PRE_ROLL_NO_SKIP(
             "http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
             "Pre-roll, linear not skippable",
-            "http://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
+            "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast"
                     + "&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct"
                     + "%3Dlinear&correlator=",
@@ -19,7 +19,7 @@ public enum VideoMetadata {
     PRE_ROLL_SKIP(
             "http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
             "Pre-roll, linear, skippable",
-            "http://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
+            "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast"
                     + "&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct"
                     + "%3Dskippablelinear&correlator=",
@@ -27,31 +27,31 @@ public enum VideoMetadata {
     POST_ROLL(
             "http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
             "Post-roll",
-            "http://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
+            "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp"
                     + "&output=vmap&unviewed_position_start=1&cust_params=deployment%3Ddevsite"
                     + "%26sample_ar%3Dpostonly&cmsid=496&vid=short_onecue&correlator=",
             R.drawable.thumbnail1),
     VMAP("http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
             "VMAP",
-            "http://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
+            "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp"
                     + "&output=vmap&unviewed_position_start=1&cust_params=deployment%3Ddevsite"
                     + "%26sample_ar%3Dpremidpost&cmsid=496&vid=short_onecue&correlator=",
             R.drawable.thumbnail1),
     VMAP_PODS("http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
             "VMAP Pods",
-            "http://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
+            "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp"
                     + "&output=vmap&unviewed_position_start=1&cust_params=deployment%3Ddevsite"
                     + "%26sample_ar%3Dpremidpostpod&cmsid=496&vid=short_onecue&correlator=",
             R.drawable.thumbnail1),
     WRAPPER("http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
             "Wrapper",
-            "http://pubads.g.doubleclick.net/gampad/ads?sz=400x300&iu=%2F6062%2Fhanna_MA_group"
-                    + "%2Fwrapper_with_comp&ciu_szs=728x90&impl=s&gdfp_req=1&env=vp&output"
-                    + "=xml_vast2&unviewed_position_start=1&m_ast=vast&url=[referrer_url]"
-                    + "&correlator=[timestamp]",
+            "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
+                    + "single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast"
+                    + "&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct"
+                    + "%3Dredirectlinear&correlator=",
             R.drawable.thumbnail1),
     ADSENSE("http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
             "AdSense",

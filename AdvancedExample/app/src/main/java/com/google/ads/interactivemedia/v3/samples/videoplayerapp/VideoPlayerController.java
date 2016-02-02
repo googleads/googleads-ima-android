@@ -160,6 +160,7 @@ public class VideoPlayerController {
             @Override
             public void onAdError(AdErrorEvent adErrorEvent) {
                 log("Ad Error: " + adErrorEvent.getError().getMessage());
+                resumeContent();
             }
         });
 

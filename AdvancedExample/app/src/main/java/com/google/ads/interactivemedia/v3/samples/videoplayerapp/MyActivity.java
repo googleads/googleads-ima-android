@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.MediaRouteActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,13 +16,16 @@ import android.view.View;
 /**
  * Main Activity.
  */
-public class MyActivity extends ActionBarActivity
+public class MyActivity extends AppCompatActivity
     implements VideoListFragment.OnVideoSelectedListener,
             VideoListFragment.OnVideoListFragmentResumedListener,
             VideoFragment.OnVideoFragmentViewCreatedListener {
 
     private static final String VIDEO_PLAYLIST_FRAGMENT_TAG = "video_playlist_fragment_tag";
     private static final String VIDEO_EXAMPLE_FRAGMENT_TAG = "video_example_fragment_tag";
+
+    private static CastApplication sCastApplication;
+    private boolean mReadyToCast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +43,26 @@ public class MyActivity extends ActionBarActivity
                     .commit();
         }
 
+        sCastApplication = new CastApplication(getApplicationContext());
         orientAppUi();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        sCastApplication.activityOnStart();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.my, menu);
+
+        MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
+        MediaRouteActionProvider mediaRouteActionProvider =
+                (MediaRouteActionProvider) MenuItemCompat.getActionProvider(mediaRouteMenuItem);
+        mediaRouteActionProvider.setRouteSelector(sCastApplication.getMediaRouteSelector());
+        mediaRouteMenuItem.setVisible(mReadyToCast);
         return true;
     }
 
@@ -124,12 +142,16 @@ public class MyActivity extends ActionBarActivity
                     .commit();
         }
         videoFragment.loadVideo(videoItem);
+        sCastApplication.setVideoFragment(videoFragment);
+        mReadyToCast = true;
+        invalidateOptionsMenu();
         orientAppUi();
-
     }
 
     @Override
     public void onVideoListFragmentResumed() {
+        mReadyToCast = false;
+        invalidateOptionsMenu();
         orientAppUi();
     }
 

@@ -38,8 +38,12 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     // Used to track the current content video URL to resume content playback.
     private String mContentVideoUrl;
 
-    // The saved position in the content to resume to after ad playback.
-    private int mSavedVideoPosition;
+    // The saved position in the ad to resume if app is backgrounded during ad playback.
+    private int mSavedAdPosition;
+
+    // The saved position in the content to resume to after ad playback or if app is backgrounded
+    // during content playback.
+    private int mSavedContentPosition;
 
     // Called when the content is completed.
     private OnContentCompleteListener mOnContentCompleteListener;
@@ -73,7 +77,8 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
     private void init() {
         mIsAdDisplayed = false;
-        mSavedVideoPosition = 0;
+        mSavedAdPosition = 0;
+        mSavedContentPosition = 0;
         mVideoPlayer = (VideoPlayer) this.getRootView().findViewById(R.id.videoPlayer);
         mAdUiContainer = (ViewGroup) this.getRootView().findViewById(R.id.adUiContainer);
 
@@ -206,17 +211,64 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     }
 
     /**
-     * Save the playback progress state of the currently playing video.
+     * Save the playback progress state of the currently playing video. This is called when content
+     * is paused to prepare for ad playback or when app is backgrounded.
      */
     public void savePosition() {
-        mSavedVideoPosition = mVideoPlayer.getCurrentPosition();
+        if (mIsAdDisplayed) {
+            mSavedAdPosition = mVideoPlayer.getCurrentPosition();
+        } else {
+            mSavedContentPosition = mVideoPlayer.getCurrentPosition();
+        }
     }
 
     /**
-     * Restore the currently loaded video to its previously saved playback progress state.
+     * Restore the currently loaded video to its previously saved playback progress state. This is
+     * called when content is resumed after ad playback or when focus has returned to the app.
      */
     public void restorePosition() {
-        mVideoPlayer.seekTo(mSavedVideoPosition);
+        if (mIsAdDisplayed) {
+            mVideoPlayer.seekTo(mSavedAdPosition);
+        } else {
+            mVideoPlayer.seekTo(mSavedContentPosition);
+        }
+    }
+
+    /**
+     * Pauses the content video.
+     */
+    public void pause() {
+        mVideoPlayer.pause();
+    }
+
+    /**
+     * Plays the content video.
+     */
+    public void play() {
+        mVideoPlayer.play();
+    }
+
+    /**
+     * Seeks the content video.
+     */
+    public void seek(int time) {
+        if (mIsAdDisplayed) {
+            // When ad is playing, set the content video position to seek to when ad finishes.
+            mSavedContentPosition = time;
+        } else {
+            mVideoPlayer.seekTo(time);
+        }
+    }
+
+    /**
+     * Returns current content video play time.
+     */
+    public int getCurrentContentTime() {
+        if (mIsAdDisplayed) {
+            return mSavedContentPosition;
+        } else {
+            return mVideoPlayer.getCurrentPosition();
+        }
     }
 
     /**
@@ -241,7 +293,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
         mIsAdDisplayed = false;
         mVideoPlayer.setVideoPath(mContentVideoUrl);
         mVideoPlayer.enablePlaybackControls();
-        restorePosition();
+        mVideoPlayer.seekTo(mSavedContentPosition);
         mVideoPlayer.play();
     }
 

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -21,6 +22,8 @@ import java.util.List;
 public class VideoListFragment extends Fragment {
 
     private OnVideoSelectedListener mSelectedCallback;
+    LayoutInflater mInflater;
+    ViewGroup mContainer;
 
     /**
      * Listener called when the user selects a video from the list.
@@ -60,6 +63,8 @@ public class VideoListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mInflater = inflater;
+        mContainer = container;
         View rootView = inflater.inflate(R.layout.fragment_video_list, container, false);
 
         final ListView listView = (ListView) rootView.findViewById(R.id.videoListView);
@@ -88,18 +93,21 @@ public class VideoListFragment extends Fragment {
     }
 
     private void getCustomAdTag(VideoItem originalVideoItem) {
-        final EditText txtUrl = new EditText(this.getActivity());
-        final VideoItem videoItem = originalVideoItem;
+        View dialogueView = mInflater.inflate(R.layout.custom_ad_tag, mContainer, false);
+        final EditText txtUrl = (EditText) dialogueView.findViewById(R.id.customTag);
         txtUrl.setHint("VAST ad tag URL");
+        final CheckBox isVmap = (CheckBox) dialogueView.findViewById(R.id.isVmap);
+        final VideoItem videoItem = originalVideoItem;
 
         new AlertDialog.Builder(this.getActivity())
                 .setTitle("Custom VAST Ad Tag URL")
-                .setView(txtUrl)
+                .setView(dialogueView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String customAdTagUrl = txtUrl.getText().toString();
                         VideoItem customAdTagVideoItem = new VideoItem(videoItem.getVideoUrl(),
-                                videoItem.getTitle(), customAdTagUrl, videoItem.getImageResource());
+                                videoItem.getTitle(), customAdTagUrl, videoItem.getImageResource(),
+                                isVmap.isChecked());
 
                         if (mSelectedCallback != null) {
                             mSelectedCallback.onVideoSelected(customAdTagVideoItem);
@@ -120,7 +128,7 @@ public class VideoListFragment extends Fragment {
         for (int i = 0; i < VideoMetadata.APP_VIDEOS.size(); i++) {
             VideoMetadata videoMetadata = VideoMetadata.APP_VIDEOS.get(i);
             videoItems.add(new VideoItem(videoMetadata.videoUrl, videoMetadata.title,
-                    videoMetadata.adTagUrl, videoMetadata.thumbnail));
+                    videoMetadata.adTagUrl, videoMetadata.thumbnail, videoMetadata.isVmap));
         }
 
         return videoItems;

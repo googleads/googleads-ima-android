@@ -9,13 +9,16 @@ public final class VideoItem {
     private final String mTitle;
     private final String mVideoUrl;
     private final String mAdTagUrl;
+    private final boolean mIsVmap;
 
-    public VideoItem(String videoUrl, String title,  String adTagUrl, int thumbnailResourceId) {
+    public VideoItem(String videoUrl, String title,  String adTagUrl, int thumbnailResourceId,
+                     boolean isVmap) {
         super();
         mThumbnailResourceId = thumbnailResourceId;
         mTitle = title;
         mAdTagUrl = adTagUrl;
         mVideoUrl = videoUrl;
+        mIsVmap = isVmap;
     }
 
     /**
@@ -44,5 +47,12 @@ public final class VideoItem {
      */
     public String getAdTagUrl() {
         return mAdTagUrl;
+    }
+
+    /**
+     * Returns if the ad is VMAP.
+     */
+    public boolean getIsVmap() {
+        return mIsVmap;
     }
 }

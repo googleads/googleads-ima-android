@@ -53,6 +53,9 @@ public class VideoPlayerController {
     // VAST ad tag URL to use when requesting ads during video playback.
     private String mCurrentAdTagUrl;
 
+    // URL of content video.
+    private String mContentVideoUrl;
+
     // ViewGroup to render an associated companion ad into.
     private ViewGroup mCompanionViewGroup;
 
@@ -211,6 +214,10 @@ public class VideoPlayerController {
         mCurrentAdTagUrl = adTagUrl;
     }
 
+    public String getAdTagUrl() {
+        return mCurrentAdTagUrl;
+    }
+
     /**
      * Request and subsequently play video ads from the ad server.
      */
@@ -288,6 +295,11 @@ public class VideoPlayerController {
      */
     public void setContentVideo(String videoPath) {
         mVideoPlayerWithAdPlayback.setContentVideoPath(videoPath);
+        mContentVideoUrl = videoPath;
+    }
+
+    public String getContentVideoUrl() {
+        return mContentVideoUrl;
     }
 
     /**
@@ -298,6 +310,8 @@ public class VideoPlayerController {
         mVideoPlayerWithAdPlayback.savePosition();
         if (mAdsManager != null && mVideoPlayerWithAdPlayback.getIsAdDisplayed()) {
             mAdsManager.pause();
+        } else {
+            mVideoPlayerWithAdPlayback.pause();
         }
     }
 
@@ -309,6 +323,22 @@ public class VideoPlayerController {
         mVideoPlayerWithAdPlayback.restorePosition();
         if (mAdsManager != null && mVideoPlayerWithAdPlayback.getIsAdDisplayed()) {
             mAdsManager.resume();
+        } else {
+            mVideoPlayerWithAdPlayback.play();
         }
+    }
+
+    /**
+     * Seeks to time in content video in seconds.
+     */
+    public void seek(double time) {
+        mVideoPlayerWithAdPlayback.seek((int) (time * 1000.0));
+    }
+
+    /**
+     * Returns the current time of the content video in seconds.
+     */
+    public double getCurrentContentTime() {
+        return ((double) mVideoPlayerWithAdPlayback.getCurrentContentTime()) / 1000.0;
     }
 }

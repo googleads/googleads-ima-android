@@ -1,5 +1,0 @@
-To integrate the IMA SDK, first download the SDK jar from
-https://developers.google.com/interactive-media-ads/docs/sdks/android/download
-and place it in this folder.
-Right click the file in Android Studio, select "Add As Library..."
-Select the "app" module, and click OK.

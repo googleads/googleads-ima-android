@@ -128,6 +128,10 @@ public class VideoFragment extends Fragment {
         }
     }
 
+    public VideoPlayerController getVideoPlayerController() {
+        return mVideoPlayerController;
+    }
+
     @Override
     public void onPause() {
         if (mVideoPlayerController != null) {
@@ -142,5 +146,9 @@ public class VideoFragment extends Fragment {
             mVideoPlayerController.resume();
         }
         super.onResume();
+    }
+
+    public boolean isVmap() {
+        return mVideoItem.getIsVmap();
     }
 }

@@ -86,6 +86,11 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     }
 
     @Override
+    public int getDuration() {
+        return mPlaybackState == PlaybackState.STOPPED ? 0 : super.getDuration();
+    }
+
+    @Override
     public void setOnCompletionListener(OnCompletionListener listener) {
         // The OnCompletionListener can only be implemented by SampleVideoPlayer.
         throw new UnsupportedOperationException();
@@ -136,6 +141,9 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
 
     @Override
     public void stopPlayback() {
+        if (mPlaybackState == PlaybackState.STOPPED) {
+            return;
+        }
         super.stopPlayback();
         mPlaybackState = PlaybackState.STOPPED;
     }

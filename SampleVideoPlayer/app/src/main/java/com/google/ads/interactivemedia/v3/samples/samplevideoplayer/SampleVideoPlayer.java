@@ -15,17 +15,22 @@ import java.util.List;
 
 /**
  * A VideoView that intercepts various methods and reports them back via a
- * PlayerCallback.
+ * OnVideoCompletedListener.
  */
-public class SampleVideoPlayer extends VideoView implements VideoPlayer {
+public class SampleVideoPlayer extends VideoView {
 
-    private enum PlaybackState {
-        STOPPED, PAUSED, PLAYING
+    /**
+     * Interface for alerting caller of video completion.
+     */
+    public interface OnVideoCompletedListener {
+
+        /**
+         * Called when the current video has completed playback to the end of the video.
+         */
+        void onVideoCompleted();
     }
 
-    private MediaController mMediaController;
-    private PlaybackState mPlaybackState;
-    private final List<PlayerCallback> mVideoPlayerCallbacks = new ArrayList<PlayerCallback>(1);
+    private final List<OnVideoCompletedListener> mOnVideoCompletedListeners = new ArrayList<>(1);
 
     public SampleVideoPlayer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -43,12 +48,10 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     }
 
     private void init() {
-        mPlaybackState = PlaybackState.STOPPED;
-        mMediaController = new MediaController(getContext());
-        mMediaController.setAnchorView(this);
-        enablePlaybackControls();
+        MediaController mediaController = new MediaController(getContext());
+        mediaController.setAnchorView(this);
 
-        // Set OnCompletionListener to notify our callbacks when the video is completed.
+        // Set OnCompletionListener to notify our listeners when the video is completed.
         super.setOnCompletionListener(new OnCompletionListener() {
 
             @Override
@@ -56,27 +59,20 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
                 // Reset the MediaPlayer.
                 // This prevents a race condition which occasionally results in the media
                 // player crashing when switching between videos.
-                disablePlaybackControls();
                 mediaPlayer.reset();
                 mediaPlayer.setDisplay(getHolder());
-                enablePlaybackControls();
-                mPlaybackState = PlaybackState.STOPPED;
 
-                for (PlayerCallback callback : mVideoPlayerCallbacks) {
-                    callback.onCompleted();
+                for (OnVideoCompletedListener listener : mOnVideoCompletedListeners) {
+                    listener.onVideoCompleted();
                 }
             }
         });
 
-        // Set OnErrorListener to notify our callbacks if the video errors.
+        // Set OnErrorListener to notify our listeners if the video errors.
         super.setOnErrorListener(new OnErrorListener() {
 
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
-                mPlaybackState = PlaybackState.STOPPED;
-                for (PlayerCallback callback : mVideoPlayerCallbacks) {
-                    callback.onError();
-                }
 
                 // Returning true signals to MediaPlayer that we handled the error. This will
                 // prevent the completion handler from being called.
@@ -86,85 +82,16 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     }
 
     @Override
-    public int getDuration() {
-        return mPlaybackState == PlaybackState.STOPPED ? 0 : super.getDuration();
-    }
-
-    @Override
     public void setOnCompletionListener(OnCompletionListener listener) {
         // The OnCompletionListener can only be implemented by SampleVideoPlayer.
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void setOnErrorListener(OnErrorListener listener) {
-        // The OnErrorListener can only be implemented by SampleVideoPlayer.
-        throw new UnsupportedOperationException();
-    }
-
-    // Methods implementing the VideoPlayer interface.
-
-    @Override
     public void play() {
         start();
     }
 
-    @Override
-    public void start() {
-        super.start();
-        PlaybackState oldPlaybackState = mPlaybackState;
-        mPlaybackState = PlaybackState.PLAYING;
-        switch (oldPlaybackState) {
-            case STOPPED:
-                for (PlayerCallback callback : mVideoPlayerCallbacks) {
-                    callback.onPlay();
-                }
-                break;
-            case PAUSED:
-                for (PlayerCallback callback : mVideoPlayerCallbacks) {
-                    callback.onResume();
-                }
-                break;
-            default:
-                // Already playing; do nothing.
-        }
-    }
-
-    @Override
-    public void pause() {
-        super.pause();
-        mPlaybackState = PlaybackState.PAUSED;
-        for (PlayerCallback callback : mVideoPlayerCallbacks) {
-            callback.onPause();
-        }
-    }
-
-    @Override
-    public void stopPlayback() {
-        if (mPlaybackState == PlaybackState.STOPPED) {
-            return;
-        }
-        super.stopPlayback();
-        mPlaybackState = PlaybackState.STOPPED;
-    }
-
-    @Override
-    public void disablePlaybackControls() {
-        setMediaController(null);
-    }
-
-    @Override
-    public void enablePlaybackControls() {
-        setMediaController(mMediaController);
-    }
-
-    @Override
-    public void addPlayerCallback(PlayerCallback callback) {
-        mVideoPlayerCallbacks.add(callback);
-    }
-
-    @Override
-    public void removePlayerCallback(PlayerCallback callback) {
-        mVideoPlayerCallbacks.remove(callback);
+    public void addVideoCompletedListener(OnVideoCompletedListener listener) {
+        mOnVideoCompletedListeners.add(listener);
     }
 }

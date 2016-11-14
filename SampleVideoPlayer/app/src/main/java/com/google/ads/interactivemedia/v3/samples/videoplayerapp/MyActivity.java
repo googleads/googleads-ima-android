@@ -13,9 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
-import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.VideoPlayer;
+import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.SampleVideoPlayer;
 
 /**
  * Main Activity.
@@ -74,9 +73,8 @@ public class MyActivity extends ActionBarActivity {
      */
     public static class VideoFragment extends Fragment {
 
-        protected VideoPlayer mVideoPlayer;
-        protected ImageButton mPlayButton;
-        int mSavedVideoPosition;
+        protected SampleVideoPlayer mVideoPlayer;
+        protected View mPlayButton;
 
         @Override
         public void onActivityCreated(Bundle bundle) {
@@ -93,11 +91,10 @@ public class MyActivity extends ActionBarActivity {
         }
 
         protected void initUi(View rootView) {
-            mSavedVideoPosition = 0;
-            mVideoPlayer = (VideoPlayer) rootView.findViewById(R.id.videoPlayer);
+            mVideoPlayer = (SampleVideoPlayer) rootView.findViewById(R.id.videoPlayer);
             mVideoPlayer.setVideoPath(getString(R.string.content_url));
 
-            mPlayButton = (ImageButton) rootView.findViewById(R.id.playButton);
+            mPlayButton = (View) rootView.findViewById(R.id.playButton);
             mPlayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -108,19 +105,15 @@ public class MyActivity extends ActionBarActivity {
         }
 
         @Override
-        public void onPause() {
-            super.onPause();
-            if (mVideoPlayer != null) {
-                mSavedVideoPosition = mVideoPlayer.getCurrentPosition();
-            }
+        public void onResume() {
+            super.onResume();
+            mVideoPlayer.play();
         }
 
         @Override
-        public void onResume() {
-            super.onResume();
-            if (mVideoPlayer != null) {
-                mVideoPlayer.seekTo(mSavedVideoPosition);
-            }
+        public void onPause() {
+            super.onPause();
+            mVideoPlayer.pause();
         }
     }
 

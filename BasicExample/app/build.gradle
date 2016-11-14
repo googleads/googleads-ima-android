@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    compile 'com.google.ads.interactivemedia.v3:interactivemedia:3.2.1'
+    compile 'com.google.ads.interactivemedia.v3:interactivemedia:3.5.2'
     compile 'com.android.support:appcompat-v7:21.+'
-    compile 'com.google.android.gms:play-services-ads:8.4.0'
+    compile 'com.google.android.gms:play-services-ads:9.8.0'
 }

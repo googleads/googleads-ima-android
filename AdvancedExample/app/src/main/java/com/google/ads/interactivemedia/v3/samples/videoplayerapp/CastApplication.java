@@ -23,7 +23,7 @@ import java.io.IOException;
  */
 public class CastApplication {
     private static final String TAG = "ChromeCastDemoActivity";
-    public static final String APP_ID = "6609F938";
+    public static final String APP_ID = "8EE292C4";
     public static final String NAMESPACE = "urn:x-cast:com.google.ads.ima.cast";
 
     private static CastDevice sSelectedDevice;
@@ -142,7 +142,8 @@ public class CastApplication {
                                 // request the ad again in Chromecast except for VMAP because there
                                 // are multiple ad breaks. To request a single ad use same the same
                                 // message with current time as 0.
-                                if (mVideoFragment.isVmap()) {
+                                if (mVideoFragment.isVmap()
+                                        || mVideoPlayerController.getCurrentContentTime() == 0) {
                                     sendMessage("requestAd," + mAdTagUrl + ","
                                             + mVideoPlayerController.getCurrentContentTime());
                                 } else {

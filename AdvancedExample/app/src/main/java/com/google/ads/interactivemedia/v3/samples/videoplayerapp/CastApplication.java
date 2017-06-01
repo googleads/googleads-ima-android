@@ -23,7 +23,7 @@ import java.io.IOException;
  */
 public class CastApplication {
     private static final String TAG = "ChromeCastDemoActivity";
-    public static final String APP_ID = "YOUR_RECEIVER_APP_ID";
+    public static final String APP_ID = "93F3197F"; // Replace with your cast app id.
     public static final String NAMESPACE = "urn:x-cast:com.google.ads.ima.cast";
 
     private static CastDevice sSelectedDevice;

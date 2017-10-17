@@ -49,6 +49,11 @@ public interface VideoPlayer {
     void pause();
 
     /**
+     * Resume the currently loaded video.
+     */
+    void resume();
+
+    /**
      * Get the playback progress state (milliseconds) of the current video.
      */
     int getCurrentPosition();

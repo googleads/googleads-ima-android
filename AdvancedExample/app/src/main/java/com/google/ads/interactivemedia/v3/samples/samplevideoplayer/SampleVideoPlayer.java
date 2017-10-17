@@ -104,26 +104,18 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     // Methods implementing the VideoPlayer interface.
     @Override
     public void play() {
-        start();
+        super.start();
+        for (PlayerCallback callback : mVideoPlayerCallbacks) {
+            callback.onPlay();
+        }
+        mPlaybackState = PlaybackState.PLAYING;
     }
 
     @Override
-    public void start() {
+    public void resume() {
         super.start();
-        switch (mPlaybackState) {
-            case STOPPED:
-                for (PlayerCallback callback : mVideoPlayerCallbacks) {
-                    callback.onPlay();
-                }
-                break;
-            case PAUSED:
-                for (PlayerCallback callback : mVideoPlayerCallbacks) {
-                    callback.onResume();
-                }
-                break;
-            default:
-                // Already playing; do nothing.
-                break;
+        for (PlayerCallback callback : mVideoPlayerCallbacks) {
+            callback.onResume();
         }
         mPlaybackState = PlaybackState.PLAYING;
     }

@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         applicationId "com.google.ads.interactivemedia.v3.samples.videoplayerapp"
-        minSdkVersion 9
-        targetSdkVersion 21
+        minSdkVersion 14
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -20,5 +20,5 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:21.+'
+    compile 'com.android.support:appcompat-v7:25.+'
 }

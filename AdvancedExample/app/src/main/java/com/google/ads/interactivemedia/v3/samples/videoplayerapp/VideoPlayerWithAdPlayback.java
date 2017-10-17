@@ -86,13 +86,17 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
         mVideoAdPlayer = new VideoAdPlayer() {
             @Override
             public void playAd() {
-                mIsAdDisplayed = true;
-                mVideoPlayer.play();
+                if (mIsAdDisplayed) {
+                    mVideoPlayer.resume();
+                } else {
+                    mIsAdDisplayed = true;
+                    mVideoPlayer.play();
+                }
             }
 
             @Override
             public void loadAd(String url) {
-                mIsAdDisplayed = true;
+                mIsAdDisplayed = false;
                 mVideoPlayer.setVideoPath(url);
             }
 

@@ -92,12 +92,12 @@ public class MyActivity extends AppCompatActivity {
 
         protected void initUi(View rootView) {
             mVideoPlayer = (SampleVideoPlayer) rootView.findViewById(R.id.videoPlayer);
-            mVideoPlayer.setVideoPath(getString(R.string.content_url));
 
             mPlayButton = (View) rootView.findViewById(R.id.playButton);
             mPlayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    mVideoPlayer.setVideoPath(getString(R.string.content_url));
                     mVideoPlayer.play();
                     mPlayButton.setVisibility(View.GONE);
                 }

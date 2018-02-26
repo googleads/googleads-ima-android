@@ -151,7 +151,7 @@ public class VideoPlayerController {
         mLog = log;
 
         // Create an AdsLoader and optionally set the language.
-        ImaSdkSettings imaSdkSettings = new ImaSdkSettings();
+        ImaSdkSettings imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
         imaSdkSettings.setLanguage(language);
         mSdkFactory = ImaSdkFactory.getInstance();
         mAdsLoader = mSdkFactory.createAdsLoader(context, imaSdkSettings);

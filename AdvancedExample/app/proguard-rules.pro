@@ -14,20 +14,8 @@
 #   public *;
 #}
 
-# The following rules are used to strip any non essential Google Play Services classes and method.
--keep class * extends java.util.ListResourceBundle {
-    protected Object[][] getContents();
-}
+-keep class com.google.obf.** { *; }
+-keep interface com.google.obf.** { *; }
 
--keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
-    public static final *** NULL;
-}
-
--keepnames @com.google.android.gms.common.annotation.KeepName class *
--keepclassmembernames class * {
-    @com.google.android.gms.common.annotation.KeepName *;
-}
-
--keepnames class * implements android.os.Parcelable {
-    public static final ** CREATOR;
-}
+-keep class com.google.ads.interactivemedia.** { *; }
+-keep interface com.google.ads.interactivemedia.** { *; }

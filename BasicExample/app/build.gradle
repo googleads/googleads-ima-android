@@ -2,8 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
-
     defaultConfig {
         applicationId "com.google.ads.interactivemedia.v3.samples.videoplayerapp"
         minSdkVersion 14
@@ -13,15 +11,14 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-
-    compile 'com.google.ads.interactivemedia.v3:interactivemedia:3.7.2'
+    compile 'com.google.ads.interactivemedia.v3:interactivemedia:3.8.2'
     compile 'com.android.support:appcompat-v7:25.+'
     compile 'com.google.android.gms:play-services-ads:11.0.2'
 }

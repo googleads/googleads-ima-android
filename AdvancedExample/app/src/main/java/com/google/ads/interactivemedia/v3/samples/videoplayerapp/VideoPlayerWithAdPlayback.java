@@ -256,12 +256,11 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
      * Seeks the content video.
      */
     public void seek(int time) {
-        if (mIsAdDisplayed) {
-            // When ad is playing, set the content video position to seek to when ad finishes.
-            mSavedContentPosition = time;
-        } else {
+        // Seek only if an ad is not playing. Save the content position either way.
+        if (!mIsAdDisplayed) {
             mVideoPlayer.seekTo(time);
         }
+        mSavedContentPosition = time;
     }
 
     /**

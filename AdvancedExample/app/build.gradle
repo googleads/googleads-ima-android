@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 27
 
     defaultConfig {
         applicationId "com.google.ads.interactivemedia.v3.samples.videoplayerapp"
-        minSdkVersion 14
-        targetSdkVersion 25
+        minSdkVersion 16
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
@@ -19,8 +19,12 @@ android {
 }
 
 dependencies {
-    compile 'com.google.ads.interactivemedia.v3:interactivemedia:3.8.2'
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.google.android.gms:play-services-ads:11.0.4'
-    compile 'com.google.android.gms:play-services-cast:11.0.4'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.8.7'
+    implementation 'com.android.support:appcompat-v7:27+'
+    implementation 'com.android.support:customtabs:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:mediarouter-v7:27.1.1'
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
+    implementation 'com.google.android.gms:play-services-cast-framework:15.0.1'
 }

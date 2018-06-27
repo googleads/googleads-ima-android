@@ -6,12 +6,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.MediaRouteActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import com.google.android.gms.cast.framework.CastButtonFactory;
 
 /**
  * Main Activity.
@@ -24,8 +23,7 @@ public class MyActivity extends AppCompatActivity
     private static final String VIDEO_PLAYLIST_FRAGMENT_TAG = "video_playlist_fragment_tag";
     private static final String VIDEO_EXAMPLE_FRAGMENT_TAG = "video_example_fragment_tag";
 
-    private static CastApplication sCastApplication;
-    private boolean mReadyToCast;
+    private CastApplication mCastApplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,27 +40,31 @@ public class MyActivity extends AppCompatActivity
                             VIDEO_PLAYLIST_FRAGMENT_TAG)
                     .commit();
         }
-
-        sCastApplication = new CastApplication(getApplicationContext());
+        mCastApplication = new CastApplication(this);
         orientAppUi();
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        sCastApplication.activityOnStart();
+    protected void onResume() {
+        mCastApplication.onResume();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mCastApplication.onPause();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.my, menu);
 
-        MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
-        MediaRouteActionProvider mediaRouteActionProvider =
-                (MediaRouteActionProvider) MenuItemCompat.getActionProvider(mediaRouteMenuItem);
-        mediaRouteActionProvider.setRouteSelector(sCastApplication.getMediaRouteSelector());
-        mediaRouteMenuItem.setVisible(mReadyToCast);
+        CastButtonFactory.setUpMediaRouteButton(
+                getApplicationContext(), menu, R.id.media_route_menu_item);
         return true;
     }
 
@@ -72,9 +74,6 @@ public class MyActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -142,15 +141,13 @@ public class MyActivity extends AppCompatActivity
                     .commit();
         }
         videoFragment.loadVideo(videoItem);
-        sCastApplication.setVideoFragment(videoFragment);
-        mReadyToCast = true;
+        mCastApplication.setVideoFragment(videoFragment);
         invalidateOptionsMenu();
         orientAppUi();
     }
 
     @Override
     public void onVideoListFragmentResumed() {
-        mReadyToCast = false;
         invalidateOptionsMenu();
         orientAppUi();
     }

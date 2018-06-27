@@ -13,6 +13,7 @@ import com.google.ads.interactivemedia.v3.api.AdEvent;
 import com.google.ads.interactivemedia.v3.api.AdsLoader;
 import com.google.ads.interactivemedia.v3.api.AdsManager;
 import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent;
+import com.google.ads.interactivemedia.v3.api.AdsRenderingSettings;
 import com.google.ads.interactivemedia.v3.api.AdsRequest;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
@@ -68,6 +69,10 @@ public class VideoPlayerController {
 
     // View that we can write log messages to, to display in the UI.
     private Logger mLog;
+
+    private double mPlayAdsAfterTime = -1;
+
+    private boolean mVideoStarted;
 
     // Inner class implementation of AdsLoader.AdsLoaderListener.
     private class AdsLoadedListener implements AdsLoader.AdsLoadedListener {
@@ -136,7 +141,12 @@ public class VideoPlayerController {
                     }
                 }
             });
-            mAdsManager.init();
+            AdsRenderingSettings adsRenderingSettings =
+                    ImaSdkFactory.getInstance().createAdsRenderingSettings();
+            adsRenderingSettings.setPlayAdsAfterTime(mPlayAdsAfterTime);
+            mAdsManager.init(adsRenderingSettings);
+            seek(mPlayAdsAfterTime);
+            mVideoStarted = true;
         }
     }
 
@@ -184,7 +194,7 @@ public class VideoPlayerController {
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestAndPlayAds();
+                requestAndPlayAds(-1);
             }
         });
     }
@@ -221,7 +231,7 @@ public class VideoPlayerController {
     /**
      * Request and subsequently play video ads from the ad server.
      */
-    public void requestAndPlayAds() {
+    public void requestAndPlayAds(double playAdsAfterTime) {
         if (mCurrentAdTagUrl == null || mCurrentAdTagUrl == "") {
             log("No VAST ad tag URL specified");
             resumeContent();
@@ -252,6 +262,8 @@ public class VideoPlayerController {
         request.setAdTagUrl(mCurrentAdTagUrl);
         request.setAdDisplayContainer(mAdDisplayContainer);
         request.setContentProgressProvider(mVideoPlayerWithAdPlayback.getContentProgressProvider());
+
+        mPlayAdsAfterTime = playAdsAfterTime;
 
         // Request the ad. After the ad is loaded, onAdsManagerLoaded() will be called.
         mAdsLoader.requestAds(request);
@@ -340,5 +352,9 @@ public class VideoPlayerController {
      */
     public double getCurrentContentTime() {
         return ((double) mVideoPlayerWithAdPlayback.getCurrentContentTime()) / 1000.0;
+    }
+
+    public boolean hasVideoStarted() {
+        return mVideoStarted;
     }
 }

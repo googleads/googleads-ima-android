@@ -23,7 +23,7 @@ import java.io.IOException;
  */
 public class CastApplication implements Cast.MessageReceivedCallback {
 
-    static final String APP_ID = "7A3D33D4"; // Replace with your receiver app id.
+    static final String APP_ID = "93F3197F"; // Replace with your receiver app id.
 
     private static final String NAMESPACE = "urn:x-cast:com.google.ads.ima.cast";
     private static final String TAG = "ChromeCastDemoActivity";

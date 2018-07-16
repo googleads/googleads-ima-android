@@ -3,6 +3,7 @@
 package com.google.ads.interactivemedia.v3.samples.samplevideoplayer;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
@@ -87,6 +88,23 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     @Override
     public int getDuration() {
         return mPlaybackState == PlaybackState.STOPPED ? 0 : super.getDuration();
+    }
+
+    @Override
+    public int getVolume() {
+        // Get the system's audio service and get media volume from it.
+        AudioManager audioManager =
+                (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+        if (audioManager != null) {
+            double volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            double max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            if (max <= 0) {
+                return 0;
+            }
+            // Return a range from 0-100.
+            return (int) ((volume / max) * 100.0f);
+        }
+        return 0;
     }
 
     @Override

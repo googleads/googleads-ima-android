@@ -85,6 +85,11 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
         // Define VideoAdPlayer connector.
         mVideoAdPlayer = new VideoAdPlayer() {
             @Override
+            public int getVolume() {
+                return mVideoPlayer.getVolume();
+            }
+
+            @Override
             public void playAd() {
                 if (mIsAdDisplayed) {
                     mVideoPlayer.resume();

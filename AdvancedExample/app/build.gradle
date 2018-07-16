@@ -19,7 +19,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.8.7'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.9.0'
     implementation 'com.android.support:appcompat-v7:27+'
     implementation 'com.android.support:customtabs:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'

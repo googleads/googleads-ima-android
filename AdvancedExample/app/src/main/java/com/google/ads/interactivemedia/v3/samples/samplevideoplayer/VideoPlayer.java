@@ -69,6 +69,11 @@ public interface VideoPlayer {
     int getDuration();
 
     /**
+     * Gets the current volume. Range is [0-100].
+     */
+    int getVolume();
+
+    /**
      * Stop playing the currently loaded video.
      */
     void stopPlayback();

@@ -8,8 +8,7 @@ import java.util.List;
  */
 public enum VideoMetadata {
 
-    PRE_ROLL_NO_SKIP(
-            "http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
+    PRE_ROLL_NO_SKIP("https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4",
             "Pre-roll, linear not skippable",
             "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast"
@@ -17,8 +16,7 @@ public enum VideoMetadata {
                     + "%3Dlinear&correlator=",
             R.drawable.thumbnail1,
             false),
-    PRE_ROLL_SKIP(
-            "http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
+    PRE_ROLL_SKIP("https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4",
             "Pre-roll, linear, skippable",
             "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast"
@@ -26,8 +24,7 @@ public enum VideoMetadata {
                     + "%3Dskippablelinear&correlator=",
             R.drawable.thumbnail1,
             false),
-    POST_ROLL(
-            "http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
+    POST_ROLL("https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4",
             "Post-roll",
             "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp"
@@ -35,7 +32,7 @@ public enum VideoMetadata {
                     + "%26sample_ar%3Dpostonly&cmsid=496&vid=short_onecue&correlator=",
             R.drawable.thumbnail1,
             true),
-    VMAP("http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
+    VMAP("https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4",
             "VMAP",
             "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp"
@@ -43,7 +40,7 @@ public enum VideoMetadata {
                     + "%26sample_ar%3Dpremidpost&cmsid=496&vid=short_onecue&correlator=",
             R.drawable.thumbnail1,
             true),
-    VMAP_PODS("http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
+    VMAP_PODS("https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4",
             "VMAP Pods",
             "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp"
@@ -51,7 +48,7 @@ public enum VideoMetadata {
                     + "%26sample_ar%3Dpremidpostpod&cmsid=496&vid=short_onecue&correlator=",
             R.drawable.thumbnail1,
             true),
-    WRAPPER("http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
+    WRAPPER("https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4",
             "Wrapper",
             "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/"
                     + "single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast"
@@ -59,12 +56,12 @@ public enum VideoMetadata {
                     + "%3Dredirectlinear&correlator=",
             R.drawable.thumbnail1,
             false),
-    ADSENSE("http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
+    ADSENSE("https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4",
             "AdSense",
             "http://googleads.g.doubleclick.net/pagead/ads?client=ca-video-afvtest&ad_type=video",
             R.drawable.thumbnail1,
             false),
-    CUSTOM("http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4",
+    CUSTOM("https://s0.2mdn.net/4253510/google_ddm_animation_480P.mp4",
             "Custom",
             "custom",
             R.drawable.thumbnail1,

@@ -23,6 +23,7 @@ import com.google.ads.interactivemedia.v3.api.AdsManager;
 import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent;
 import com.google.ads.interactivemedia.v3.api.AdsRequest;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
+import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
 import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.SampleVideoPlayer;
@@ -115,7 +116,12 @@ public class MyActivity extends AppCompatActivity {
 
             // Create an AdsLoader.
             mSdkFactory = ImaSdkFactory.getInstance();
-            mAdsLoader = mSdkFactory.createAdsLoader(this.getContext());
+            AdDisplayContainer adDisplayContainer = mSdkFactory.createAdDisplayContainer();
+            adDisplayContainer.setAdContainer(mAdUiContainer);
+            ImaSdkSettings settings = mSdkFactory.createImaSdkSettings();
+            mAdsLoader = mSdkFactory.createAdsLoader(
+                    this.getContext(), settings, adDisplayContainer);
+
             // Add listeners for when ads are loaded and for errors.
             mAdsLoader.addAdErrorListener(this);
             mAdsLoader.addAdsLoadedListener(new AdsLoadedListener() {
@@ -171,13 +177,9 @@ public class MyActivity extends AppCompatActivity {
          * @param adTagUrl URL of the ad's VAST XML
          */
         private void requestAds(String adTagUrl) {
-            AdDisplayContainer adDisplayContainer = mSdkFactory.createAdDisplayContainer();
-            adDisplayContainer.setAdContainer(mAdUiContainer);
-
             // Create the ads request.
             AdsRequest request = mSdkFactory.createAdsRequest();
             request.setAdTagUrl(adTagUrl);
-            request.setAdDisplayContainer(adDisplayContainer);
             request.setContentProgressProvider(new ContentProgressProvider() {
                 @Override
                 public VideoProgressUpdate getContentProgress() {

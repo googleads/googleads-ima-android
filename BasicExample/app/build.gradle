@@ -18,7 +18,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.10.6'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.10.9'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:customtabs:27.1.1'
     implementation 'com.android.support:support-media-compat:27.1.1'

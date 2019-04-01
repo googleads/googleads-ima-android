@@ -146,6 +146,14 @@ public class VideoFragment extends Fragment {
         super.onResume();
     }
 
+    @Override
+    public void onDestroy() {
+        if (mVideoPlayerController != null) {
+            mVideoPlayerController.destroy();
+        }
+        super.onDestroy();
+    }
+
     public boolean isVmap() {
         return mVideoItem.getIsVmap();
     }

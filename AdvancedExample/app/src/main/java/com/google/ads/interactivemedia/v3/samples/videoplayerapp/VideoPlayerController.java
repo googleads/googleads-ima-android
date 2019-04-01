@@ -164,7 +164,11 @@ public class VideoPlayerController {
         ImaSdkSettings imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
         imaSdkSettings.setLanguage(language);
         mSdkFactory = ImaSdkFactory.getInstance();
-        mAdsLoader = mSdkFactory.createAdsLoader(context, imaSdkSettings);
+
+        mAdDisplayContainer = mSdkFactory.createAdDisplayContainer();
+        mAdDisplayContainer.setPlayer(mVideoPlayerWithAdPlayback.getVideoAdPlayer());
+        mAdDisplayContainer.setAdContainer(mVideoPlayerWithAdPlayback.getAdUiContainer());
+        mAdsLoader = mSdkFactory.createAdsLoader(context, imaSdkSettings, mAdDisplayContainer);
 
         mAdsLoader.addAdErrorListener(new AdErrorEvent.AdErrorListener() {
             /**
@@ -245,9 +249,6 @@ public class VideoPlayerController {
         mAdsLoader.contentComplete();
 
         mPlayButton.setVisibility(View.GONE);
-        mAdDisplayContainer = mSdkFactory.createAdDisplayContainer();
-        mAdDisplayContainer.setPlayer(mVideoPlayerWithAdPlayback.getVideoAdPlayer());
-        mAdDisplayContainer.setAdContainer(mVideoPlayerWithAdPlayback.getAdUiContainer());
 
         // Set up spots for companions.
         CompanionAdSlot companionAdSlot = mSdkFactory.createCompanionAdSlot();
@@ -260,7 +261,6 @@ public class VideoPlayerController {
         // Create the ads request.
         AdsRequest request = mSdkFactory.createAdsRequest();
         request.setAdTagUrl(mCurrentAdTagUrl);
-        request.setAdDisplayContainer(mAdDisplayContainer);
         request.setContentProgressProvider(mVideoPlayerWithAdPlayback.getContentProgressProvider());
 
         mPlayAdsAfterTime = playAdsAfterTime;
@@ -337,6 +337,18 @@ public class VideoPlayerController {
             mAdsManager.resume();
         } else {
             mVideoPlayerWithAdPlayback.play();
+        }
+    }
+
+    public void destroy() {
+        if (mAdsManager != null) {
+            mAdsManager.destroy();
+            mAdsManager = null;
+        }
+
+        if (mAdDisplayContainer != null) {
+            mAdDisplayContainer.destroy();
+            mAdDisplayContainer = null;
         }
     }
 

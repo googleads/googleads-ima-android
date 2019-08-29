@@ -46,7 +46,6 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
         mPlaybackState = PlaybackState.STOPPED;
         mMediaController = new MediaController(getContext());
         mMediaController.setAnchorView(this);
-        enablePlaybackControls();
 
         // Set OnCompletionListener to notify our callbacks when the video is completed.
         super.setOnCompletionListener(new OnCompletionListener() {
@@ -54,12 +53,8 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 // Reset the MediaPlayer.
-                // This prevents a race condition which occasionally results in the media
-                // player crashing when switching between videos.
-                disablePlaybackControls();
                 mediaPlayer.reset();
                 mediaPlayer.setDisplay(getHolder());
-                enablePlaybackControls();
                 mPlaybackState = PlaybackState.STOPPED;
 
                 for (PlayerCallback callback : mVideoPlayerCallbacks) {

@@ -1,3 +1,12 @@
+testapp/bin
+testapp/gen
+testapp/libs
+testapp/.project
+testapp/.classpath
+codelab/bin
+codelab/gen
+codelab/libs
+
 # Built application files
 *.apk
 *.ap_

@@ -1,8 +1,8 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;

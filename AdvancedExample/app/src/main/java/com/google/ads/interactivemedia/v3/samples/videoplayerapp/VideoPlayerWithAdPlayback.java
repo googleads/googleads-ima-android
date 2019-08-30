@@ -7,14 +7,17 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
+import com.google.ads.interactivemedia.v3.api.AdPodInfo;
+import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo;
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
+import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
 import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.VideoPlayer;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Video player that can play content video and ads.
@@ -28,6 +31,13 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
     // The wrapped video player.
     private VideoPlayer mVideoPlayer;
+
+    // A Timer to help track media updates
+    private Timer timer;
+
+    // Track the currently playing media file. If doing preloading, this will need to be an
+    // array or other data structure.
+    private AdMediaInfo adMediaInfo;
 
     // The SDK will render ad playback UI elements into this ViewGroup.
     private ViewGroup mAdUiContainer;
@@ -55,7 +65,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     private ContentProgressProvider mContentProgressProvider;
 
     private final List<VideoAdPlayer.VideoAdPlayerCallback> mAdCallbacks =
-            new ArrayList<VideoAdPlayer.VideoAdPlayerCallback>(1);
+        new ArrayList<VideoAdPlayer.VideoAdPlayerCallback>(1);
 
     public VideoPlayerWithAdPlayback(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -75,6 +85,34 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
         init();
     }
 
+    private void startTracking() {
+        if (timer != null) {
+            return;
+        }
+        timer = new Timer();
+        TimerTask updateTimerTask =
+            new TimerTask() {
+                @Override
+                public void run() {
+                    // Tell IMA the current video progress. A better implementation would be
+                    // reactive to events from the media player, instead of polling.
+                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                        callback.onAdProgress(adMediaInfo, mVideoAdPlayer.getAdProgress());
+                    }
+                }
+            };
+        int initialDelayMs = 250;
+        int pollingTimeMs = 250;
+        timer.schedule(updateTimerTask, pollingTimeMs, initialDelayMs);
+    }
+
+    private void stopTracking() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
     private void init() {
         mIsAdDisplayed = false;
         mSavedAdPosition = 0;
@@ -82,8 +120,8 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
         mVideoPlayer = (VideoPlayer) this.getRootView().findViewById(R.id.videoPlayer);
         mAdUiContainer = (ViewGroup) this.getRootView().findViewById(R.id.adUiContainer);
 
-        // Define VideoAdPlayer connector.
-        mVideoAdPlayer = new VideoAdPlayer() {
+      // Define VideoAdPlayer connector.
+      mVideoAdPlayer = new VideoAdPlayer() {
             @Override
             public int getVolume() {
                 return mVideoPlayer.getVolume();
@@ -91,6 +129,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
             @Override
             public void playAd() {
+                startTracking();
                 if (mIsAdDisplayed) {
                     mVideoPlayer.resume();
                 } else {
@@ -100,24 +139,27 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
             }
 
             @Override
-            public void loadAd(String url) {
+            public void loadAd(AdMediaInfo info, AdPodInfo api) {
+                adMediaInfo = info;
                 mIsAdDisplayed = false;
-                mVideoPlayer.setVideoPath(url);
+                mVideoPlayer.setVideoPath(info.getUrl());
             }
 
             @Override
-            public void stopAd() {
+            public void stopAd(AdMediaInfo info) {
+                stopTracking();
                 mVideoPlayer.stopPlayback();
             }
 
             @Override
-            public void pauseAd() {
+            public void pauseAd(AdMediaInfo info) {
+                stopTracking();
                 mVideoPlayer.pause();
             }
 
             @Override
-            public void resumeAd() {
-                playAd();
+            public void release() {
+                // any clean up that needs to be done
             }
 
             @Override
@@ -135,72 +177,74 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
                 if (!mIsAdDisplayed || mVideoPlayer.getDuration() <= 0) {
                     return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
                 }
-                return new VideoProgressUpdate(mVideoPlayer.getCurrentPosition(),
-                        mVideoPlayer.getDuration());
-            }
-        };
+                return new VideoProgressUpdate(
+                    mVideoPlayer.getCurrentPosition(), mVideoPlayer.getDuration());
+              }
+          };
 
-        mContentProgressProvider = new ContentProgressProvider() {
+      mContentProgressProvider =
+          new ContentProgressProvider() {
             @Override
             public VideoProgressUpdate getContentProgress() {
-                if (mIsAdDisplayed || mVideoPlayer.getDuration() <= 0) {
-                    return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
-                }
-                return new VideoProgressUpdate(mVideoPlayer.getCurrentPosition(),
-                        mVideoPlayer.getDuration());
+              if (mIsAdDisplayed || mVideoPlayer.getDuration() <= 0) {
+                return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
+              }
+              return new VideoProgressUpdate(
+                  mVideoPlayer.getCurrentPosition(), mVideoPlayer.getDuration());
             }
-        };
+          };
 
-        // Set player callbacks for delegating major video events.
-        mVideoPlayer.addPlayerCallback(new VideoPlayer.PlayerCallback() {
+      // Set player callbacks for delegating major video events.
+      mVideoPlayer.addPlayerCallback(
+          new VideoPlayer.PlayerCallback() {
             @Override
             public void onPlay() {
                 if (mIsAdDisplayed) {
-                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                        callback.onPlay();
-                    }
-                }
+                  for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                      callback.onPlay(adMediaInfo);
+                  }
+              }
             }
 
             @Override
             public void onPause() {
-                if (mIsAdDisplayed) {
-                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                        callback.onPause();
-                    }
+              if (mIsAdDisplayed) {
+                for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                    callback.onPause(adMediaInfo);
                 }
+              }
             }
 
             @Override
             public void onResume() {
-                if (mIsAdDisplayed) {
-                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                        callback.onResume();
-                    }
+              if (mIsAdDisplayed) {
+                for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                    callback.onResume(adMediaInfo);
                 }
+              }
             }
 
             @Override
             public void onError() {
-                if (mIsAdDisplayed) {
-                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                        callback.onError();
-                    }
+              if (mIsAdDisplayed) {
+                for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                    callback.onError(adMediaInfo);
                 }
+              }
             }
 
             @Override
             public void onCompleted() {
-                if (mIsAdDisplayed) {
-                    for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                        callback.onEnded();
-                    }
-                } else {
-                    // Alert an external listener that our content video is complete.
-                    if (mOnContentCompleteListener != null) {
-                        mOnContentCompleteListener.onContentComplete();
-                    }
-                }
+              if (mIsAdDisplayed) {
+                  for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                      callback.onEnded(adMediaInfo);
+                  }
+              } else {
+                  // Alert an external listener that our content video is complete.
+                  if (mOnContentCompleteListener != null) {
+                      mOnContentCompleteListener.onContentComplete();
+                  }
+              }
             }
         });
     }

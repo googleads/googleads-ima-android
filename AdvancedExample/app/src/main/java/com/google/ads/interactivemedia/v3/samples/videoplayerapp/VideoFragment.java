@@ -1,6 +1,5 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,17 +27,6 @@ public class VideoFragment extends Fragment {
      */
     public interface OnVideoFragmentViewCreatedListener {
         public void onVideoFragmentViewCreated();
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        try {
-            mViewCreatedCallback = (OnVideoFragmentViewCreatedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement " + OnVideoFragmentViewCreatedListener.class.getName());
-        }
-        super.onAttach(activity);
     }
 
     @Override

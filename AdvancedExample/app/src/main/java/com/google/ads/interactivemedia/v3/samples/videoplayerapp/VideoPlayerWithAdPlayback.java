@@ -11,7 +11,6 @@ import com.google.ads.interactivemedia.v3.api.AdPodInfo;
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo;
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
-import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
 import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.VideoPlayer;
 import java.util.ArrayList;
@@ -120,15 +119,15 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
         mVideoPlayer = (VideoPlayer) this.getRootView().findViewById(R.id.videoPlayer);
         mAdUiContainer = (ViewGroup) this.getRootView().findViewById(R.id.adUiContainer);
 
-      // Define VideoAdPlayer connector.
-      mVideoAdPlayer = new VideoAdPlayer() {
+        // Define VideoAdPlayer connector.
+        mVideoAdPlayer = new VideoAdPlayer() {
             @Override
             public int getVolume() {
                 return mVideoPlayer.getVolume();
             }
 
             @Override
-            public void playAd() {
+            public void playAd(AdMediaInfo info) {
                 startTracking();
                 if (mIsAdDisplayed) {
                     mVideoPlayer.resume();

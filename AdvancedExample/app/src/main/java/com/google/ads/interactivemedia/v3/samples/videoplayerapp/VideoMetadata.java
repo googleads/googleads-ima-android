@@ -56,20 +56,14 @@ public enum VideoMetadata {
                     + "%3Dredirectlinear&correlator=",
             R.drawable.thumbnail1,
             false),
-    ADSENSE("https://storage.googleapis.com/gvabox/media/samples/stock.mp4",
-            "AdSense",
-            "http://googleads.g.doubleclick.net/pagead/ads?client=ca-video-afvtest&ad_type=video",
-            R.drawable.thumbnail1,
-            false),
     CUSTOM("https://storage.googleapis.com/gvabox/media/samples/stock.mp4",
             "Custom",
             "custom",
             R.drawable.thumbnail1,
             false);
 
-    public static final List<VideoMetadata> APP_VIDEOS =
-        Arrays.asList(PRE_ROLL_NO_SKIP, PRE_ROLL_SKIP, POST_ROLL, VMAP, VMAP_PODS, WRAPPER,
-            ADSENSE, CUSTOM);
+  public static final List<VideoMetadata> APP_VIDEOS =
+      Arrays.asList(PRE_ROLL_NO_SKIP, PRE_ROLL_SKIP, POST_ROLL, VMAP, VMAP_PODS, WRAPPER, CUSTOM);
 
     /** The thumbnail image for the video. **/
     public final int thumbnail;

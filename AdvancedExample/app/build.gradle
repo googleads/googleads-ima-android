@@ -18,6 +18,11 @@ android {
     }
 }
 
+repositories {
+    google()
+    jcenter()
+}
+
 dependencies {
     implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.16.1'
     implementation 'androidx.appcompat:appcompat:1.1.0'

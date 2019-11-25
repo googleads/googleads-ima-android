@@ -250,7 +250,7 @@ public class VideoPlayerController {
 
         mPlayButton.setVisibility(View.GONE);
 
-        // Copybara:strip [START devsite_companion_include]
+        // Copybara:strip_begin [START devsite_companion_include]
         // Set up spots for companions.
         CompanionAdSlot companionAdSlot = mSdkFactory.createCompanionAdSlot();
         companionAdSlot.setContainer(mCompanionViewGroup);
@@ -258,7 +258,7 @@ public class VideoPlayerController {
         ArrayList<CompanionAdSlot> companionAdSlots = new ArrayList<CompanionAdSlot>();
         companionAdSlots.add(companionAdSlot);
         mAdDisplayContainer.setCompanionSlots(companionAdSlots);
-        // [END devsite_companion_include] Copybara:strip
+        // [END devsite_companion_include] Copybara:strip_end
 
         // Create the ads request.
         AdsRequest request = mSdkFactory.createAdsRequest();

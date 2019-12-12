@@ -15,9 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.SampleVideoPlayer;
 
-/**
- * Main Activity.
- */
+/** Main Activity. */
 public class MyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

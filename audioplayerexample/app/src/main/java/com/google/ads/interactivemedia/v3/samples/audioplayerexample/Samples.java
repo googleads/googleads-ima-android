@@ -1,4 +1,4 @@
-package com.google.ads.interactivemedia.v3.samples.audiodemo;
+package com.google.ads.interactivemedia.v3.samples.audioplayerexample;
 
 import android.content.Context;
 import android.graphics.Bitmap;

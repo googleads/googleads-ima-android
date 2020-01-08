@@ -1,6 +1,6 @@
-package com.google.ads.interactivemedia.v3.samples.audiodemo;
+package com.google.ads.interactivemedia.v3.samples.audioplayerexample;
 
-import static com.google.ads.interactivemedia.v3.samples.audiodemo.Samples.SAMPLES;
+import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Samples.SAMPLES;
 
 import android.app.Activity;
 import android.content.ComponentName;

@@ -1,4 +1,4 @@
-package com.google.ads.interactivemedia.v3.samples.audiodemo;
+package com.google.ads.interactivemedia.v3.samples.audioplayerexample;
 
 /** Constants */
 public final class Constants {

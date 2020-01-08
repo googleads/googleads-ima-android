@@ -1,9 +1,9 @@
-package com.google.ads.interactivemedia.v3.samples.audiodemo;
+package com.google.ads.interactivemedia.v3.samples.audioplayerexample;
 
-import static com.google.ads.interactivemedia.v3.samples.audiodemo.Constants.MEDIA_SESSION_TAG;
-import static com.google.ads.interactivemedia.v3.samples.audiodemo.Constants.PLAYBACK_CHANNEL_ID;
-import static com.google.ads.interactivemedia.v3.samples.audiodemo.Constants.PLAYBACK_NOTIFICATION_ID;
-import static com.google.ads.interactivemedia.v3.samples.audiodemo.Samples.SAMPLES;
+import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.MEDIA_SESSION_TAG;
+import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.PLAYBACK_CHANNEL_ID;
+import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.PLAYBACK_NOTIFICATION_ID;
+import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Samples.SAMPLES;
 
 import android.app.PendingIntent;
 import android.app.Service;

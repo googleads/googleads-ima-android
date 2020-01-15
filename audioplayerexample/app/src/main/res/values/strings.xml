@@ -1,8 +1,9 @@
 <resources>
   <string name="application_name" translation_description="name of the application. [CHAR LIMIT=50]">AudioPlayerExample</string>
   <string name="ad_content_title">Advertisement</string>
+  <string name="background_image_description" translation_description="description of the background image. [CHAR LIMIT=50]">Background Image Description</string>
   <string name="playback_channel_name">Playback</string>
-  <string name="playback_channel_description">Playback Channel Description</string>
+  <string name="playback_channel_description" translation_description="description of the playback channel. [CHAR LIMIT=50]">Playback Channel Description</string>
   <string name="request_ad">Request Ad</string>
   <string name="request_ad_later">Request Ad (delay 3s)</string>
 </resources>

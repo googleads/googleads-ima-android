@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main_activity);
     Context context = this;
-    ViewGroup companionView = (ViewGroup) findViewById(R.id.companionAdSlotFrame);
+    ViewGroup companionView = findViewById(R.id.companionAdSlotFrame);
     adContainer = createAdDisplayContainer(context, companionView);
 
     // Kick off the Audio Player Service in the foreground, so it can outlive this activity.
@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
           }
         });
 
-    Button requestAdButton = (Button) findViewById(R.id.requestAd);
+    Button requestAdButton = findViewById(R.id.requestAd);
     requestAdButton.setOnClickListener(
         new OnClickListener() {
           @Override
@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
           }
         });
 
-    Button requestAdLaterButton = (Button) findViewById(R.id.requestAdLater);
+    Button requestAdLaterButton = findViewById(R.id.requestAdLater);
     requestAdLaterButton.setOnClickListener(
         new OnClickListener() {
           @Override

@@ -14,17 +14,19 @@
      limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.ads.interactivemedia.v3.samples.AudioPlayerExample">
+    package="com.google.ads.interactivemedia.v3.samples.audioplayerexample">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
   <application
       android:allowBackup="true"
+      android:fullBackupContent="true"
       android:icon="@mipmap/ic_launcher"
       android:label="@string/application_name">
     <activity android:name=".MainActivity" android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
+        <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
@@ -32,4 +34,3 @@
              android:exported="false"/>
   </application>
 </manifest>
-

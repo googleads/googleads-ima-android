@@ -204,7 +204,11 @@ public final class ImaService
 
     @Override
     public int getVolume() {
-      return (int) (100 * exoPlayer.getAudioComponent().getVolume());
+      if (exoPlayer.getAudioComponent() == null) {
+        return -1;
+      } else {
+        return (int) (100 * exoPlayer.getAudioComponent().getVolume());
+      }
     }
   }
 

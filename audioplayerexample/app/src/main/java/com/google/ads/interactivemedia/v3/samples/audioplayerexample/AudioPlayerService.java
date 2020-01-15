@@ -17,7 +17,6 @@ import android.support.v4.media.session.MediaSessionCompat;
 import androidx.annotation.Nullable;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
@@ -41,12 +40,10 @@ public class AudioPlayerService extends Service {
 
   private boolean isAdPlaying;
   private SimpleExoPlayer player;
-  private MediaDescriptionAdapter descriptionAdapter;
   private PlayerNotificationManager playerNotificationManager;
   private MediaSessionCompat mediaSession;
   private MediaSessionConnector mediaSessionConnector;
   private ImaService imaService;
-  private DefaultDataSourceFactory dataSourceFactory;
   private ConcatenatingMediaSource contentMediaSource;
 
   @Override
@@ -55,12 +52,9 @@ public class AudioPlayerService extends Service {
     final Context context = this;
     isAdPlaying = false;
 
-    // new method in next version of exoplayer
-    // player = new SimpleExoPlayer.Builder(context).build();
+    player = new SimpleExoPlayer.Builder(context).build();
 
-    player = ExoPlayerFactory.newSimpleInstance(context);
-
-    dataSourceFactory =
+    DefaultDataSourceFactory dataSourceFactory =
         new DefaultDataSourceFactory(
             context, Util.getUserAgent(context, getString(R.string.application_name)));
     contentMediaSource =
@@ -76,7 +70,7 @@ public class AudioPlayerService extends Service {
     player.prepare(contentMediaSource);
     player.setPlayWhenReady(true);
 
-    descriptionAdapter =
+    MediaDescriptionAdapter descriptionAdapter =
         new MediaDescriptionAdapter() {
           @Override
           public String getCurrentContentTitle(Player player) {
@@ -120,6 +114,7 @@ public class AudioPlayerService extends Service {
             context,
             PLAYBACK_CHANNEL_ID,
             R.string.playback_channel_name,
+            R.string.playback_channel_description,
             PLAYBACK_NOTIFICATION_ID,
             descriptionAdapter);
 

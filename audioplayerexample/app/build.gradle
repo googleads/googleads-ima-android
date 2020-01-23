@@ -47,5 +47,5 @@ dependencies {
     implementation 'com.google.android.exoplayer:extension-mediasession:2.10.8'
     implementation 'com.google.guava:guava:28.1-android'
 
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.16.2'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.16.5'
 }

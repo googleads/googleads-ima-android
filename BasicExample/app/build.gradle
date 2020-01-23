@@ -2,6 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "com.google.ads.interactivemedia.v3.samples.videoplayerapp"
         minSdkVersion 16
@@ -19,12 +25,12 @@ android {
 
 repositories {
     google()
+    jcenter()
 }
 
 dependencies {
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.16.2'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.16.5'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'androidx.browser:browser:1.2.0'
     implementation 'androidx.media:media:1.1.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }

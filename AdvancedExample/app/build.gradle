@@ -3,6 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "com.google.ads.interactivemedia.v3.samples.videoplayerapp"
         minSdkVersion 16
@@ -24,12 +29,11 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.16.2'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.16.5'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.browser:browser:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
+    implementation 'androidx.browser:browser:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
-    implementation 'com.google.android.gms:play-services-cast-framework:17.1.0'
+    implementation 'com.google.android.gms:play-services-cast-framework:18.0.0'
 }

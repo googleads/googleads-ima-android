@@ -57,6 +57,9 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     // Called when the content is completed.
     private OnContentCompleteListener mOnContentCompleteListener;
 
+  // Used to track if the content has completed.
+  private boolean contentHasCompleted;
+
     // VideoAdPlayer interface implementation for the SDK to send ad play/pause type events.
     private VideoAdPlayer mVideoAdPlayer;
 
@@ -114,6 +117,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
     private void init() {
         mIsAdDisplayed = false;
+        contentHasCompleted = false;
         mSavedAdPosition = 0;
         mSavedContentPosition = 0;
         mVideoPlayer = (VideoPlayer) this.getRootView().findViewById(R.id.videoPlayer);
@@ -193,58 +197,59 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
             }
           };
 
-      // Set player callbacks for delegating major video events.
-      mVideoPlayer.addPlayerCallback(
-          new VideoPlayer.PlayerCallback() {
-            @Override
-            public void onPlay() {
-                if (mIsAdDisplayed) {
-                  for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                      callback.onPlay(adMediaInfo);
-                  }
+    // Set player callbacks for delegating major video events.
+    mVideoPlayer.addPlayerCallback(
+        new VideoPlayer.PlayerCallback() {
+          @Override
+          public void onPlay() {
+            if (mIsAdDisplayed) {
+              for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                callback.onPlay(adMediaInfo);
               }
             }
+          }
 
-            @Override
-            public void onPause() {
-              if (mIsAdDisplayed) {
-                for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                    callback.onPause(adMediaInfo);
-                }
+          @Override
+          public void onPause() {
+            if (mIsAdDisplayed) {
+              for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                callback.onPause(adMediaInfo);
               }
             }
+          }
 
-            @Override
-            public void onResume() {
-              if (mIsAdDisplayed) {
-                for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                    callback.onResume(adMediaInfo);
-                }
+          @Override
+          public void onResume() {
+            if (mIsAdDisplayed) {
+              for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                callback.onResume(adMediaInfo);
               }
             }
+          }
 
-            @Override
-            public void onError() {
-              if (mIsAdDisplayed) {
-                for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                    callback.onError(adMediaInfo);
-                }
+          @Override
+          public void onError() {
+            if (mIsAdDisplayed) {
+              for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                callback.onError(adMediaInfo);
               }
             }
+          }
 
-            @Override
-            public void onCompleted() {
-              if (mIsAdDisplayed) {
-                  for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
-                      callback.onEnded(adMediaInfo);
-                  }
-              } else {
-                  // Alert an external listener that our content video is complete.
-                  if (mOnContentCompleteListener != null) {
-                      mOnContentCompleteListener.onContentComplete();
-                  }
+          @Override
+          public void onCompleted() {
+            if (mIsAdDisplayed) {
+              for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                callback.onEnded(adMediaInfo);
+              }
+            } else {
+              contentHasCompleted = true;
+              // Alert an external listener that our content video is complete.
+              if (mOnContentCompleteListener != null) {
+                mOnContentCompleteListener.onContentComplete();
               }
             }
+          }
         });
     }
 
@@ -260,6 +265,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
      */
     public void setContentVideoPath(String contentVideoUrl) {
         mContentVideoUrl = contentVideoUrl;
+        contentHasCompleted = false;
     }
 
     /**
@@ -346,6 +352,10 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
         mVideoPlayer.enablePlaybackControls();
         mVideoPlayer.seekTo(mSavedContentPosition);
         mVideoPlayer.play();
+
+        if (contentHasCompleted) {
+          mVideoPlayer.pause();
+        }
     }
 
     /**

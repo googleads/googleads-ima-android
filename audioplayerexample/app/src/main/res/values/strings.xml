@@ -5,5 +5,4 @@
   <string name="playback_channel_name">Playback</string>
   <string name="playback_channel_description" translation_description="description of the playback channel. [CHAR LIMIT=50]">Playback Channel Description</string>
   <string name="request_ad">Request Ad</string>
-  <string name="request_ad_later">Request Ad (delay 3s)</string>
 </resources>

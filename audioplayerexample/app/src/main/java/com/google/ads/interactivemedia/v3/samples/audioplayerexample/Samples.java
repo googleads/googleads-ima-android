@@ -9,10 +9,10 @@ import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import androidx.annotation.DrawableRes;
 
-/** Helper to provide sample audio samples for the app. */
+/** Helper to provide a list of sample audio files for the app. */
 public final class Samples {
 
-  /** Helper to provide sample audio samples for the app. */
+  /** Helper to provide a sample audio file for the app. */
   public static final class Sample {
     public final Uri uri;
     public final String mediaId;
@@ -57,7 +57,7 @@ public final class Samples {
             R.drawable.album_art_3),
       };
 
-  public static MediaDescriptionCompat getMediaDescription(Context context, Sample sample) {
+  public static MediaDescriptionCompat createMediaDescription(Context context, Sample sample) {
     Bundle extras = new Bundle();
     Bitmap bitmap = getBitmap(context, sample.bitmapResource);
     extras.putParcelable(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);

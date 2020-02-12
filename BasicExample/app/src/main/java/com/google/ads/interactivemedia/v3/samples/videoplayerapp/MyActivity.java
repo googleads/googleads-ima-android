@@ -95,9 +95,6 @@ public class MyActivity extends AppCompatActivity {
         // The container for the ad's UI.
         private ViewGroup mAdUiContainer;
 
-        // Factory class for creating SDK objects.
-        private ImaSdkFactory mSdkFactory;
-
         // The AdsLoader instance exposes the requestAds method.
         private AdsLoader mAdsLoader;
 
@@ -115,11 +112,12 @@ public class MyActivity extends AppCompatActivity {
             super.onActivityCreated(bundle);
 
             // Create an AdsLoader.
-            mSdkFactory = ImaSdkFactory.getInstance();
-            AdDisplayContainer adDisplayContainer = mSdkFactory.createAdDisplayContainer();
-            adDisplayContainer.setAdContainer(mAdUiContainer);
-            ImaSdkSettings settings = mSdkFactory.createImaSdkSettings();
-            mAdsLoader = mSdkFactory.createAdsLoader(
+            AdDisplayContainer adDisplayContainer = ImaSdkFactory.createAdDisplayContainer(
+                mAdUiContainer,
+                ImaSdkFactory.createSdkOwnedPlayer(this.getContext(), mAdUiContainer)
+            );
+            ImaSdkSettings settings = ImaSdkFactory.createImaSdkSettings();
+            mAdsLoader = ImaSdkFactory.createAdsLoader(
                     this.getContext(), settings, adDisplayContainer);
 
             // Add listeners for when ads are loaded and for errors.
@@ -178,7 +176,7 @@ public class MyActivity extends AppCompatActivity {
          */
         private void requestAds(String adTagUrl) {
             // Create the ads request.
-            AdsRequest request = mSdkFactory.createAdsRequest();
+            AdsRequest request = ImaSdkFactory.createAdsRequest();
             request.setAdTagUrl(adTagUrl);
             request.setContentProgressProvider(new ContentProgressProvider() {
                 @Override

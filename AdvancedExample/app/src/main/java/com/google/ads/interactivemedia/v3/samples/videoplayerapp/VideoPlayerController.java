@@ -165,9 +165,10 @@ public class VideoPlayerController {
         imaSdkSettings.setLanguage(language);
         mSdkFactory = ImaSdkFactory.getInstance();
 
-        mAdDisplayContainer = mSdkFactory.createAdDisplayContainer();
-        mAdDisplayContainer.setPlayer(mVideoPlayerWithAdPlayback.getVideoAdPlayer());
-        mAdDisplayContainer.setAdContainer(mVideoPlayerWithAdPlayback.getAdUiContainer());
+        mAdDisplayContainer = mSdkFactory.createAdDisplayContainer(
+            mVideoPlayerWithAdPlayback.getAdUiContainer(),
+            mVideoPlayerWithAdPlayback.getVideoAdPlayer()
+        );
         mAdsLoader = mSdkFactory.createAdsLoader(context, imaSdkSettings, mAdDisplayContainer);
 
         mAdsLoader.addAdErrorListener(new AdErrorEvent.AdErrorListener() {

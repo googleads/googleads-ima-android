@@ -6,7 +6,6 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
 import com.google.ads.interactivemedia.v3.api.AdEvent;
@@ -18,7 +17,6 @@ import com.google.ads.interactivemedia.v3.api.AdsRequest;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
-
 import java.util.ArrayList;
 
 /**
@@ -161,11 +159,11 @@ public class VideoPlayerController {
         mLog = log;
 
         // Create an AdsLoader and optionally set the language.
-        ImaSdkSettings imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
-        imaSdkSettings.setLanguage(language);
         mSdkFactory = ImaSdkFactory.getInstance();
+        ImaSdkSettings imaSdkSettings = mSdkFactory.createImaSdkSettings();
+        imaSdkSettings.setLanguage(language);
 
-        mAdDisplayContainer = mSdkFactory.createAdDisplayContainer(
+        mAdDisplayContainer = ImaSdkFactory.createAdDisplayContainer(
             mVideoPlayerWithAdPlayback.getAdUiContainer(),
             mVideoPlayerWithAdPlayback.getVideoAdPlayer()
         );

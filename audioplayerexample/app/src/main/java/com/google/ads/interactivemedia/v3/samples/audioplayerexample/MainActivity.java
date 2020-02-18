@@ -15,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -26,7 +25,6 @@ public class MainActivity extends Activity {
 
   private static final String AD_TAG_URL = "https://vastsynthesizer.appspot.com/ima-sample-audio";
   private AudioPlayerService boundService;
-  private AdDisplayContainer container;
   private ServiceConnection connection;
 
   @Override
@@ -44,16 +42,12 @@ public class MainActivity extends Activity {
     companionAdSlot.setContainer(companionView);
     companionAdSlot.setSize(640, 640);
 
-    // Create an AdDisplayContainer specialized for audio ads.
-    container = sdkFactory.createAudioAdDisplayContainer(this);
-    container.setCompanionSlots(ImmutableList.of(companionAdSlot));
-
     connection =
         new ServiceConnection() {
           @Override
           public void onServiceConnected(ComponentName name, IBinder binder) {
             boundService = ((AudioPlayerService.ServiceBinder) binder).getBoundService();
-            boundService.initializeAds(container);
+            boundService.initializeAds(ImmutableList.of(companionAdSlot));
           }
 
           @Override

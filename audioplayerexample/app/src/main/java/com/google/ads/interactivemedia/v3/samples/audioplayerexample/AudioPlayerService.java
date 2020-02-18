@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
-import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
+import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
+import com.google.common.collect.ImmutableList;
 
 /** Plays music and ads using a shared instance of `ExoPlayer`. */
 public class AudioPlayerService extends Service {
@@ -62,8 +63,8 @@ public class AudioPlayerService extends Service {
     super.onDestroy();
   }
 
-  public void initializeAds(AdDisplayContainer adContainer) {
-    imaAdPlayerAdapter.initializeAds(adContainer);
+  public void initializeAds(ImmutableList<CompanionAdSlot> adSlots) {
+    imaAdPlayerAdapter.initializeAds(this, adSlots);
   }
 
   public AudioPlayerAdapter getPlayer() {

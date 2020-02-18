@@ -10,11 +10,13 @@ import com.google.ads.interactivemedia.v3.api.AdsLoader;
 import com.google.ads.interactivemedia.v3.api.AdsManager;
 import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent;
 import com.google.ads.interactivemedia.v3.api.AdsRequest;
+import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
+import com.google.common.collect.ImmutableList;
 
 class ImaAdPlayerAdapter implements VideoAdPlayer {
 
@@ -22,7 +24,6 @@ class ImaAdPlayerAdapter implements VideoAdPlayer {
   private static final String AD_DESC = "Ads";
   private static final String AD_TITLE = "Music will resume shortly.";
 
-  private final Context context;
   private AudioPlayerAdapter audioPlayerAdapter;
 
   private final ImaSdkFactory sdkFactory;
@@ -32,7 +33,6 @@ class ImaAdPlayerAdapter implements VideoAdPlayer {
   private AdsLoader adsLoader;
 
   public ImaAdPlayerAdapter(Context context, AudioPlayerAdapter audioPlayerAdapter) {
-    this.context = context;
     this.audioPlayerAdapter = audioPlayerAdapter;
     sdkFactory = ImaSdkFactory.getInstance();
     imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
@@ -51,8 +51,7 @@ class ImaAdPlayerAdapter implements VideoAdPlayer {
     String adMediaFileUrl = adMediaInfo.getUrl();
 
     // Use null for mediaIcon unless your ad has an icon to show in the notification menu.
-    this.audioPlayerAdapter.load(adMediaFileUrl, AD_TITLE, AD_DESC, null);
-    ;
+    audioPlayerAdapter.load(adMediaFileUrl, AD_TITLE, AD_DESC, null);
   }
 
   @Override
@@ -65,12 +64,12 @@ class ImaAdPlayerAdapter implements VideoAdPlayer {
   public void stopAd(AdMediaInfo adMediaInfo) {
     String url = adMediaInfo.getUrl();
     Log.i(TAG, "stopAd: " + url);
-    this.audioPlayerAdapter.resume();
+    audioPlayerAdapter.resume();
   }
 
   @Override
   public void release() {
-    this.audioPlayerAdapter = null;
+    audioPlayerAdapter = null;
   }
 
   @Override
@@ -82,19 +81,19 @@ class ImaAdPlayerAdapter implements VideoAdPlayer {
   @Override
   public VideoProgressUpdate getAdProgress() {
     return new VideoProgressUpdate(
-        this.audioPlayerAdapter.getCurrentPosition(), this.audioPlayerAdapter.getDuration());
+        audioPlayerAdapter.getCurrentPosition(), audioPlayerAdapter.getDuration());
   }
 
   @Override
   public int getVolume() {
     // Returns the volume of the player as a percentage from 0 to 100.
-    return (int) (this.audioPlayerAdapter.getVolume() * 100);
+    return (int) (audioPlayerAdapter.getVolume() * 100);
   }
 
-  public void initializeAds(AdDisplayContainer adDisplayContainer) {
-
-    adDisplayContainer.setPlayer(this);
-    adsLoader = sdkFactory.createAdsLoader(context, imaSdkSettings, adDisplayContainer);
+  public void initializeAds(Context context, ImmutableList<CompanionAdSlot> adSlots) {
+    AdDisplayContainer container = ImaSdkFactory.createAudioAdDisplayContainer(context, this);
+    container.setCompanionSlots(adSlots);
+    adsLoader = sdkFactory.createAdsLoader(context, imaSdkSettings, container);
     adsLoader.addAdErrorListener(
         new AdErrorEvent.AdErrorListener() {
           @Override

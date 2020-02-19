@@ -32,7 +32,7 @@ class ImaAdPlayerAdapter implements VideoAdPlayer {
   private AdsManager adsManager;
   private AdsLoader adsLoader;
 
-  public ImaAdPlayerAdapter(Context context, AudioPlayerAdapter audioPlayerAdapter) {
+  public ImaAdPlayerAdapter(AudioPlayerAdapter audioPlayerAdapter) {
     this.audioPlayerAdapter = audioPlayerAdapter;
     sdkFactory = ImaSdkFactory.getInstance();
     imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
@@ -69,7 +69,8 @@ class ImaAdPlayerAdapter implements VideoAdPlayer {
 
   @Override
   public void release() {
-    audioPlayerAdapter = null;
+    adsManager.destroy();
+    adsManager = null;
   }
 
   @Override

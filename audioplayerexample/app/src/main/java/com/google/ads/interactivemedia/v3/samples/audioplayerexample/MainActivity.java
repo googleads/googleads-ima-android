@@ -1,7 +1,5 @@
 package com.google.ads.interactivemedia.v3.samples.audioplayerexample;
 
-import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Samples.SAMPLES;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,12 +13,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
 
-/** App featuring an audio playlist and buttons to trigger ad playback. */
+import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Samples.SAMPLES;
+
+/**
+ * App featuring an audio playlist and buttons to trigger ad playback.
+ */
 public class MainActivity extends Activity {
 
   private static final String AD_TAG_URL = "https://vastsynthesizer.appspot.com/ima-sample-audio";
@@ -38,7 +41,7 @@ public class MainActivity extends Activity {
     // Create a CompanionAdSlot and bind it with a ViewGroup on the UI for rendering companion
     // banners.
     ViewGroup companionView = findViewById(R.id.companionAdSlotFrame);
-    CompanionAdSlot companionAdSlot = sdkFactory.createCompanionAdSlot();
+    final CompanionAdSlot companionAdSlot = sdkFactory.createCompanionAdSlot();
     companionAdSlot.setContainer(companionView);
     companionAdSlot.setSize(640, 640);
 

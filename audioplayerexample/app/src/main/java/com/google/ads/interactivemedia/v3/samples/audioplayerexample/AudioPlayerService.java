@@ -27,7 +27,7 @@ public class AudioPlayerService extends Service {
     audioPlayerAdapter = new AudioPlayerAdapter(this, getString(R.string.application_name));
 
     // Share the instance of ExoPlayer with the IMA SDK.
-    imaAdPlayerAdapter = new ImaAdPlayerAdapter(this, audioPlayerAdapter);
+    imaAdPlayerAdapter = new ImaAdPlayerAdapter(audioPlayerAdapter);
 
     // Create a manager for a status bar notification that is required for foreground services.
     // https://developer.android.com/guide/topics/ui/notifiers/notifications.html#foreground-service

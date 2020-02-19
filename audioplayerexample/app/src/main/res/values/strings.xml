@@ -4,5 +4,5 @@
   <string name="background_image_description" translation_description="description of the background image. [CHAR LIMIT=50]">Background Image Description</string>
   <string name="playback_channel_name">Playback</string>
   <string name="playback_channel_description" translation_description="description of the playback channel. [CHAR LIMIT=50]">Playback Channel Description</string>
-  <string name="request_ad">Request Ad</string>
+  <string name="request_ad" translation_description="label of the button to request an ad. [CHAR LIMIT=50]">Request Ad</string>
 </resources>

@@ -69,8 +69,7 @@ class ImaAdPlayerAdapter implements VideoAdPlayer {
 
   @Override
   public void release() {
-    adsManager.destroy();
-    adsManager = null;
+    // Add any additional clean-up of resource used by the VideoAdPlayer.
   }
 
   @Override

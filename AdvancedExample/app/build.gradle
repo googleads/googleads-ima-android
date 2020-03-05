@@ -30,12 +30,12 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.17.0'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.18.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.browser:browser:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
-    implementation 'com.google.android.gms:play-services-cast-framework:18.0.0'
+    implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 }

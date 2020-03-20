@@ -1,5 +1,9 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,10 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener;
@@ -30,7 +30,7 @@ import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.SampleVideoP
 import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.SampleVideoPlayer.OnVideoCompletedListener;
 
 /** Main Activity. */
-public class MyActivity extends AppCompatActivity {
+public class MyActivity extends Activity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +66,7 @@ public class MyActivity extends AppCompatActivity {
 
   private void orientVideoDescriptionFragment(int orientation) {
     // Hide the extra content when in landscape so the video is as large as possible.
-    FragmentManager fragmentManager = getSupportFragmentManager();
+    FragmentManager fragmentManager = getFragmentManager();
     Fragment extraContentFragment = fragmentManager.findFragmentById(R.id.videoDescription);
 
     if (extraContentFragment != null) {

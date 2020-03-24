@@ -35,7 +35,7 @@ public final class Samples {
     }
   }
 
-  public static final Sample[] SAMPLES =
+  private static final Sample[] SAMPLES =
       new Sample[] {
         new Sample(
             "https://storage.googleapis.com/automotive-media/Jazz_In_Paris.mp3",
@@ -57,7 +57,11 @@ public final class Samples {
             R.drawable.album_art_3),
       };
 
-  public static MediaDescriptionCompat createMediaDescription(Context context, Sample sample) {
+  public static Sample[] getSamples() {
+    return SAMPLES;
+  }
+
+  public static MediaDescriptionCompat getMediaDescription(Context context, Sample sample) {
     Bundle extras = new Bundle();
     Bitmap bitmap = getBitmap(context, sample.bitmapResource);
     extras.putParcelable(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);

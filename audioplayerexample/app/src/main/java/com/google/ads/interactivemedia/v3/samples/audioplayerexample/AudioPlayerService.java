@@ -1,47 +1,166 @@
 package com.google.ads.interactivemedia.v3.samples.audioplayerexample;
 
+import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.MEDIA_SESSION_TAG;
+import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.PLAYBACK_CHANNEL_ID;
+import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.PLAYBACK_NOTIFICATION_ID;
+
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.media.MediaDescriptionCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.view.ViewGroup;
 import androidx.annotation.Nullable;
+import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
+import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
+import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator;
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.ShuffleOrder;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
+import com.google.android.exoplayer2.ui.PlayerNotificationManager.BitmapCallback;
+import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescriptionAdapter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
 
-/** Plays music and ads using a shared instance of `ExoPlayer`. */
+/**
+ * Allows audio playback with hooks for advertisements. This is meant to run as a Foreground Service
+ * to enable playback to continue even if the app is minimized or cleaned up.
+ */
 public class AudioPlayerService extends Service {
 
-  public static final String PLAYBACK_CHANNEL_ID = "audio_demo_service_channel";
-  public static final int PLAYBACK_NOTIFICATION_ID = 1;
-
+  private boolean isAdPlaying;
+  private SimpleExoPlayer player;
   private PlayerNotificationManager playerNotificationManager;
-  private AudioPlayerAdapter audioPlayerAdapter;
-  private ImaAdPlayerAdapter imaAdPlayerAdapter;
+  private MediaSessionCompat mediaSession;
+  private MediaSessionConnector mediaSessionConnector;
+  private ImaService imaService;
+  private ConcatenatingMediaSource contentMediaSource;
+  private final Samples.Sample[] sampleList = Samples.getSamples();
 
   @Override
   public void onCreate() {
     super.onCreate();
+    final Context context = this;
+    isAdPlaying = false;
 
-    // Create an `AudioPlayerAdapter` to wrap an instance of ExoPlayer.
-    audioPlayerAdapter = new AudioPlayerAdapter(this, getString(R.string.application_name));
+    player = new SimpleExoPlayer.Builder(context).build();
 
-    // Share the instance of ExoPlayer with the IMA SDK.
-    imaAdPlayerAdapter = new ImaAdPlayerAdapter(audioPlayerAdapter);
+    DefaultDataSourceFactory dataSourceFactory =
+        new DefaultDataSourceFactory(
+            context, Util.getUserAgent(context, getString(R.string.application_name)));
+    contentMediaSource =
+        new ConcatenatingMediaSource(
+            /* isAtomic= */ false,
+            /* useLazyPreparation= */ true,
+            new ShuffleOrder.DefaultShuffleOrder(/* length= */ 0));
+    for (Samples.Sample sample : sampleList) {
+      MediaSource mediaSource =
+          new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(sample.uri);
+      contentMediaSource.addMediaSource(mediaSource);
+    }
+    player.prepare(contentMediaSource);
+    player.setPlayWhenReady(true);
 
-    // Create a manager for a status bar notification that is required for foreground services.
-    // https://developer.android.com/guide/topics/ui/notifiers/notifications.html#foreground-service
+    MediaDescriptionAdapter descriptionAdapter =
+        new MediaDescriptionAdapter() {
+          @Override
+          public String getCurrentContentTitle(Player player) {
+            if (isAdPlaying) {
+              return getString(R.string.ad_content_title);
+            }
+            return sampleList[player.getCurrentWindowIndex()].title;
+          }
+
+          @Nullable
+          @Override
+          public PendingIntent createCurrentContentIntent(Player player) {
+            return null;
+          }
+
+          @Nullable
+          @Override
+          public String getCurrentContentText(Player player) {
+            if (isAdPlaying) {
+              // Null will remove the extra line for description.
+              return null;
+            }
+            return sampleList[player.getCurrentWindowIndex()].description;
+          }
+
+          @Nullable
+          @Override
+          public Bitmap getCurrentLargeIcon(Player player, BitmapCallback callback) {
+            // Use null for ad playback unless your ad has an icon to show in the notification
+            // menu.
+            if (isAdPlaying) {
+              return null;
+            }
+            return Samples.getBitmap(
+                context, sampleList[player.getCurrentWindowIndex()].bitmapResource);
+          }
+        };
+
     playerNotificationManager =
         PlayerNotificationManager.createWithNotificationChannel(
-            this,
+            context,
             PLAYBACK_CHANNEL_ID,
             R.string.playback_channel_name,
             R.string.playback_channel_description,
             PLAYBACK_NOTIFICATION_ID,
-            audioPlayerAdapter.getDescriptionAdapter());
+            descriptionAdapter);
 
-    playerNotificationManager.setMediaSessionToken(audioPlayerAdapter.getSessionToken());
-    playerNotificationManager.setPlayer(audioPlayerAdapter.getSimpleExoPlayer());
+    playerNotificationManager.setPlayer(player);
+
+    mediaSession = new MediaSessionCompat(context, MEDIA_SESSION_TAG);
+    mediaSession.setActive(true);
+    playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
+
+    mediaSessionConnector = new MediaSessionConnector(mediaSession);
+    mediaSessionConnector.setQueueNavigator(
+        new TimelineQueueNavigator(mediaSession) {
+          @Override
+          public MediaDescriptionCompat getMediaDescription(Player player, int windowIndex) {
+            if (isAdPlaying) {
+              return new MediaDescriptionCompat.Builder()
+                  .setDescription(getString(R.string.ad_content_title))
+                  .build();
+            }
+            return Samples.getMediaDescription(context, sampleList[windowIndex]);
+          }
+        });
+    mediaSessionConnector.setPlayer(player);
+
+    imaService = new ImaService(context, dataSourceFactory, new SharedAudioPlayer());
+  }
+
+  @Override
+  public void onDestroy() {
+    mediaSession.release();
+    mediaSessionConnector.setPlayer(null);
+    playerNotificationManager.setPlayer(null);
+    player.release();
+    player = null;
+
+    super.onDestroy();
+  }
+
+  @Nullable
+  @Override
+  public IBinder onBind(Intent intent) {
+    return new AudioPlayerServiceBinder();
   }
 
   @Override
@@ -49,43 +168,63 @@ public class AudioPlayerService extends Service {
     return START_STICKY;
   }
 
-  @Nullable
-  @Override
-  public IBinder onBind(Intent intent) {
-    return new ServiceBinder(this);
-  }
-
-  @Override
-  public void onDestroy() {
-    playerNotificationManager.setPlayer(null);
-    audioPlayerAdapter.releasePlayer();
-
-    super.onDestroy();
-  }
-
-  public void initializeAds(ImmutableList<CompanionAdSlot> adSlots) {
-    imaAdPlayerAdapter.initializeAds(this, adSlots);
-  }
-
-  public AudioPlayerAdapter getPlayer() {
-    return audioPlayerAdapter;
-  }
-
-  public ImaAdPlayerAdapter getAdPlayer() {
-    return imaAdPlayerAdapter;
-  }
-
-  /** Provides access to the `AudioPlayerService` instance after binding. */
-  public static class ServiceBinder extends Binder {
-    private final AudioPlayerService boundService;
-
-    /** @param service The bound instance of the service */
-    public ServiceBinder(AudioPlayerService service) {
-      boundService = service;
+  /**
+   * A limited API for the ImaService which provides a minimal surface of control over playback on
+   * the shared SimpleExoPlayer instance.
+   */
+  class SharedAudioPlayer {
+    public void claim() {
+      isAdPlaying = true;
+      player.setPlayWhenReady(false);
     }
 
-    public AudioPlayerService getBoundService() {
-      return boundService;
+    public void release() {
+      if (isAdPlaying) {
+        isAdPlaying = false;
+        player.prepare(contentMediaSource);
+        player.setPlayWhenReady(true);
+      }
+    }
+
+    public void prepare(MediaSource mediaSource) {
+      player.prepare(mediaSource);
+    }
+
+    public void addAnalyticsListener(AnalyticsListener listener) {
+      player.addAnalyticsListener(listener);
+    }
+
+    public Player getPlayer() {
+      return player;
+    }
+  }
+
+  /** Provide a Binder to the Application allowing control of the Audio Service */
+  public class AudioPlayerServiceBinder extends Binder {
+    public void updateSong(int index) {
+      if (isAdPlaying) {
+        // Return here to prevent changing the song while an ad is playing. A publisher could
+        // instead choose queue up the change for after the ad is completed, or cancel the ad.
+        return;
+      }
+      if (player.getCurrentTimeline().getWindowCount() < index) {
+        player.seekTo(index, C.TIME_UNSET);
+      }
+    }
+
+    public void initializeAds(Context context, ViewGroup companionView) {
+      ImaSdkFactory sdkFactory = ImaSdkFactory.getInstance();
+      AdDisplayContainer container =
+          ImaSdkFactory.createAudioAdDisplayContainer(context, imaService.imaVideoAdPlayer);
+      CompanionAdSlot companionAdSlot = sdkFactory.createCompanionAdSlot();
+      companionAdSlot.setContainer(companionView);
+      companionAdSlot.setSize(300, 250);
+      container.setCompanionSlots(ImmutableList.of(companionAdSlot));
+      imaService.init(container);
+    }
+
+    public void requestAd(String adTagUrl) {
+      imaService.requestAds(adTagUrl);
     }
   }
 }

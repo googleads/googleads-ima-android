@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <string name="app_name">IMA Sample Video Player</string>
-    <string name="action_settings">Settings</string>
-    <string name="video_description">Android Promotional Video</string>
-    <string name="content_url"><![CDATA[https://storage.googleapis.com/gvabox/media/samples/android.mp4]]></string>
-
-</resources>

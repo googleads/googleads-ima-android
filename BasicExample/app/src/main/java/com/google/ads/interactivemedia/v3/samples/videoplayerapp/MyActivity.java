@@ -1,274 +1,118 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
-import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
-import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener;
-import com.google.ads.interactivemedia.v3.api.AdEvent;
-import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener;
-import com.google.ads.interactivemedia.v3.api.AdsLoader;
-import com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener;
-import com.google.ads.interactivemedia.v3.api.AdsManager;
-import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent;
-import com.google.ads.interactivemedia.v3.api.AdsRequest;
-import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
-import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
-import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider;
-import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
-import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.SampleVideoPlayer;
-import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.SampleVideoPlayer.OnVideoCompletedListener;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.ads.AdsMediaSource;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 /** Main Activity. */
 public class MyActivity extends Activity {
+
+  private PlayerView playerView;
+  private SimpleExoPlayer player;
+  private ImaAdsLoader adsLoader;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_my);
-    orientVideoDescriptionFragment(getResources().getConfiguration().orientation);
+
+    playerView = findViewById(R.id.player_view);
+
+    // Create an AdsLoader with the ad tag url.
+    adsLoader = new ImaAdsLoader(this, Uri.parse(getString(R.string.ad_tag_url)));
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.my, menu);
-    return true;
+  public void onStart() {
+    super.onStart();
+    if (Util.SDK_INT > 23) {
+      initializePlayer();
+      if (playerView != null) {
+        playerView.onResume();
+      }
+    }
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-    if (id == R.id.action_settings) {
-      return true;
+  public void onResume() {
+    super.onResume();
+    if (Util.SDK_INT <= 23 || player == null) {
+      initializePlayer();
+      if (playerView != null) {
+        playerView.onResume();
+      }
     }
-    return super.onOptionsItemSelected(item);
   }
 
   @Override
-  public void onConfigurationChanged(Configuration configuration) {
-    super.onConfigurationChanged(configuration);
-    orientVideoDescriptionFragment(configuration.orientation);
-  }
-
-  private void orientVideoDescriptionFragment(int orientation) {
-    // Hide the extra content when in landscape so the video is as large as possible.
-    FragmentManager fragmentManager = getFragmentManager();
-    Fragment extraContentFragment = fragmentManager.findFragmentById(R.id.videoDescription);
-
-    if (extraContentFragment != null) {
-      FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-      if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        fragmentTransaction.hide(extraContentFragment);
-      } else {
-        fragmentTransaction.show(extraContentFragment);
+  public void onPause() {
+    super.onPause();
+    if (Util.SDK_INT <= 23) {
+      if (playerView != null) {
+        playerView.onPause();
       }
-      fragmentTransaction.commit();
+      releasePlayer();
     }
   }
 
-  /** The main fragment for displaying video content. */
-  public static class VideoFragment extends Fragment implements AdEventListener, AdErrorListener {
-
-    private static String LOGTAG = "ImaExample";
-
-    // The video player.
-    private SampleVideoPlayer mVideoPlayer;
-
-    // The container for the ad's UI.
-    private ViewGroup mAdUiContainer;
-
-    // Factory class for creating SDK objects.
-    private ImaSdkFactory mSdkFactory;
-
-    // The AdsLoader instance exposes the requestAds method.
-    private AdsLoader mAdsLoader;
-
-    // AdsManager exposes methods to control ad playback and listen to ad events.
-    private AdsManager mAdsManager;
-
-    // Whether an ad is displayed.
-    private boolean mIsAdDisplayed;
-
-    // The play button to trigger the ad request.
-    private View mPlayButton;
-
-    @Override
-    public void onActivityCreated(Bundle bundle) {
-      super.onActivityCreated(bundle);
-
-      // Create an AdsLoader.
-      mSdkFactory = ImaSdkFactory.getInstance();
-      AdDisplayContainer adDisplayContainer =
-          ImaSdkFactory.createAdDisplayContainer(
-              mAdUiContainer,
-              ImaSdkFactory.createSdkOwnedPlayer(this.getContext(), mAdUiContainer));
-      mPlayButton.bringToFront();
-      ImaSdkSettings settings = mSdkFactory.createImaSdkSettings();
-      mAdsLoader = mSdkFactory.createAdsLoader(this.getContext(), settings, adDisplayContainer);
-
-      // Add listeners for when ads are loaded and for errors.
-      mAdsLoader.addAdErrorListener(this);
-      mAdsLoader.addAdsLoadedListener(
-          new AdsLoadedListener() {
-            @Override
-            public void onAdsManagerLoaded(AdsManagerLoadedEvent adsManagerLoadedEvent) {
-              // Ads were successfully loaded, so get the AdsManager instance. AdsManager has
-              // events for ad playback and errors.
-              mAdsManager = adsManagerLoadedEvent.getAdsManager();
-
-              // Attach event and error event listeners.
-              mAdsManager.addAdErrorListener(VideoFragment.this);
-              mAdsManager.addAdEventListener(VideoFragment.this);
-              mAdsManager.init();
-            }
-          });
-
-      // Add listener for when the content video finishes.
-      mVideoPlayer.addVideoCompletedListener(
-          new OnVideoCompletedListener() {
-            @Override
-            public void onVideoCompleted() {
-              // Handle completed event for playing post-rolls.
-              if (mAdsLoader != null) {
-                mAdsLoader.contentComplete();
-              }
-            }
-          });
-
-      // When Play is clicked, request ads and hide the button.
-      mPlayButton.setOnClickListener(
-          new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              mVideoPlayer.setVideoPath(getString(R.string.content_url));
-              requestAds(getString(R.string.ad_tag_url));
-              view.setVisibility(View.GONE);
-            }
-          });
-    }
-
-    @Override
-    public View onCreateView(
-        LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-      View rootView = inflater.inflate(R.layout.fragment_video, container, false);
-
-      mVideoPlayer = (SampleVideoPlayer) rootView.findViewById(R.id.sampleVideoPlayer);
-      mAdUiContainer = (ViewGroup) rootView.findViewById(R.id.videoPlayerWithAdPlayback);
-      mPlayButton = rootView.findViewById(R.id.playButton);
-
-      return rootView;
-    }
-
-    /**
-     * Request video ads from the given VAST ad tag.
-     *
-     * @param adTagUrl URL of the ad's VAST XML
-     */
-    private void requestAds(String adTagUrl) {
-      // Create the ads request.
-      AdsRequest request = mSdkFactory.createAdsRequest();
-      request.setAdTagUrl(adTagUrl);
-      request.setContentProgressProvider(
-          new ContentProgressProvider() {
-            @Override
-            public VideoProgressUpdate getContentProgress() {
-              if (mIsAdDisplayed || mVideoPlayer == null || mVideoPlayer.getDuration() <= 0) {
-                return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
-              }
-              return new VideoProgressUpdate(
-                  mVideoPlayer.getCurrentPosition(), mVideoPlayer.getDuration());
-            }
-          });
-
-      // Request the ad. After the ad is loaded, onAdsManagerLoaded() will be called.
-      mAdsLoader.requestAds(request);
-    }
-
-    @Override
-    public void onAdEvent(AdEvent adEvent) {
-      Log.i(LOGTAG, "Event: " + adEvent.getType());
-
-      // These are the suggested event types to handle. For full list of all ad event
-      // types, see the documentation for AdEvent.AdEventType.
-      switch (adEvent.getType()) {
-        case LOADED:
-          // AdEventType.LOADED will be fired when ads are ready to be played.
-          // AdsManager.start() begins ad playback. This method is ignored for VMAP or
-          // ad rules playlists, as the SDK will automatically start executing the
-          // playlist.
-          mAdsManager.start();
-          break;
-        case CONTENT_PAUSE_REQUESTED:
-          // AdEventType.CONTENT_PAUSE_REQUESTED is fired immediately before a video
-          // ad is played.
-          mIsAdDisplayed = true;
-          mVideoPlayer.pause();
-          break;
-        case CONTENT_RESUME_REQUESTED:
-          // AdEventType.CONTENT_RESUME_REQUESTED is fired when the ad is completed
-          // and you should start playing your content.
-          mIsAdDisplayed = false;
-          mVideoPlayer.play();
-          break;
-        case ALL_ADS_COMPLETED:
-          if (mAdsManager != null) {
-            mAdsManager.destroy();
-            mAdsManager = null;
-          }
-          break;
-        default:
-          break;
+  @Override
+  public void onStop() {
+    super.onStop();
+    if (Util.SDK_INT > 23) {
+      if (playerView != null) {
+        playerView.onPause();
       }
-    }
-
-    @Override
-    public void onAdError(AdErrorEvent adErrorEvent) {
-      Log.e(LOGTAG, "Ad Error: " + adErrorEvent.getError().getMessage());
-      mVideoPlayer.play();
-    }
-
-    @Override
-    public void onResume() {
-      if (mAdsManager != null && mIsAdDisplayed) {
-        mAdsManager.resume();
-      } else {
-        mVideoPlayer.play();
-      }
-      super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-      if (mAdsManager != null && mIsAdDisplayed) {
-        mAdsManager.pause();
-      } else {
-        mVideoPlayer.pause();
-      }
-      super.onPause();
+      releasePlayer();
     }
   }
 
-  /** The fragment for displaying any video title or other non-video content. */
-  public static class VideoDescriptionFragment extends Fragment {
+  @Override
+  protected void onDestroy() {
+    adsLoader.release();
 
-    @Override
-    public View onCreateView(
-        LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-      return inflater.inflate(R.layout.fragment_video_description, container, false);
-    }
+    super.onDestroy();
+  }
+
+  private void releasePlayer() {
+    adsLoader.setPlayer(null);
+    playerView.setPlayer(null);
+    player.release();
+    player = null;
+  }
+
+  private void initializePlayer() {
+    // Create a SimpleExoPlayer and set is as the player for content and ads.
+    player = new SimpleExoPlayer.Builder(this).build();
+    playerView.setPlayer(player);
+    adsLoader.setPlayer(player);
+
+    DataSource.Factory dataSourceFactory =
+        new DefaultDataSourceFactory(this, Util.getUserAgent(this, getString(R.string.app_name)));
+
+    ProgressiveMediaSource.Factory mediaSourceFactory =
+        new ProgressiveMediaSource.Factory(dataSourceFactory);
+
+    // Create the MediaSource for the content you wish to play.
+    MediaSource mediaSource =
+        mediaSourceFactory.createMediaSource(Uri.parse(getString(R.string.content_url)));
+
+    // Create the AdsMediaSource using the AdsLoader and the MediaSource.
+    AdsMediaSource adsMediaSource =
+        new AdsMediaSource(mediaSource, dataSourceFactory, adsLoader, playerView);
+
+    // Prepare the content and ad to be played with the SimpleExoPlayer.
+    player.prepare(adsMediaSource);
+
+    // Set PlayWhenReady. If true, content and ads will autoplay.
+    player.setPlayWhenReady(false);
   }
 }

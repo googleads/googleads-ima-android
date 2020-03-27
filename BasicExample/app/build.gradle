@@ -30,8 +30,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.18.1'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.browser:browser:1.2.0'
-    implementation 'androidx.media:media:1.1.0'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.1'
+
+    // The library adds the IMA ExoPlayer integration for ads.
+    implementation 'com.google.android.exoplayer:extension-ima:2.11.1'
 }

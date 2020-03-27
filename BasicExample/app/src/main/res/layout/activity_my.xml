@@ -7,16 +7,9 @@
     tools:context=".MyActivity"
     tools:ignore="MergeRootFrame">
 
-    <fragment
-        android:name="com.google.ads.interactivemedia.v3.samples.videoplayerapp.MyActivity$VideoFragment"
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/player_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.4" />
+        android:layout_height="wrap_content" />
 
-    <fragment
-        android:name="com.google.ads.interactivemedia.v3.samples.videoplayerapp.MyActivity$VideoDescriptionFragment"
-        android:id="@+id/videoDescription"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.6" />
 </LinearLayout>

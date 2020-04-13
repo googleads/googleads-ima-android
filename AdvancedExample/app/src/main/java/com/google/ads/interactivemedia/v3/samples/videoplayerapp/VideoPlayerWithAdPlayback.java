@@ -21,11 +21,6 @@ import java.util.TimerTask;
 /** Video player that can play content video and ads. */
 public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
-  /** Interface for alerting caller of video completion. */
-  public interface OnContentCompleteListener {
-    public void onContentComplete();
-  }
-
   // The wrapped video player.
   private VideoPlayer mVideoPlayer;
 
@@ -51,9 +46,6 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
   // The saved position in the content to resume to after ad playback or if app is backgrounded
   // during content playback.
   private int mSavedContentPosition;
-
-  // Called when the content is completed.
-  private OnContentCompleteListener mOnContentCompleteListener;
 
   // Used to track if the content has completed.
   private boolean contentHasCompleted;
@@ -244,17 +236,12 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
             } else {
               contentHasCompleted = true;
               // Alert an external listener that our content video is complete.
-              if (mOnContentCompleteListener != null) {
-                mOnContentCompleteListener.onContentComplete();
+              for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
+                callback.onContentComplete();
               }
             }
           }
         });
-  }
-
-  /** Set a listener to be triggered when the content (non-ad) video completes. */
-  public void setOnContentCompleteListener(OnContentCompleteListener listener) {
-    mOnContentCompleteListener = listener;
   }
 
   /** Set the path of the video to be played as content. */

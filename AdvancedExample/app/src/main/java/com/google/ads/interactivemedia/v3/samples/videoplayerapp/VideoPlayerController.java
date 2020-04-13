@@ -178,15 +178,6 @@ public class VideoPlayerController {
 
     mAdsLoader.addAdsLoadedListener(new VideoPlayerController.AdsLoadedListener());
 
-    mVideoPlayerWithAdPlayback.setOnContentCompleteListener(
-        new VideoPlayerWithAdPlayback.OnContentCompleteListener() {
-          /** Event raised by VideoPlayerWithAdPlayback when content video is complete. */
-          @Override
-          public void onContentComplete() {
-            mAdsLoader.contentComplete();
-          }
-        });
-
     // When Play is clicked, request ads and hide the button.
     mPlayButton.setOnClickListener(
         new View.OnClickListener() {

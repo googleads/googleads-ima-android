@@ -17,6 +17,7 @@
     package="com.google.ads.interactivemedia.v3.samples.audioplayerexample">
 
   <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
   <application
       android:allowBackup="true"

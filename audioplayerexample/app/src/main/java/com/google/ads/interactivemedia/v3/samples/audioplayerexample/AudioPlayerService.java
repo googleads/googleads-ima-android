@@ -4,6 +4,7 @@ import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Cons
 import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.PLAYBACK_CHANNEL_ID;
 import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.PLAYBACK_NOTIFICATION_ID;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -31,6 +32,7 @@ import com.google.android.exoplayer2.source.ShuffleOrder;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.BitmapCallback;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescriptionAdapter;
+import com.google.android.exoplayer2.ui.PlayerNotificationManager.NotificationListener;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
@@ -123,6 +125,21 @@ public class AudioPlayerService extends Service {
             descriptionAdapter);
 
     playerNotificationManager.setPlayer(player);
+
+    playerNotificationManager.setNotificationListener(
+        new NotificationListener() {
+          @Override
+          public void onNotificationStarted(int notificationId, Notification notification) {
+            // This must be called within 5 seconds of the notification being displayed and
+            // before the main app has been killed.
+            startForeground(notificationId, notification);
+          }
+
+          @Override
+          public void onNotificationCancelled(int notificationId) {
+            stopSelf();
+          }
+        });
 
     mediaSession = new MediaSessionCompat(context, MEDIA_SESSION_TAG);
     mediaSession.setActive(true);

@@ -200,6 +200,7 @@ public class AudioPlayerService extends Service {
         isAdPlaying = false;
         player.prepare(contentMediaSource);
         player.setPlayWhenReady(true);
+        // TODO: Seek to where you left off the stream, if desired.
       }
     }
 
@@ -224,7 +225,7 @@ public class AudioPlayerService extends Service {
         // instead choose queue up the change for after the ad is completed, or cancel the ad.
         return;
       }
-      if (player.getCurrentTimeline().getWindowCount() < index) {
+      if (player.getCurrentTimeline().getWindowCount() > index) {
         player.seekTo(index, C.TIME_UNSET);
       }
     }

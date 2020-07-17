@@ -18,7 +18,7 @@ public interface VideoPlayer {
     void onResume();
 
     /** Called when the current video has completed playback to the end of the video. */
-    void onCompleted();
+    void onComplete();
 
     /** Called when an error occurs during video playback. */
     void onError();

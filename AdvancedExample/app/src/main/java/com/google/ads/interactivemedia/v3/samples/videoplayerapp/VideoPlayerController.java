@@ -17,7 +17,6 @@ import com.google.ads.interactivemedia.v3.api.AdsRequest;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
-import java.util.ArrayList;
 
 /** Ads logic for handling the IMA SDK integration code and events. */
 public class VideoPlayerController {
@@ -92,7 +91,9 @@ public class VideoPlayerController {
             /** Responds to AdEvents. */
             @Override
             public void onAdEvent(AdEvent adEvent) {
-              log("Event: " + adEvent.getType());
+              if (adEvent.getType() != AdEvent.AdEventType.AD_PROGRESS) {
+                log("Event: " + adEvent.getType());
+              }
 
               // These are the suggested event types to handle. For full list of all ad
               // event types, see the documentation for AdEvent.AdEventType.
@@ -227,7 +228,6 @@ public class VideoPlayerController {
     if (mAdsManager != null) {
       mAdsManager.destroy();
     }
-    mAdsLoader.contentComplete();
 
     mPlayButton.setVisibility(View.GONE);
 

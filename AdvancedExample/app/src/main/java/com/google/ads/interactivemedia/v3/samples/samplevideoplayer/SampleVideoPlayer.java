@@ -58,7 +58,7 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
             mPlaybackState = PlaybackState.STOPPED;
 
             for (PlayerCallback callback : mVideoPlayerCallbacks) {
-              callback.onCompleted();
+              callback.onComplete();
             }
           }
         });

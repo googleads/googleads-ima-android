@@ -228,14 +228,13 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
           }
 
           @Override
-          public void onCompleted() {
+          public void onComplete() {
             if (mIsAdDisplayed) {
               for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
                 callback.onEnded(adMediaInfo);
               }
             } else {
               contentHasCompleted = true;
-              // Alert an external listener that our content video is complete.
               for (VideoAdPlayer.VideoAdPlayerCallback callback : mAdCallbacks) {
                 callback.onContentComplete();
               }

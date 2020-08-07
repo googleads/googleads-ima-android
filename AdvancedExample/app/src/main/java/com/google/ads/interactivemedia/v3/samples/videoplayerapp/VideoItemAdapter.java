@@ -12,11 +12,11 @@ import java.util.List;
 /** Renders VideoItems into a GridView for displaying videos in a playlist format. */
 public class VideoItemAdapter extends ArrayAdapter<VideoItem> {
 
-  private int mLayoutResourceId;
+  private int layoutResourceId;
 
   public VideoItemAdapter(Context context, int layoutResourceId, List<VideoItem> data) {
     super(context, layoutResourceId, data);
-    this.mLayoutResourceId = layoutResourceId;
+    this.layoutResourceId = layoutResourceId;
   }
 
   @Override
@@ -27,7 +27,7 @@ public class VideoItemAdapter extends ArrayAdapter<VideoItem> {
     // Check if it's recycled.
     if (row == null) {
       LayoutInflater inflater = LayoutInflater.from(getContext());
-      row = inflater.inflate(mLayoutResourceId, parent, false);
+      row = inflater.inflate(layoutResourceId, parent, false);
       videoItemHolder = new VideoItemHolder();
       videoItemHolder.title = (TextView) row.findViewById(R.id.videoItemText);
       videoItemHolder.image = (ImageView) row.findViewById(R.id.videoItemImage);

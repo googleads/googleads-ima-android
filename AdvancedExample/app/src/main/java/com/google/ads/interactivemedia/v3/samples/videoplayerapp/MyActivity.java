@@ -21,7 +21,7 @@ public class MyActivity extends AppCompatActivity
   private static final String VIDEO_PLAYLIST_FRAGMENT_TAG = "video_playlist_fragment_tag";
   private static final String VIDEO_EXAMPLE_FRAGMENT_TAG = "video_example_fragment_tag";
 
-  private CastApplication mCastApplication;
+  private CastApplication castApplication;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -38,20 +38,20 @@ public class MyActivity extends AppCompatActivity
           .add(R.id.video_example_container, videoListFragment, VIDEO_PLAYLIST_FRAGMENT_TAG)
           .commit();
     }
-    mCastApplication = new CastApplication(this);
+    castApplication = new CastApplication(this);
     orientAppUi();
   }
 
   @Override
   protected void onResume() {
-    mCastApplication.onResume();
+    castApplication.onResume();
     super.onResume();
   }
 
   @Override
   protected void onPause() {
     super.onPause();
-    mCastApplication.onPause();
+    castApplication.onPause();
   }
 
   @Override
@@ -139,7 +139,7 @@ public class MyActivity extends AppCompatActivity
           .commit();
     }
     videoFragment.loadVideo(videoItem);
-    mCastApplication.setVideoFragment(videoFragment);
+    castApplication.setVideoFragment(videoFragment);
     invalidateOptionsMenu();
     orientAppUi();
   }

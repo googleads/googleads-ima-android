@@ -27,45 +27,45 @@ public class VideoPlayerController {
   }
 
   // Container with references to video player and ad UI ViewGroup.
-  private AdDisplayContainer mAdDisplayContainer;
+  private AdDisplayContainer adDisplayContainer;
 
   // The AdsLoader instance exposes the requestAds method.
-  private AdsLoader mAdsLoader;
+  private AdsLoader adsLoader;
 
   // AdsManager exposes methods to control ad playback and listen to ad events.
-  private AdsManager mAdsManager;
+  private AdsManager adsManager;
 
   // Factory class for creating SDK objects.
-  private ImaSdkFactory mSdkFactory;
+  private ImaSdkFactory sdkFactory;
 
   // Ad-enabled video player.
-  private VideoPlayerWithAdPlayback mVideoPlayerWithAdPlayback;
+  private VideoPlayerWithAdPlayback videoPlayerWithAdPlayback;
 
   // Button the user taps to begin video playback and ad request.
-  private View mPlayButton;
+  private View playButton;
 
   // VAST ad tag URL to use when requesting ads during video playback.
-  private String mCurrentAdTagUrl;
+  private String currentAdTagUrl;
 
   // URL of content video.
-  private String mContentVideoUrl;
+  private String contentVideoUrl;
 
   // ViewGroup to render an associated companion ad into.
-  private ViewGroup mCompanionViewGroup;
+  private ViewGroup companionViewGroup;
 
   // Tracks if the SDK is playing an ad, since the SDK might not necessarily use the video
   // player provided to play the video ad.
-  private boolean mIsAdPlaying;
+  private boolean isAdPlaying;
 
   // View that handles taps to toggle ad pause/resume during video playback.
-  private View mPlayPauseToggle;
+  private View playPauseToggle;
 
   // View that we can write log messages to, to display in the UI.
-  private Logger mLog;
+  private Logger log;
 
-  private double mPlayAdsAfterTime = -1;
+  private double playAdsAfterTime = -1;
 
-  private boolean mVideoStarted;
+  private boolean videoStarted;
 
   // Inner class implementation of AdsLoader.AdsLoaderListener.
   private class AdsLoadedListener implements AdsLoader.AdsLoadedListener {
@@ -74,10 +74,10 @@ public class VideoPlayerController {
     public void onAdsManagerLoaded(AdsManagerLoadedEvent adsManagerLoadedEvent) {
       // Ads were successfully loaded, so get the AdsManager instance. AdsManager has
       // events for ad playback and errors.
-      mAdsManager = adsManagerLoadedEvent.getAdsManager();
+      adsManager = adsManagerLoadedEvent.getAdsManager();
 
       // Attach event and error event listeners.
-      mAdsManager.addAdErrorListener(
+      adsManager.addAdErrorListener(
           new AdErrorEvent.AdErrorListener() {
             /** An event raised when there is an error loading or playing ads. */
             @Override
@@ -86,7 +86,7 @@ public class VideoPlayerController {
               resumeContent();
             }
           });
-      mAdsManager.addAdEventListener(
+      adsManager.addAdEventListener(
           new AdEvent.AdEventListener() {
             /** Responds to AdEvents. */
             @Override
@@ -103,7 +103,7 @@ public class VideoPlayerController {
                   // played. AdsManager.start() begins ad playback. This method is
                   // ignored for VMAP or ad rules playlists, as the SDK will
                   // automatically start executing the playlist.
-                  mAdsManager.start();
+                  adsManager.start();
                   break;
                 case CONTENT_PAUSE_REQUESTED:
                   // AdEventType.CONTENT_PAUSE_REQUESTED is fired immediately before
@@ -116,15 +116,15 @@ public class VideoPlayerController {
                   resumeContent();
                   break;
                 case PAUSED:
-                  mIsAdPlaying = false;
+                  isAdPlaying = false;
                   break;
                 case RESUMED:
-                  mIsAdPlaying = true;
+                  isAdPlaying = true;
                   break;
                 case ALL_ADS_COMPLETED:
-                  if (mAdsManager != null) {
-                    mAdsManager.destroy();
-                    mAdsManager = null;
+                  if (adsManager != null) {
+                    adsManager.destroy();
+                    adsManager = null;
                   }
                   break;
                 default:
@@ -134,10 +134,10 @@ public class VideoPlayerController {
           });
       AdsRenderingSettings adsRenderingSettings =
           ImaSdkFactory.getInstance().createAdsRenderingSettings();
-      adsRenderingSettings.setPlayAdsAfterTime(mPlayAdsAfterTime);
-      mAdsManager.init(adsRenderingSettings);
-      seek(mPlayAdsAfterTime);
-      mVideoStarted = true;
+      adsRenderingSettings.setPlayAdsAfterTime(playAdsAfterTime);
+      adsManager.init(adsRenderingSettings);
+      seek(playAdsAfterTime);
+      videoStarted = true;
     }
   }
 
@@ -149,25 +149,25 @@ public class VideoPlayerController {
       String language,
       ViewGroup companionViewGroup,
       Logger log) {
-    mVideoPlayerWithAdPlayback = videoPlayerWithAdPlayback;
-    mPlayButton = playButton;
-    mPlayPauseToggle = playPauseToggle;
-    mIsAdPlaying = false;
-    mCompanionViewGroup = companionViewGroup;
-    mLog = log;
+    this.videoPlayerWithAdPlayback = videoPlayerWithAdPlayback;
+    this.playButton = playButton;
+    this.playPauseToggle = playPauseToggle;
+    isAdPlaying = false;
+    this.companionViewGroup = companionViewGroup;
+    this.log = log;
 
     // Create an AdsLoader and optionally set the language.
-    mSdkFactory = ImaSdkFactory.getInstance();
-    ImaSdkSettings imaSdkSettings = mSdkFactory.createImaSdkSettings();
+    sdkFactory = ImaSdkFactory.getInstance();
+    ImaSdkSettings imaSdkSettings = sdkFactory.createImaSdkSettings();
     imaSdkSettings.setLanguage(language);
 
-    mAdDisplayContainer =
+    adDisplayContainer =
         ImaSdkFactory.createAdDisplayContainer(
-            mVideoPlayerWithAdPlayback.getAdUiContainer(),
-            mVideoPlayerWithAdPlayback.getVideoAdPlayer());
-    mAdsLoader = mSdkFactory.createAdsLoader(context, imaSdkSettings, mAdDisplayContainer);
+            videoPlayerWithAdPlayback.getAdUiContainer(),
+            videoPlayerWithAdPlayback.getVideoAdPlayer());
+    adsLoader = sdkFactory.createAdsLoader(context, imaSdkSettings, adDisplayContainer);
 
-    mAdsLoader.addAdErrorListener(
+    adsLoader.addAdErrorListener(
         new AdErrorEvent.AdErrorListener() {
           /** An event raised when there is an error loading or playing ads. */
           @Override
@@ -177,10 +177,10 @@ public class VideoPlayerController {
           }
         });
 
-    mAdsLoader.addAdsLoadedListener(new VideoPlayerController.AdsLoadedListener());
+    adsLoader.addAdsLoadedListener(new VideoPlayerController.AdsLoadedListener());
 
     // When Play is clicked, request ads and hide the button.
-    mPlayButton.setOnClickListener(
+    playButton.setOnClickListener(
         new View.OnClickListener() {
           @Override
           public void onClick(View view) {
@@ -190,71 +190,71 @@ public class VideoPlayerController {
   }
 
   private void log(String message) {
-    if (mLog != null) {
-      mLog.log(message + "\n");
+    if (log != null) {
+      log.log(message + "\n");
     }
   }
 
   private void pauseContent() {
-    mVideoPlayerWithAdPlayback.pauseContentForAdPlayback();
-    mIsAdPlaying = true;
+    videoPlayerWithAdPlayback.pauseContentForAdPlayback();
+    isAdPlaying = true;
     setPlayPauseOnAdTouch();
   }
 
   private void resumeContent() {
-    mVideoPlayerWithAdPlayback.resumeContentAfterAdPlayback();
-    mIsAdPlaying = false;
+    videoPlayerWithAdPlayback.resumeContentAfterAdPlayback();
+    isAdPlaying = false;
     removePlayPauseOnAdTouch();
   }
 
   /** Set the ad tag URL the player should use to request ads when playing a content video. */
   public void setAdTagUrl(String adTagUrl) {
-    mCurrentAdTagUrl = adTagUrl;
+    currentAdTagUrl = adTagUrl;
   }
 
   public String getAdTagUrl() {
-    return mCurrentAdTagUrl;
+    return currentAdTagUrl;
   }
 
   /** Request and subsequently play video ads from the ad server. */
   public void requestAndPlayAds(double playAdsAfterTime) {
-    if (mCurrentAdTagUrl == null || mCurrentAdTagUrl == "") {
+    if (currentAdTagUrl == null || currentAdTagUrl == "") {
       log("No VAST ad tag URL specified");
       resumeContent();
       return;
     }
 
     // Since we're switching to a new video, tell the SDK the previous video is finished.
-    if (mAdsManager != null) {
-      mAdsManager.destroy();
+    if (adsManager != null) {
+      adsManager.destroy();
     }
 
-    mPlayButton.setVisibility(View.GONE);
+    playButton.setVisibility(View.GONE);
 
     // Create the ads request.
-    AdsRequest request = mSdkFactory.createAdsRequest();
-    request.setAdTagUrl(mCurrentAdTagUrl);
-    request.setContentProgressProvider(mVideoPlayerWithAdPlayback.getContentProgressProvider());
+    AdsRequest request = sdkFactory.createAdsRequest();
+    request.setAdTagUrl(currentAdTagUrl);
+    request.setContentProgressProvider(videoPlayerWithAdPlayback.getContentProgressProvider());
 
-    mPlayAdsAfterTime = playAdsAfterTime;
+    this.playAdsAfterTime = playAdsAfterTime;
 
     // Request the ad. After the ad is loaded, onAdsManagerLoaded() will be called.
-    mAdsLoader.requestAds(request);
+    adsLoader.requestAds(request);
   }
 
   /** Touch to toggle play/pause during ad play instead of seeking. */
   private void setPlayPauseOnAdTouch() {
     // Use AdsManager pause/resume methods instead of the video player pause/resume methods
     // in case the SDK is using a different, SDK-created video player for ad playback.
-    mPlayPauseToggle.setOnTouchListener(
+    playPauseToggle.setOnTouchListener(
         new View.OnTouchListener() {
           public boolean onTouch(View view, MotionEvent event) {
             // If an ad is playing, touching it will toggle playback.
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-              if (mIsAdPlaying) {
-                mAdsManager.pause();
+              if (isAdPlaying) {
+                adsManager.pause();
               } else {
-                mAdsManager.resume();
+                adsManager.resume();
               }
               return true;
             } else {
@@ -266,7 +266,7 @@ public class VideoPlayerController {
 
   /** Remove the play/pause on touch behavior. */
   private void removePlayPauseOnAdTouch() {
-    mPlayPauseToggle.setOnTouchListener(null);
+    playPauseToggle.setOnTouchListener(null);
   }
 
   /**
@@ -274,12 +274,12 @@ public class VideoPlayerController {
    * just a URL and could trigger additional decisions regarding ad tag selection.
    */
   public void setContentVideo(String videoPath) {
-    mVideoPlayerWithAdPlayback.setContentVideoPath(videoPath);
-    mContentVideoUrl = videoPath;
+    videoPlayerWithAdPlayback.setContentVideoPath(videoPath);
+    contentVideoUrl = videoPath;
   }
 
   public String getContentVideoUrl() {
-    return mContentVideoUrl;
+    return contentVideoUrl;
   }
 
   /**
@@ -287,11 +287,11 @@ public class VideoPlayerController {
    * example.
    */
   public void pause() {
-    mVideoPlayerWithAdPlayback.savePosition();
-    if (mAdsManager != null && mVideoPlayerWithAdPlayback.getIsAdDisplayed()) {
-      mAdsManager.pause();
+    videoPlayerWithAdPlayback.savePosition();
+    if (adsManager != null && videoPlayerWithAdPlayback.getIsAdDisplayed()) {
+      adsManager.pause();
     } else {
-      mVideoPlayerWithAdPlayback.pause();
+      videoPlayerWithAdPlayback.pause();
     }
   }
 
@@ -300,37 +300,37 @@ public class VideoPlayerController {
    * resumed.
    */
   public void resume() {
-    mVideoPlayerWithAdPlayback.restorePosition();
-    if (mAdsManager != null && mVideoPlayerWithAdPlayback.getIsAdDisplayed()) {
-      mAdsManager.resume();
+    videoPlayerWithAdPlayback.restorePosition();
+    if (adsManager != null && videoPlayerWithAdPlayback.getIsAdDisplayed()) {
+      adsManager.resume();
     } else {
-      mVideoPlayerWithAdPlayback.play();
+      videoPlayerWithAdPlayback.play();
     }
   }
 
   public void destroy() {
-    if (mAdsManager != null) {
-      mAdsManager.destroy();
-      mAdsManager = null;
+    if (adsManager != null) {
+      adsManager.destroy();
+      adsManager = null;
     }
 
-    if (mAdDisplayContainer != null) {
-      mAdDisplayContainer.destroy();
-      mAdDisplayContainer = null;
+    if (adDisplayContainer != null) {
+      adDisplayContainer.destroy();
+      adDisplayContainer = null;
     }
   }
 
   /** Seeks to time in content video in seconds. */
   public void seek(double time) {
-    mVideoPlayerWithAdPlayback.seek((int) (time * 1000.0));
+    videoPlayerWithAdPlayback.seek((int) (time * 1000.0));
   }
 
   /** Returns the current time of the content video in seconds. */
   public double getCurrentContentTime() {
-    return ((double) mVideoPlayerWithAdPlayback.getCurrentContentTime()) / 1000.0;
+    return ((double) videoPlayerWithAdPlayback.getCurrentContentTime()) / 1000.0;
   }
 
   public boolean hasVideoStarted() {
-    return mVideoStarted;
+    return videoStarted;
   }
 }

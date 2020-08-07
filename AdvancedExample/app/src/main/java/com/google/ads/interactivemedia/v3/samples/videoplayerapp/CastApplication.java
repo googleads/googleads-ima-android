@@ -26,119 +26,119 @@ public class CastApplication implements Cast.MessageReceivedCallback {
   private static final String NAMESPACE = "urn:x-cast:com.google.ads.ima.cast";
   private static final String TAG = "ChromeCastDemoActivity";
 
-  private VideoFragment mVideoFragment;
-  private VideoPlayerController mVideoPlayerController;
-  private String mAdTagUrl;
-  private String mContentUrl;
-  private boolean mCastAdPlaying;
-  private double mCastContentTime;
+  private VideoFragment videoFragment;
+  private VideoPlayerController videoPlayerController;
+  private String adTagUrl;
+  private String contentUrl;
+  private boolean castAdPlaying;
+  private double castContentTime;
 
-  private Activity mActivity;
-  private CastContext mCastContext;
-  private CastSession mCastSession;
-  private SessionManager mSessionManager;
+  private Activity activity;
+  private CastContext castContext;
+  private CastSession castSession;
+  private SessionManager sessionManager;
 
-  private SessionManagerListener<CastSession> mSessionManagerListener =
+  private SessionManagerListener<CastSession> sessionManagerListener =
       new SessionManagerListener<CastSession>() {
         @Override
-        public void onSessionStarting(CastSession castSession) {}
+        public void onSessionStarting(CastSession session) {}
 
         @Override
-        public void onSessionStarted(CastSession castSession, String sessionId) {
-          onApplicationConnected(castSession);
+        public void onSessionStarted(CastSession session, String sessionId) {
+          onApplicationConnected(session);
         }
 
         @Override
-        public void onSessionStartFailed(CastSession castSession, int error) {
+        public void onSessionStartFailed(CastSession session, int error) {
           onApplicationDisconnected();
         }
 
         @Override
-        public void onSessionEnding(CastSession castSession) {
-          if (mCastSession != null && !mCastAdPlaying) {
-            RemoteMediaClient remoteMediaClient = mCastSession.getRemoteMediaClient();
+        public void onSessionEnding(CastSession session) {
+          if (castSession != null && !castAdPlaying) {
+            RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
             if (remoteMediaClient != null) {
               double videoPosition = remoteMediaClient.getApproximateStreamPosition();
-              mCastContentTime = videoPosition / 1000.0;
+              castContentTime = videoPosition / 1000.0;
             }
           }
         }
 
         @Override
-        public void onSessionEnded(CastSession castSession, int error) {
+        public void onSessionEnded(CastSession session, int error) {
           onApplicationDisconnected();
         }
 
         @Override
-        public void onSessionResuming(CastSession castSession, String sessionId) {}
+        public void onSessionResuming(CastSession session, String sessionId) {}
 
         @Override
-        public void onSessionResumed(CastSession castSession, boolean wasSuspended) {
-          onApplicationConnected(castSession);
+        public void onSessionResumed(CastSession session, boolean wasSuspended) {
+          onApplicationConnected(session);
         }
 
         @Override
-        public void onSessionResumeFailed(CastSession castSession, int error) {
+        public void onSessionResumeFailed(CastSession session, int error) {
           onApplicationDisconnected();
         }
 
         @Override
-        public void onSessionSuspended(CastSession castSession, int reason) {}
+        public void onSessionSuspended(CastSession session, int reason) {}
       };
 
-  public CastApplication(Activity activity) {
-    mActivity = activity;
+  public CastApplication(Activity newActivity) {
+    activity = newActivity;
 
-    mCastContext = CastContext.getSharedInstance(activity);
-    mSessionManager = mCastContext.getSessionManager();
+    castContext = CastContext.getSharedInstance(newActivity);
+    sessionManager = castContext.getSessionManager();
   }
 
   void onPause() {
-    mSessionManager.removeSessionManagerListener(mSessionManagerListener, CastSession.class);
+    sessionManager.removeSessionManagerListener(sessionManagerListener, CastSession.class);
   }
 
   void onResume() {
-    mSessionManager.addSessionManagerListener(mSessionManagerListener, CastSession.class);
+    sessionManager.addSessionManagerListener(sessionManagerListener, CastSession.class);
   }
 
-  private void onApplicationConnected(CastSession castSession) {
-    mCastSession = castSession;
+  private void onApplicationConnected(CastSession session) {
+    castSession = session;
     try {
-      mCastSession.setMessageReceivedCallbacks(NAMESPACE, CastApplication.this);
+      castSession.setMessageReceivedCallbacks(NAMESPACE, CastApplication.this);
     } catch (IOException e) {
       Log.e(TAG, "Exception when creating channel", e);
     }
-    mVideoPlayerController = mVideoFragment.getVideoPlayerController();
-    mAdTagUrl = mVideoPlayerController.getAdTagUrl();
-    mContentUrl = mVideoPlayerController.getContentVideoUrl();
-    mVideoPlayerController.pause();
+    videoPlayerController = videoFragment.getVideoPlayerController();
+    adTagUrl = videoPlayerController.getAdTagUrl();
+    contentUrl = videoPlayerController.getContentVideoUrl();
+    videoPlayerController.pause();
     loadMedia();
-    mActivity.invalidateOptionsMenu();
+    activity.invalidateOptionsMenu();
   }
 
   private void onApplicationDisconnected() {
     // User stops casting. Resume video on device and seek to current time of Cast.
-    if (mVideoPlayerController == null) {
+    if (videoPlayerController == null) {
       return;
-    } else if (!mVideoPlayerController.hasVideoStarted()) {
+    } else if (!videoPlayerController.hasVideoStarted()) {
       // Only re-request ads if VMAP or the video hasn't started.
-      if (mVideoFragment.isVmap() || mCastContentTime == 0) {
-        mVideoPlayerController.requestAndPlayAds(mCastContentTime);
+      if (videoFragment.isVmap() || castContentTime == 0) {
+        videoPlayerController.requestAndPlayAds(castContentTime);
       }
     }
-    mVideoPlayerController.seek(mCastContentTime);
+    videoPlayerController.seek(castContentTime);
 
-    mActivity.invalidateOptionsMenu();
-    mCastSession = null;
+    activity.invalidateOptionsMenu();
+    castSession = null;
 
-    mVideoPlayerController.resume();
+    videoPlayerController.resume();
   }
 
   private void loadMedia() {
     MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
     mediaMetadata.putString(MediaMetadata.KEY_TITLE, "My video");
     MediaInfo mediaInfo =
-        new MediaInfo.Builder(mContentUrl)
+        new MediaInfo.Builder(contentUrl)
             .setContentType("video/mp4")
             .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
             .setMetadata(mediaMetadata)
@@ -146,7 +146,7 @@ public class CastApplication implements Cast.MessageReceivedCallback {
 
     MediaLoadOptions mediaLoadOptions = new MediaLoadOptions.Builder().build();
 
-    RemoteMediaClient remoteMediaClient = mCastSession.getRemoteMediaClient();
+    RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
     try {
       Log.d(TAG, "loading media");
       remoteMediaClient
@@ -160,15 +160,15 @@ public class CastApplication implements Cast.MessageReceivedCallback {
                     // request the ad again in Chromecast except for VMAP because there
                     // are multiple ad breaks. To request a single ad use same the same
                     // message with current time as 0.
-                    if (mVideoFragment.isVmap()
-                        || mVideoPlayerController.getCurrentContentTime() == 0) {
+                    if (videoFragment.isVmap()
+                        || videoPlayerController.getCurrentContentTime() == 0) {
                       sendMessage(
                           "requestAd,"
-                              + mAdTagUrl
+                              + adTagUrl
                               + ","
-                              + mVideoPlayerController.getCurrentContentTime());
+                              + videoPlayerController.getCurrentContentTime());
                     } else {
-                      sendMessage("seek," + mVideoPlayerController.getCurrentContentTime());
+                      sendMessage("seek," + videoPlayerController.getCurrentContentTime());
                     }
                   } else {
                     Log.e(
@@ -189,11 +189,11 @@ public class CastApplication implements Cast.MessageReceivedCallback {
     String event = splitMessage[0];
     switch (event) {
       case "onContentPauseRequested":
-        mCastAdPlaying = true;
-        mCastContentTime = Double.parseDouble(splitMessage[1]);
+        castAdPlaying = true;
+        castContentTime = Double.parseDouble(splitMessage[1]);
         break;
       case "onContentResumeRequested":
-        mCastAdPlaying = false;
+        castAdPlaying = false;
         break;
     }
   }
@@ -201,7 +201,7 @@ public class CastApplication implements Cast.MessageReceivedCallback {
   private void sendMessage(String message) {
     try {
       Log.d(TAG, "Sending message: " + message);
-      mCastSession
+      castSession
           .sendMessage(NAMESPACE, message)
           .setResultCallback(
               new ResultCallback<Status>() {
@@ -217,7 +217,7 @@ public class CastApplication implements Cast.MessageReceivedCallback {
     }
   }
 
-  void setVideoFragment(VideoFragment videoFragment) {
-    mVideoFragment = videoFragment;
+  void setVideoFragment(VideoFragment newVideoFragment) {
+    videoFragment = newVideoFragment;
   }
 }

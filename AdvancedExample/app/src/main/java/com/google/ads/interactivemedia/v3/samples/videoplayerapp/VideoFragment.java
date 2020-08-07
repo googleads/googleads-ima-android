@@ -15,11 +15,11 @@ import androidx.fragment.app.Fragment;
 /** The main fragment for displaying video content. */
 public class VideoFragment extends Fragment {
 
-  private VideoPlayerController mVideoPlayerController;
-  private VideoItem mVideoItem;
-  private TextView mVideoTitle;
-  private ScrollView mVideoExampleLayout;
-  private OnVideoFragmentViewCreatedListener mViewCreatedCallback;
+  private VideoPlayerController videoPlayerController;
+  private VideoItem videoItem;
+  private TextView videoTitle;
+  private ScrollView videoExampleLayout;
+  private OnVideoFragmentViewCreatedListener viewCreatedCallback;
 
   /** Listener called when the fragment's onCreateView is fired. */
   public interface OnVideoFragmentViewCreatedListener {
@@ -36,33 +36,33 @@ public class VideoFragment extends Fragment {
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.fragment_video, container, false);
     initUi(rootView);
-    if (mViewCreatedCallback != null) {
-      mViewCreatedCallback.onVideoFragmentViewCreated();
+    if (viewCreatedCallback != null) {
+      viewCreatedCallback.onVideoFragmentViewCreated();
     }
     return rootView;
   }
 
   public void loadVideo(VideoItem videoItem) {
-    if (mVideoPlayerController == null) {
-      mVideoItem = videoItem;
+    this.videoItem = videoItem;
+    if (videoPlayerController == null) {
       return;
     }
-    mVideoItem = videoItem;
-    mVideoPlayerController.setContentVideo(mVideoItem.getVideoUrl());
-    mVideoPlayerController.setAdTagUrl(videoItem.getAdTagUrl());
-    mVideoTitle.setText(videoItem.getTitle());
+    
+    videoPlayerController.setContentVideo(videoItem.getVideoUrl());
+    videoPlayerController.setAdTagUrl(newVideoItem.getAdTagUrl());
+    videoTitle.setText(newVideoItem.getTitle());
   }
 
   private void initUi(View rootView) {
-    VideoPlayerWithAdPlayback mVideoPlayerWithAdPlayback =
+    VideoPlayerWithAdPlayback videoPlayerWithAdPlayback =
         rootView.findViewById(R.id.videoPlayerWithAdPlayback);
     View playButton = rootView.findViewById(R.id.playButton);
     View playPauseToggle = rootView.findViewById(R.id.videoContainer);
     ViewGroup companionAdSlot = rootView.findViewById(R.id.companionAdSlot);
-    mVideoTitle = rootView.findViewById(R.id.video_title);
-    mVideoExampleLayout = rootView.findViewById(R.id.videoExampleLayout);
-    mVideoExampleLayout.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
-    mVideoExampleLayout.setSmoothScrollingEnabled(true);
+    videoTitle = rootView.findViewById(R.id.video_title);
+    videoExampleLayout = rootView.findViewById(R.id.videoExampleLayout);
+    videoExampleLayout.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+    videoExampleLayout.setSmoothScrollingEnabled(true);
 
     // Make the dummyScrollContent height the size of the screen height.
     DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -87,10 +87,10 @@ public class VideoFragment extends Fragment {
           }
         };
 
-    mVideoPlayerController =
+    videoPlayerController =
         new VideoPlayerController(
             this.getActivity(),
-            mVideoPlayerWithAdPlayback,
+            videoPlayerWithAdPlayback,
             playButton,
             playPauseToggle,
             getString(R.string.ad_ui_lang),
@@ -98,15 +98,15 @@ public class VideoFragment extends Fragment {
             logger);
 
     // If we've already selected a video, load it now.
-    if (mVideoItem != null) {
-      loadVideo(mVideoItem);
+    if (videoItem != null) {
+      loadVideo(videoItem);
     }
   }
 
   /** Shows or hides all non-video UI elements to make the video as large as possible. */
   public void makeFullscreen(boolean isFullscreen) {
-    for (int i = 0; i < mVideoExampleLayout.getChildCount(); i++) {
-      View view = mVideoExampleLayout.getChildAt(i);
+    for (int i = 0; i < videoExampleLayout.getChildCount(); i++) {
+      View view = videoExampleLayout.getChildAt(i);
       // If it's not the video element, hide or show it, depending on fullscreen status.
       if (view.getId() != R.id.videoContainer) {
         if (isFullscreen) {
@@ -119,34 +119,34 @@ public class VideoFragment extends Fragment {
   }
 
   public VideoPlayerController getVideoPlayerController() {
-    return mVideoPlayerController;
+    return videoPlayerController;
   }
 
   @Override
   public void onPause() {
-    if (mVideoPlayerController != null) {
-      mVideoPlayerController.pause();
+    if (videoPlayerController != null) {
+      videoPlayerController.pause();
     }
     super.onPause();
   }
 
   @Override
   public void onResume() {
-    if (mVideoPlayerController != null) {
-      mVideoPlayerController.resume();
+    if (videoPlayerController != null) {
+      videoPlayerController.resume();
     }
     super.onResume();
   }
 
   @Override
   public void onDestroy() {
-    if (mVideoPlayerController != null) {
-      mVideoPlayerController.destroy();
+    if (videoPlayerController != null) {
+      videoPlayerController.destroy();
     }
     super.onDestroy();
   }
 
   public boolean isVmap() {
-    return mVideoItem.getIsVmap();
+    return videoItem.getIsVmap();
   }
 }

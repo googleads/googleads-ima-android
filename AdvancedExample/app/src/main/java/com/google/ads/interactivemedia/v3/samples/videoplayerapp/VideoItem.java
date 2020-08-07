@@ -3,44 +3,44 @@ package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 /** Information about a video playlist item that the user will select in a playlist. */
 public final class VideoItem {
 
-  private final int mThumbnailResourceId;
-  private final String mTitle;
-  private final String mVideoUrl;
-  private final String mAdTagUrl;
-  private final boolean mIsVmap;
+  private final int thumbnailResourceId;
+  private final String title;
+  private final String videoUrl;
+  private final String adTagUrl;
+  private final boolean isVmap;
 
   public VideoItem(
-      String videoUrl, String title, String adTagUrl, int thumbnailResourceId, boolean isVmap) {
+      String video, String videoTitle, String adTag, int resourceId, boolean isVmapAd) {
     super();
-    mThumbnailResourceId = thumbnailResourceId;
-    mTitle = title;
-    mAdTagUrl = adTagUrl;
-    mVideoUrl = videoUrl;
-    mIsVmap = isVmap;
+    thumbnailResourceId = resourceId;
+    title = videoTitle;
+    adTagUrl = adTag;
+    videoUrl = video;
+    isVmap = isVmapAd;
   }
 
   /** Returns the video thumbnail image resource. */
   public int getImageResource() {
-    return mThumbnailResourceId;
+    return thumbnailResourceId;
   }
 
   /** Returns the title of the video item. */
   public String getTitle() {
-    return mTitle;
+    return title;
   }
 
   /** Returns the URL of the content video. */
   public String getVideoUrl() {
-    return mVideoUrl;
+    return videoUrl;
   }
 
   /** Returns the ad tag for the video. */
   public String getAdTagUrl() {
-    return mAdTagUrl;
+    return adTagUrl;
   }
 
   /** Returns if the ad is VMAP. */
   public boolean getIsVmap() {
-    return mIsVmap;
+    return isVmap;
   }
 }

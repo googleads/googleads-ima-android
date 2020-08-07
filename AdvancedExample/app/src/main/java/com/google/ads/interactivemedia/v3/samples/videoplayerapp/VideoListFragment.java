@@ -18,9 +18,9 @@ import java.util.List;
 /** Fragment for displaying a playlist of video thumbnails that the user can select from to play. */
 public class VideoListFragment extends Fragment {
 
-  private OnVideoSelectedListener mSelectedCallback;
-  LayoutInflater mInflater;
-  ViewGroup mContainer;
+  private OnVideoSelectedListener selectedCallback;
+  LayoutInflater inflater;
+  ViewGroup container;
 
   /**
    * Listener called when the user selects a video from the list. Container activity must implement
@@ -30,7 +30,7 @@ public class VideoListFragment extends Fragment {
     public void onVideoSelected(VideoItem videoItem);
   }
 
-  private OnVideoListFragmentResumedListener mResumeCallback;
+  private OnVideoListFragmentResumedListener resumeCallback;
 
   /** Listener called when the video list fragment resumes. */
   public interface OnVideoListFragmentResumedListener {
@@ -41,14 +41,14 @@ public class VideoListFragment extends Fragment {
   public void onAttach(Context context) {
     super.onAttach(context);
     try {
-      mSelectedCallback = (OnVideoSelectedListener) context;
+      selectedCallback = (OnVideoSelectedListener) context;
     } catch (ClassCastException e) {
       throw new ClassCastException(
           context.toString() + " must implement " + OnVideoSelectedListener.class.getName());
     }
 
     try {
-      mResumeCallback = (OnVideoListFragmentResumedListener) context;
+      resumeCallback = (OnVideoListFragmentResumedListener) context;
     } catch (ClassCastException e) {
       throw new ClassCastException(
           context.toString()
@@ -60,8 +60,8 @@ public class VideoListFragment extends Fragment {
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    mInflater = inflater;
-    mContainer = container;
+    inflater = inflater;
+    container = container;
     View rootView = inflater.inflate(R.layout.fragment_video_list, container, false);
 
     final ListView listView = (ListView) rootView.findViewById(R.id.videoListView);
@@ -73,14 +73,14 @@ public class VideoListFragment extends Fragment {
         new AdapterView.OnItemClickListener() {
           @Override
           public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-            if (mSelectedCallback != null) {
+            if (selectedCallback != null) {
               VideoItem selectedVideo = (VideoItem) listView.getItemAtPosition(position);
 
               // If applicable, prompt the user to input a custom ad tag.
               if (selectedVideo.getAdTagUrl().equals(getString(R.string.custom_ad_tag_value))) {
                 getCustomAdTag(selectedVideo);
               } else {
-                mSelectedCallback.onVideoSelected(selectedVideo);
+                selectedCallback.onVideoSelected(selectedVideo);
               }
             }
           }
@@ -90,7 +90,7 @@ public class VideoListFragment extends Fragment {
   }
 
   private void getCustomAdTag(VideoItem originalVideoItem) {
-    View dialogueView = mInflater.inflate(R.layout.custom_ad_tag, mContainer, false);
+    View dialogueView = inflater.inflate(R.layout.custom_ad_tag, container, false);
     final EditText txtUrl = (EditText) dialogueView.findViewById(R.id.customTag);
     txtUrl.setHint("VAST ad tag URL");
     final CheckBox isVmap = (CheckBox) dialogueView.findViewById(R.id.isVmap);
@@ -112,8 +112,8 @@ public class VideoListFragment extends Fragment {
                         videoItem.getImageResource(),
                         isVmap.isChecked());
 
-                if (mSelectedCallback != null) {
-                  mSelectedCallback.onVideoSelected(customAdTagVideoItem);
+                if (selectedCallback != null) {
+                  selectedCallback.onVideoSelected(customAdTagVideoItem);
                 }
               }
             })
@@ -146,8 +146,8 @@ public class VideoListFragment extends Fragment {
   @Override
   public void onResume() {
     super.onResume();
-    if (mResumeCallback != null) {
-      mResumeCallback.onVideoListFragmentResumed();
+    if (resumeCallback != null) {
+      resumeCallback.onVideoListFragmentResumed();
     }
   }
 }

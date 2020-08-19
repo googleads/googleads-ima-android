@@ -1,5 +1,6 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
+import android.app.UiModeManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,20 +39,29 @@ public class MyActivity extends AppCompatActivity
           .add(R.id.video_example_container, videoListFragment, VIDEO_PLAYLIST_FRAGMENT_TAG)
           .commit();
     }
-    castApplication = new CastApplication(this);
+
+    UiModeManager uiModeManager = (UiModeManager) getSystemService(UI_MODE_SERVICE);
+    if (uiModeManager.getCurrentModeType() != Configuration.UI_MODE_TYPE_TELEVISION) {
+      // Only create a cast application on devices that support cast.
+      castApplication = new CastApplication(this);
+    }
     orientAppUi();
   }
 
   @Override
   protected void onResume() {
-    castApplication.onResume();
     super.onResume();
+    if (castApplication != null) {
+      castApplication.onResume();
+    }
   }
 
   @Override
   protected void onPause() {
     super.onPause();
-    castApplication.onPause();
+    if (castApplication != null) {
+      castApplication.onPause();
+    }
   }
 
   @Override
@@ -139,7 +149,11 @@ public class MyActivity extends AppCompatActivity
           .commit();
     }
     videoFragment.loadVideo(videoItem);
-    castApplication.setVideoFragment(videoFragment);
+
+    if (castApplication != null) {
+      castApplication.setVideoFragment(videoFragment);
+    }
+
     invalidateOptionsMenu();
     orientAppUi();
   }

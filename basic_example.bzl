@@ -12,7 +12,7 @@ COMMON_DEPS = [
     "//third_party/java/android_libs/exoplayer:exoplayer2_hls",
     "//third_party/java/android_libs/exoplayer:exoplayer2_ui",
     "//third_party/java/android_libs/guava_jdk5:collect",
-    "//third_party/java/android/android_sdk_linux/extras/android/compatibility/fragment",
+    "//third_party/java/androidx/fragment",
     "//third_party/java/androidx/annotation",
 ]
 

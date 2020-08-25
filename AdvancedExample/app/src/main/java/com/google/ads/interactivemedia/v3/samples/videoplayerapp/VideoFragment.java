@@ -47,10 +47,10 @@ public class VideoFragment extends Fragment {
     if (videoPlayerController == null) {
       return;
     }
-    
+
     videoPlayerController.setContentVideo(videoItem.getVideoUrl());
-    videoPlayerController.setAdTagUrl(newVideoItem.getAdTagUrl());
-    videoTitle.setText(newVideoItem.getTitle());
+    videoPlayerController.setAdTagUrl(videoItem.getAdTagUrl());
+    videoTitle.setText(videoItem.getTitle());
   }
 
   private void initUi(View rootView) {

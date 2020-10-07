@@ -153,12 +153,15 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
 
   @Override
   public void disablePlaybackControls() {
-    setMediaController(null);
+    // The default behavior for mediaController.hide() hides the controls after 3 seconds.
+    mediaController.hide();
   }
 
+  // Integer timeout is the timeout in seconds for how long the controls will show.
+  // Using a timeout of 0 will show the controls indefinitely.
   @Override
-  public void enablePlaybackControls() {
-    setMediaController(mediaController);
+  public void enablePlaybackControls(Integer timeout) {
+    mediaController.show(timeout);
   }
 
   @Override

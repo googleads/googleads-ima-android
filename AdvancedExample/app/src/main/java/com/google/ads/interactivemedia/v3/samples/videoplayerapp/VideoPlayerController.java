@@ -117,9 +117,11 @@ public class VideoPlayerController {
                   break;
                 case PAUSED:
                   isAdPlaying = false;
+                  videoPlayerWithAdPlayback.enableControls();
                   break;
                 case RESUMED:
                   isAdPlaying = true;
+                  videoPlayerWithAdPlayback.disableControls();
                   break;
                 case ALL_ADS_COMPLETED:
                   if (adsManager != null) {

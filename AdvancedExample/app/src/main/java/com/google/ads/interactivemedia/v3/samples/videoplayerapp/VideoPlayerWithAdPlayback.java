@@ -349,4 +349,12 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
   public ContentProgressProvider getContentProgressProvider() {
     return contentProgressProvider;
   }
+
+  public void enableControls() {
+    videoPlayer.enablePlaybackControls();
+  }
+
+  public void disableControls() {
+    videoPlayer.disablePlaybackControls();
+  }
 }

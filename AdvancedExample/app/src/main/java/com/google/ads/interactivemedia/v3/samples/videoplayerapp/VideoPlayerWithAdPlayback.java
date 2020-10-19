@@ -322,7 +322,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     }
     isAdDisplayed = false;
     videoPlayer.setVideoPath(contentVideoUrl);
-    videoPlayer.enablePlaybackControls();
+    videoPlayer.enablePlaybackControls(3000);
     videoPlayer.seekTo(savedContentPosition);
     videoPlayer.play();
 
@@ -351,7 +351,9 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
   }
 
   public void enableControls() {
-    videoPlayer.enablePlaybackControls();
+    // Calling enablePlaybackControls(0) with 0 milliseconds shows the controls until
+    // disablePlaybackControls() is called.
+    videoPlayer.enablePlaybackControls(0);
   }
 
   public void disableControls() {

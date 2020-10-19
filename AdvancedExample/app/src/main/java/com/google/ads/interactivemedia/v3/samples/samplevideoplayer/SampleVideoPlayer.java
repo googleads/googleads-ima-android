@@ -157,10 +157,8 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     mediaController.hide();
   }
 
-  // Integer timeout is the timeout in seconds for how long the controls will show.
-  // Using a timeout of 0 will show the controls indefinitely.
   @Override
-  public void enablePlaybackControls(Integer timeout) {
+  public void enablePlaybackControls(int timeout) {
     mediaController.show(timeout);
   }
 

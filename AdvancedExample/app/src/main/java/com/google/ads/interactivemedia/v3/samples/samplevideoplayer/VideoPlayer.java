@@ -51,8 +51,12 @@ public interface VideoPlayer {
   /** Prevent the media controller (playback controls) from appearing. */
   void disablePlaybackControls();
 
-  /** Allow the media controller (playback controls) to appear when appropriate. */
-  void enablePlaybackControls();
+  /**
+   * Allow the media controller (playback controls) to appear when appropriate after a timeout
+   * (milliseconds). A timeout of 0 will show the controls until {@link #disablePlaybackControls()}
+   * is called.
+   */
+  void enablePlaybackControls(int timeout);
 
   /** Set the URL or path of the video to play. */
   void setVideoPath(String videoUrl);

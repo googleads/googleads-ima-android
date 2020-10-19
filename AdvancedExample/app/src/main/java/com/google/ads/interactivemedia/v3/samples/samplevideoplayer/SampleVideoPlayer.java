@@ -45,6 +45,7 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
     playbackState = PlaybackState.STOPPED;
     mediaController = new MediaController(getContext());
     mediaController.setAnchorView(this);
+    setMediaController(mediaController);
 
     // Set OnCompletionListener to notify our callbacks when the video is completed.
     super.setOnCompletionListener(

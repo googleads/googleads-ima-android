@@ -90,7 +90,7 @@ public class MyActivity extends Activity {
   }
 
   private void initializePlayer() {
-    // Create a SimpleExoPlayer and set is as the player for content and ads.
+    // Create a SimpleExoPlayer and set it as the player for content and ads.
     player = new SimpleExoPlayer.Builder(this).build();
     playerView.setPlayer(player);
     adsLoader.setPlayer(player);

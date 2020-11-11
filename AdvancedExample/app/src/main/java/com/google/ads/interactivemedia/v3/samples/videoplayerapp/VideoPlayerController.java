@@ -30,7 +30,7 @@ public class VideoPlayerController {
   private AdDisplayContainer adDisplayContainer;
 
   // The AdsLoader instance exposes the requestAds method.
-  private AdsLoader adsLoader;
+  private final AdsLoader adsLoader;
 
   // AdsManager exposes methods to control ad playback and listen to ad events.
   private AdsManager adsManager;
@@ -316,10 +316,7 @@ public class VideoPlayerController {
       adsManager = null;
     }
 
-    if (adDisplayContainer != null) {
-      adDisplayContainer.destroy();
-      adDisplayContainer = null;
-    }
+    adsLoader.release();
   }
 
   /** Seeks to time in content video in seconds. */

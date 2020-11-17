@@ -17,6 +17,7 @@ import com.google.ads.interactivemedia.v3.api.AdsRequest;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
+import java.util.ArrayList;
 
 /** Ads logic for handling the IMA SDK integration code and events. */
 public class VideoPlayerController {

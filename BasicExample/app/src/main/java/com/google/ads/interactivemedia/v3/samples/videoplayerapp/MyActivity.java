@@ -89,17 +89,17 @@ public class MyActivity extends Activity {
   }
 
   private void initializePlayer() {
-    // Create a SimpleExoPlayer and set it as the player for content and ads.
-    player = new SimpleExoPlayer.Builder(this).build();
-    playerView.setPlayer(player);
-    adsLoader.setPlayer(player);
-
     // Set up the factory for media sources, passing the ads loader and ad view providers.
     DataSource.Factory dataSourceFactory =
         new DefaultDataSourceFactory(this, Util.getUserAgent(this, getString(R.string.app_name)));
     DefaultMediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(dataSourceFactory);
     mediaSourceFactory.setAdsLoaderProvider(unusedAdTagUri -> adsLoader);
     mediaSourceFactory.setAdViewProvider(playerView);
+
+    // Create a SimpleExoPlayer and set it as the player for content and ads.
+    player = new SimpleExoPlayer.Builder(this).setMediaSourceFactory(mediaSourceFactory).build();
+    playerView.setPlayer(player);
+    adsLoader.setPlayer(player);
 
     // Create the MediaItem to play, specifying the content URI and ad tag URI.
     Uri contentUri = Uri.parse(getString(R.string.content_url));

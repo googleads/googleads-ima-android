@@ -122,24 +122,23 @@ public class AudioPlayerService extends Service {
             R.string.playback_channel_name,
             R.string.playback_channel_description,
             PLAYBACK_NOTIFICATION_ID,
-            descriptionAdapter);
+            descriptionAdapter,
+            new NotificationListener() {
+                public void onNotificationStarted(int notificationId, Notification notification,
+                                                  boolean ongoing) {
+                  // This must be called within 5 seconds of the notification being displayed and
+                  // before the main app has been killed.
+                  startForeground(notificationId, notification);
+                }
+
+                @Override
+                public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
+                  stopSelf();
+                }
+            }
+        );
 
     playerNotificationManager.setPlayer(player);
-
-    playerNotificationManager.setNotificationListener(
-        new NotificationListener() {
-          @Override
-          public void onNotificationStarted(int notificationId, Notification notification) {
-            // This must be called within 5 seconds of the notification being displayed and
-            // before the main app has been killed.
-            startForeground(notificationId, notification);
-          }
-
-          @Override
-          public void onNotificationCancelled(int notificationId) {
-            stopSelf();
-          }
-        });
 
     mediaSession = new MediaSessionCompat(context, MEDIA_SESSION_TAG);
     mediaSession.setActive(true);

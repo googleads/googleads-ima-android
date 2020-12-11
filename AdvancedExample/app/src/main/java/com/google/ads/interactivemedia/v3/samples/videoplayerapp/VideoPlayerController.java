@@ -129,6 +129,7 @@ public class VideoPlayerController {
                     adsManager.destroy();
                     adsManager = null;
                   }
+                  adsLoader.release();
                   break;
                 default:
                   break;
@@ -316,8 +317,6 @@ public class VideoPlayerController {
       adsManager.destroy();
       adsManager = null;
     }
-
-    adsLoader.release();
   }
 
   /** Seeks to time in content video in seconds. */

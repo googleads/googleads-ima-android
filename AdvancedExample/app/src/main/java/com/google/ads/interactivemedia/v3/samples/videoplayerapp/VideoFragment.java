@@ -142,6 +142,7 @@ public class VideoFragment extends Fragment {
   public void onDestroy() {
     if (videoPlayerController != null) {
       videoPlayerController.destroy();
+      videoPlayerController = null;
     }
     super.onDestroy();
   }

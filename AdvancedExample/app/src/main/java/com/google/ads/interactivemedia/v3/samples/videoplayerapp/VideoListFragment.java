@@ -27,7 +27,7 @@ public class VideoListFragment extends Fragment {
    * this interface.
    */
   public interface OnVideoSelectedListener {
-    public void onVideoSelected(VideoItem videoItem);
+    void onVideoSelected(VideoItem videoItem);
   }
 
   private OnVideoListFragmentResumedListener resumeCallback;

@@ -99,6 +99,11 @@ public class MyActivity extends AppCompatActivity
     VideoFragment videoFragment =
         (VideoFragment) fragmentManager.findFragmentByTag(VIDEO_EXAMPLE_FRAGMENT_TAG);
 
+    if (castApplication != null) {
+      // When videoFragment is null, this lets the castApplication release its reference to the
+      // fragment.
+      castApplication.setVideoFragment(videoFragment);
+    }
     Fragment videoListFragment = fragmentManager.findFragmentByTag(VIDEO_PLAYLIST_FRAGMENT_TAG);
 
     if (videoFragment != null) {

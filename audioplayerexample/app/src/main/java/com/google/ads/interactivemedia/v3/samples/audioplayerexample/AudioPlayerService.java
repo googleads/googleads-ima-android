@@ -20,6 +20,7 @@ import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
@@ -63,17 +64,21 @@ public class AudioPlayerService extends Service {
     DefaultDataSourceFactory dataSourceFactory =
         new DefaultDataSourceFactory(
             context, Util.getUserAgent(context, getString(R.string.application_name)));
+
     contentMediaSource =
         new ConcatenatingMediaSource(
             /* isAtomic= */ false,
             /* useLazyPreparation= */ true,
             new ShuffleOrder.DefaultShuffleOrder(/* length= */ 0));
     for (Samples.Sample sample : sampleList) {
+      MediaItem mediaItem = new MediaItem.Builder().setUri(sample.uri).build();
       MediaSource mediaSource =
-          new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(sample.uri);
+          new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem);
       contentMediaSource.addMediaSource(mediaSource);
     }
-    player.prepare(contentMediaSource);
+
+    player.setMediaSource(contentMediaSource);
+    player.prepare();
     player.setPlayWhenReady(true);
 
     MediaDescriptionAdapter descriptionAdapter =
@@ -197,14 +202,16 @@ public class AudioPlayerService extends Service {
     public void release() {
       if (isAdPlaying) {
         isAdPlaying = false;
-        player.prepare(contentMediaSource);
+        player.setMediaSource(contentMediaSource);
+        player.prepare();
         player.setPlayWhenReady(true);
         // TODO: Seek to where you left off the stream, if desired.
       }
     }
 
     public void prepare(MediaSource mediaSource) {
-      player.prepare(mediaSource);
+      player.setMediaSource(mediaSource);
+      player.prepare();
     }
 
     public void addAnalyticsListener(AnalyticsListener listener) {

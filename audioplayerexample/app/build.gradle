@@ -41,11 +41,11 @@ repositories {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.media:media:1.2.0'
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.7'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.7'
-    implementation 'com.google.android.exoplayer:extension-mediasession:2.11.1'
+    implementation 'androidx.media:media:1.2.1'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.12.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.12.1'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.12.1'
     implementation 'com.google.guava:guava:28.1-android'
 
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.21.2'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.22.0'
 }

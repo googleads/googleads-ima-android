@@ -20,6 +20,7 @@ import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -218,7 +219,7 @@ public class AudioPlayerService extends Service {
       player.addAnalyticsListener(listener);
     }
 
-    public Player getPlayer() {
+    public ExoPlayer getPlayer() {
       return player;
     }
   }

@@ -20,6 +20,7 @@ import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -43,7 +44,7 @@ public final class ImaService
   private ImaProgressTracker progressTracker;
   private final Context context;
   private final AudioPlayerService.SharedAudioPlayer sharedAudioPlayer;
-  private final Player exoPlayer;
+  private final ExoPlayer exoPlayer;
   private final List<VideoAdPlayerCallback> callbacks;
   private final ImaSdkFactory sdkFactory;
   private final ImaSdkSettings imaSdkSettings;

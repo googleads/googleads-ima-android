@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
+import com.google.android.exoplayer2.source.MediaSourceFactory;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -26,7 +27,7 @@ public class MyActivity extends Activity {
 
     playerView = findViewById(R.id.player_view);
 
-    // Create an AdsLoader with the ad tag url.
+    // Create an AdsLoader.
     adsLoader = new ImaAdsLoader.Builder(/* context= */ this).build();
   }
 
@@ -92,9 +93,11 @@ public class MyActivity extends Activity {
     // Set up the factory for media sources, passing the ads loader and ad view providers.
     DataSource.Factory dataSourceFactory =
         new DefaultDataSourceFactory(this, Util.getUserAgent(this, getString(R.string.app_name)));
-    DefaultMediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(dataSourceFactory);
-    mediaSourceFactory.setAdsLoaderProvider(unusedAdTagUri -> adsLoader);
-    mediaSourceFactory.setAdViewProvider(playerView);
+
+    MediaSourceFactory mediaSourceFactory =
+            new DefaultMediaSourceFactory(dataSourceFactory)
+                    .setAdsLoaderProvider(unusedAdTagUri -> adsLoader)
+                    .setAdViewProvider(playerView);
 
     // Create a SimpleExoPlayer and set it as the player for content and ads.
     player = new SimpleExoPlayer.Builder(this).setMediaSourceFactory(mediaSourceFactory).build();

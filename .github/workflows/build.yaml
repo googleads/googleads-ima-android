@@ -39,7 +39,7 @@ jobs:
         run: echo "COMMIT_RANGE="HEAD~.."" >> $GITHUB_ENV
 
       - name: Build
-        run: github/workflows/build/build.sh
+        run: .github/workflows/build/build.sh
         shell: bash
         env:
           COMMIT_RANGE: ${{ env.COMMIT_RANGE }}

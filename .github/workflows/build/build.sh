@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-projects=("AdvancedExample" "BasicExample" "audioplayerexample")
+projects=("${REGEX}")
 
 for PROJ_DIR in "${projects[@]}"
 do

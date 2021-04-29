@@ -11,6 +11,7 @@ do
   if [[ -n "$(grep -E "(${PROJ_DIR}|\.github\/workflows)" <<< "${CHANGES}")" ]]; then
     echo "Building for ${PROJ_DIR}";
     pushd "$PROJ_DIR";
+    pwd
     ./gradlew build;
     popd;
   fi

@@ -1,5 +1,4 @@
 #!/bin/bash
-# aa
 
 set -eo pipefail
 

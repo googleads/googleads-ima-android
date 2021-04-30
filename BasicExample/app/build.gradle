@@ -13,6 +13,7 @@ android {
         applicationId "com.google.ads.interactivemedia.v3.samples.videoplayerapp"
         minSdkVersion 16
         targetSdkVersion 29
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
     }
@@ -30,10 +31,11 @@ repositories {
 }
 
 dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.13.2'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.13.2'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.13.3'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.13.3'
 
     // The library adds the IMA ExoPlayer integration for ads.
-    implementation 'com.google.android.exoplayer:extension-ima:2.13.2'
+    implementation 'com.google.android.exoplayer:extension-ima:2.13.3'
 }

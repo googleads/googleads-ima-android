@@ -5,6 +5,7 @@ Provides a build rule for building the BasicExample from Blaze.
 load("//java/com/google/ads/interactivemedia/v3/samples:build_defs.bzl", "build_sample_package")
 
 COMMON_DEPS = [
+    "//third_party/java/android/android_sdk_linux/extras/android/compatibility/multidex",
     "//third_party/java/android_libs/exoplayer:exoplayer2_core",
     "//third_party/java/android_libs/exoplayer:exoplayer2_dash",
     "//third_party/java/android_libs/exoplayer:exoplayer2_ext_ima",

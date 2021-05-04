@@ -122,28 +122,28 @@ public class AudioPlayerService extends Service {
         };
 
     playerNotificationManager =
-        PlayerNotificationManager.createWithNotificationChannel(
-            context,
-            PLAYBACK_CHANNEL_ID,
-            R.string.playback_channel_name,
-            R.string.playback_channel_description,
-            PLAYBACK_NOTIFICATION_ID,
-            descriptionAdapter,
-            new NotificationListener() {
-                public void onNotificationStarted(int notificationId, Notification notification,
-                                                  boolean ongoing) {
-                  // This must be called within 5 seconds of the notification being displayed and
-                  // before the main app has been killed.
-                  startForeground(notificationId, notification);
-                }
+        new PlayerNotificationManager.Builder(
+                context,
+                /* notificationId= */ PLAYBACK_NOTIFICATION_ID,
+                /* channelId= */ PLAYBACK_CHANNEL_ID,
+                descriptionAdapter)
+            .setChannelNameResourceId(R.string.playback_channel_name)
+            .setChannelDescriptionResourceId(R.string.playback_channel_description)
+            .setNotificationListener(
+                new NotificationListener() {
+                  public void onNotificationStarted(
+                      int notificationId, Notification notification, boolean ongoing) {
+                    // This must be called within 5 seconds of the notification being displayed and
+                    // before the main app has been killed.
+                    startForeground(notificationId, notification);
+                  }
 
-                @Override
-                public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-                  stopSelf();
-                }
-            }
-        );
-
+                  @Override
+                  public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
+                    stopSelf();
+                  }
+                })
+            .build();
     playerNotificationManager.setPlayer(player);
 
     mediaSession = new MediaSessionCompat(context, MEDIA_SESSION_TAG);

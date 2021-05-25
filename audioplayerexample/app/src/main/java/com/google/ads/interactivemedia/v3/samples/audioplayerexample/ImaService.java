@@ -216,7 +216,33 @@ public final class ImaService
   /** Encapsulates callbacks for ExoPlayer changes, and lets IMA know the state of playback */
   class ImaListener implements AnalyticsListener {
     @Override
-    public void onPlayerStateChanged(
+    public void onPlaybackStateChanged(EventTime eventTime, int playbackState) {
+      if (currentAd == null) {
+        // This may be null if state changes after stopAd for a given mediaInfo
+        return;
+      }
+      switch (playbackState) {
+        case Player.STATE_BUFFERING:
+          for (VideoAdPlayerCallback callback : callbacks) {
+            callback.onBuffering(currentAd);
+          }
+          break;
+        case Player.STATE_READY:
+          for (VideoAdPlayerCallback callback : callbacks) {
+            callback.onLoaded(currentAd);
+          }
+          break;
+        case Player.STATE_ENDED:
+          // Handles when the media item in the source is completed.
+          notifyEnded();
+          break;
+        default:
+          break;
+      }
+    }
+
+    @Override
+    public void onPlayWhenReadyChanged(
         AnalyticsListener.EventTime eventTime, boolean playWhenReady, int playbackState) {
       if (currentAd == null) {
         // This may be null if state changes after stopAd for a given mediaInfo

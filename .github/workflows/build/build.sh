@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -eo pipefail
-
 projects=("${REGEX}")
 
 for PROJ_DIR in "${projects[@]}"

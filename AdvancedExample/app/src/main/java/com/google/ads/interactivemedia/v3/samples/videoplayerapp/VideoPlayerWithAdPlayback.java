@@ -57,7 +57,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
   private ContentProgressProvider contentProgressProvider;
 
   private final List<VideoAdPlayer.VideoAdPlayerCallback> adCallbacks =
-          new ArrayList<VideoAdPlayer.VideoAdPlayerCallback>(1);
+      new ArrayList<VideoAdPlayer.VideoAdPlayerCallback>(1);
 
   public VideoPlayerWithAdPlayback(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
@@ -83,16 +83,16 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     }
     timer = new Timer();
     TimerTask updateTimerTask =
-            new TimerTask() {
-              @Override
-              public void run() {
-                // Tell IMA the current video progress. A better implementation would be
-                // reactive to events from the media player, instead of polling.
-                for (VideoAdPlayer.VideoAdPlayerCallback callback : adCallbacks) {
-                  callback.onAdProgress(adMediaInfo, videoAdPlayer.getAdProgress());
-                }
-              }
-            };
+        new TimerTask() {
+          @Override
+          public void run() {
+            // Tell IMA the current video progress. A better implementation would be
+            // reactive to events from the media player, instead of polling.
+            for (VideoAdPlayer.VideoAdPlayerCallback callback : adCallbacks) {
+              callback.onAdProgress(adMediaInfo, videoAdPlayer.getAdProgress());
+            }
+          }
+        };
     int initialDelayMs = 250;
     int pollingTimeMs = 250;
     timer.schedule(updateTimerTask, pollingTimeMs, initialDelayMs);
@@ -115,78 +115,78 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
     // Define VideoAdPlayer connector.
     videoAdPlayer =
-            new VideoAdPlayer() {
-              @Override
-              public int getVolume() {
-                return videoPlayer.getVolume();
-              }
+        new VideoAdPlayer() {
+          @Override
+          public int getVolume() {
+            return videoPlayer.getVolume();
+          }
 
-              @Override
-              public void playAd(AdMediaInfo info) {
-                startTracking();
-                if (isAdDisplayed) {
-                  videoPlayer.resume();
-                } else {
-                  isAdDisplayed = true;
-                  videoPlayer.play();
-                }
-              }
+          @Override
+          public void playAd(AdMediaInfo info) {
+            startTracking();
+            if (isAdDisplayed) {
+              videoPlayer.resume();
+            } else {
+              isAdDisplayed = true;
+              videoPlayer.play();
+            }
+          }
 
-              @Override
-              public void loadAd(AdMediaInfo info, AdPodInfo api) {
-                adMediaInfo = info;
-                isAdDisplayed = false;
-                videoPlayer.setVideoPath(info.getUrl());
-              }
+          @Override
+          public void loadAd(AdMediaInfo info, AdPodInfo api) {
+            adMediaInfo = info;
+            isAdDisplayed = false;
+            videoPlayer.setVideoPath(info.getUrl());
+          }
 
-              @Override
-              public void stopAd(AdMediaInfo info) {
-                stopTracking();
-                videoPlayer.stopPlayback();
-              }
+          @Override
+          public void stopAd(AdMediaInfo info) {
+            stopTracking();
+            videoPlayer.stopPlayback();
+          }
 
-              @Override
-              public void pauseAd(AdMediaInfo info) {
-                stopTracking();
-                videoPlayer.pause();
-              }
+          @Override
+          public void pauseAd(AdMediaInfo info) {
+            stopTracking();
+            videoPlayer.pause();
+          }
 
-              @Override
-              public void release() {
-                // any clean up that needs to be done
-              }
+          @Override
+          public void release() {
+            // any clean up that needs to be done
+          }
 
-              @Override
-              public void addCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
-                adCallbacks.add(videoAdPlayerCallback);
-              }
+          @Override
+          public void addCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
+            adCallbacks.add(videoAdPlayerCallback);
+          }
 
-              @Override
-              public void removeCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
-                adCallbacks.remove(videoAdPlayerCallback);
-              }
+          @Override
+          public void removeCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
+            adCallbacks.remove(videoAdPlayerCallback);
+          }
 
-              @Override
-              public VideoProgressUpdate getAdProgress() {
-                if (!isAdDisplayed || videoPlayer.getDuration() <= 0) {
-                  return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
-                }
-                return new VideoProgressUpdate(
-                        videoPlayer.getCurrentPosition(), videoPlayer.getDuration());
-              }
-            };
+          @Override
+          public VideoProgressUpdate getAdProgress() {
+            if (!isAdDisplayed || videoPlayer.getDuration() <= 0) {
+              return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
+            }
+            return new VideoProgressUpdate(
+                videoPlayer.getCurrentPosition(), videoPlayer.getDuration());
+          }
+        };
 
     contentProgressProvider =
-            new ContentProgressProvider() {
-              @Override
-              public VideoProgressUpdate getContentProgress() {
-                if (isAdDisplayed || videoPlayer.getDuration() <= 0) {
-                  return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
-                }
-                return new VideoProgressUpdate(
-                        videoPlayer.getCurrentPosition(), videoPlayer.getDuration());
-              }
-            };
+        new ContentProgressProvider() {
+          @Override
+          public VideoProgressUpdate getContentProgress() {
+            if (isAdDisplayed || videoPlayer.getDuration() <= 0) {
+              return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
+            }
+            return new VideoProgressUpdate(
+                videoPlayer.getCurrentPosition(), videoPlayer.getDuration());
+          }
+        };
 
     // Set player callbacks for delegating major video events.
     videoPlayer.addPlayerCallback(

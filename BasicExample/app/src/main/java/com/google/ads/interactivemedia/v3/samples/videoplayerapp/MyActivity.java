@@ -97,9 +97,9 @@ public class MyActivity extends Activity {
         new DefaultDataSourceFactory(this, Util.getUserAgent(this, getString(R.string.app_name)));
 
     MediaSourceFactory mediaSourceFactory =
-            new DefaultMediaSourceFactory(dataSourceFactory)
-                    .setAdsLoaderProvider(unusedAdTagUri -> adsLoader)
-                    .setAdViewProvider(playerView);
+        new DefaultMediaSourceFactory(dataSourceFactory)
+            .setAdsLoaderProvider(unusedAdTagUri -> adsLoader)
+            .setAdViewProvider(playerView);
 
     // Create a SimpleExoPlayer and set it as the player for content and ads.
     player = new SimpleExoPlayer.Builder(this).setMediaSourceFactory(mediaSourceFactory).build();

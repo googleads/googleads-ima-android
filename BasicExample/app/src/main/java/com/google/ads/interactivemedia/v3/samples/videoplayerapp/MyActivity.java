@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.multidex.MultiDex;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
@@ -102,7 +103,7 @@ public class MyActivity extends Activity {
             .setAdViewProvider(playerView);
 
     // Create a SimpleExoPlayer and set it as the player for content and ads.
-    player = new SimpleExoPlayer.Builder(this).setMediaSourceFactory(mediaSourceFactory).build();
+    player = new ExoPlayer.Builder(this).setMediaSourceFactory(mediaSourceFactory).build();
     playerView.setPlayer(player);
     adsLoader.setPlayer(player);
 

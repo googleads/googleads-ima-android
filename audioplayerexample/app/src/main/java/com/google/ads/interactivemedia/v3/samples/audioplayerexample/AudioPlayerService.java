@@ -60,7 +60,7 @@ public class AudioPlayerService extends Service {
     final Context context = this;
     isAdPlaying = false;
 
-    player = new SimpleExoPlayer.Builder(context).build();
+    player = new ExoPlayer.Builder(context).build();
 
     DefaultDataSourceFactory dataSourceFactory =
         new DefaultDataSourceFactory(

@@ -16,6 +16,7 @@ import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.view.ViewGroup;
 import androidx.annotation.Nullable;
+import androidx.media3.common.upstream.DefaultDataSourceFactory;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
@@ -35,7 +36,6 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.BitmapCallback;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescriptionAdapter;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.NotificationListener;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
 

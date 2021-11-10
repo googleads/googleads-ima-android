@@ -102,12 +102,16 @@ public final class ImaService
 
   @Override
   public void onAdError(AdErrorEvent adErrorEvent) {
-    Log.e(LOGGING_TAG, "Ad Error: " + adErrorEvent.getError().getMessage());
+    if (adErrorEvent.getError().getMessage() != null) {
+      Log.e(LOGGING_TAG, "Ad Error: ".concat(adErrorEvent.getError().getMessage().toString()));
+    } else {
+      Log.e(LOGGING_TAG, "Ad Error: null");
+    }
   }
 
   @Override
   public void onAdEvent(AdEvent adEvent) {
-    Log.i(LOGGING_TAG, "Event: " + adEvent.getType());
+    Log.i(LOGGING_TAG, "Event: ".concat(adEvent.getType().toString()));
     switch (adEvent.getType()) {
       case LOADED:
         // If preloading we may to call start() at a particular time offset, instead of immediately.

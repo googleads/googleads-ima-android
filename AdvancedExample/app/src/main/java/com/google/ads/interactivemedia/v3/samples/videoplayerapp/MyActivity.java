@@ -1,6 +1,5 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
-import android.app.UiModeManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import com.google.android.gms.cast.framework.CastButtonFactory;
 
 /** Main Activity. */
 public class MyActivity extends AppCompatActivity
@@ -21,8 +19,6 @@ public class MyActivity extends AppCompatActivity
 
   private static final String VIDEO_PLAYLIST_FRAGMENT_TAG = "video_playlist_fragment_tag";
   private static final String VIDEO_EXAMPLE_FRAGMENT_TAG = "video_example_fragment_tag";
-
-  private CastApplication castApplication;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -40,28 +36,17 @@ public class MyActivity extends AppCompatActivity
           .commit();
     }
 
-    UiModeManager uiModeManager = (UiModeManager) getSystemService(UI_MODE_SERVICE);
-    if (uiModeManager.getCurrentModeType() != Configuration.UI_MODE_TYPE_TELEVISION) {
-      // Only create a cast application on devices that support cast.
-      castApplication = new CastApplication(this);
-    }
     orientAppUi();
   }
 
   @Override
   protected void onResume() {
     super.onResume();
-    if (castApplication != null) {
-      castApplication.onResume();
-    }
   }
 
   @Override
   protected void onPause() {
     super.onPause();
-    if (castApplication != null) {
-      castApplication.onPause();
-    }
   }
 
   @Override
@@ -71,8 +56,6 @@ public class MyActivity extends AppCompatActivity
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.my, menu);
 
-    CastButtonFactory.setUpMediaRouteButton(
-        getApplicationContext(), menu, R.id.media_route_menu_item);
     return true;
   }
 
@@ -99,11 +82,6 @@ public class MyActivity extends AppCompatActivity
     VideoFragment videoFragment =
         (VideoFragment) fragmentManager.findFragmentByTag(VIDEO_EXAMPLE_FRAGMENT_TAG);
 
-    if (castApplication != null) {
-      // When videoFragment is null, this lets the castApplication release its reference to the
-      // fragment.
-      castApplication.setVideoFragment(videoFragment);
-    }
     Fragment videoListFragment = fragmentManager.findFragmentByTag(VIDEO_PLAYLIST_FRAGMENT_TAG);
 
     if (videoFragment != null) {
@@ -154,10 +132,6 @@ public class MyActivity extends AppCompatActivity
           .commit();
     }
     videoFragment.loadVideo(videoItem);
-
-    if (castApplication != null) {
-      castApplication.setVideoFragment(videoFragment);
-    }
 
     invalidateOptionsMenu();
     orientAppUi();

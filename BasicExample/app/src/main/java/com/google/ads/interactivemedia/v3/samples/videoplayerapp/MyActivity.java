@@ -3,7 +3,9 @@ package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import androidx.multidex.MultiDex;
+import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
@@ -28,6 +30,8 @@ public class MyActivity extends Activity {
     MultiDex.install(this);
 
     playerView = findViewById(R.id.player_view);
+
+    Log.w("DO NOT SUBMIT", ExoPlayerLibraryInfo.VERSION_SLASHY);
 
     // Create an AdsLoader.
     adsLoader = new ImaAdsLoader.Builder(/* context= */ this).build();

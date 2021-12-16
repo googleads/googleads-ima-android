@@ -1,7 +1,6 @@
 package com.google.ads.interactivemedia.v3.samples.audioplayerexample;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -21,6 +20,7 @@ import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -155,7 +155,8 @@ public final class ImaService
           callback.onPlay(adMediaInfo);
         }
         MediaSource mediaSource =
-            new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(url));
+            new ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(url));
         sharedAudioPlayer.prepare(mediaSource);
       }
       exoPlayer.setPlayWhenReady(true);

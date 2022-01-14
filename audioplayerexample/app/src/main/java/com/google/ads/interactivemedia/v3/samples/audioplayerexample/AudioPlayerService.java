@@ -23,7 +23,6 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator;
@@ -35,8 +34,7 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.BitmapCallback;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescriptionAdapter;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.NotificationListener;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -46,7 +44,7 @@ import com.google.common.collect.ImmutableList;
 public class AudioPlayerService extends Service {
 
   private boolean isAdPlaying;
-  private SimpleExoPlayer player;
+  private ExoPlayer player;
   private PlayerNotificationManager playerNotificationManager;
   private MediaSessionCompat mediaSession;
   private MediaSessionConnector mediaSessionConnector;
@@ -60,11 +58,9 @@ public class AudioPlayerService extends Service {
     final Context context = this;
     isAdPlaying = false;
 
-    player = new SimpleExoPlayer.Builder(context).build();
+    player = new ExoPlayer.Builder(context).build();
 
-    DefaultDataSourceFactory dataSourceFactory =
-        new DefaultDataSourceFactory(
-            context, Util.getUserAgent(context, getString(R.string.application_name)));
+    DefaultDataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(context);
 
     contentMediaSource =
         new ConcatenatingMediaSource(
@@ -89,7 +85,7 @@ public class AudioPlayerService extends Service {
             if (isAdPlaying) {
               return getString(R.string.ad_content_title);
             }
-            return sampleList[player.getCurrentWindowIndex()].title;
+            return sampleList[player.getCurrentMediaItemIndex()].title;
           }
 
           @Nullable
@@ -105,7 +101,7 @@ public class AudioPlayerService extends Service {
               // Null will remove the extra line for description.
               return null;
             }
-            return sampleList[player.getCurrentWindowIndex()].description;
+            return sampleList[player.getCurrentMediaItemIndex()].description;
           }
 
           @Nullable
@@ -117,7 +113,7 @@ public class AudioPlayerService extends Service {
               return null;
             }
             return Samples.getBitmap(
-                context, sampleList[player.getCurrentWindowIndex()].bitmapResource);
+                context, sampleList[player.getCurrentMediaItemIndex()].bitmapResource);
           }
         };
 
@@ -125,8 +121,8 @@ public class AudioPlayerService extends Service {
         new PlayerNotificationManager.Builder(
                 context,
                 /* notificationId= */ PLAYBACK_NOTIFICATION_ID,
-                /* channelId= */ PLAYBACK_CHANNEL_ID,
-                descriptionAdapter)
+                /* channelId= */ PLAYBACK_CHANNEL_ID)
+            .setMediaDescriptionAdapter(descriptionAdapter)
             .setChannelNameResourceId(R.string.playback_channel_name)
             .setChannelDescriptionResourceId(R.string.playback_channel_description)
             .setNotificationListener(
@@ -192,7 +188,7 @@ public class AudioPlayerService extends Service {
 
   /**
    * A limited API for the ImaService which provides a minimal surface of control over playback on
-   * the shared SimpleExoPlayer instance.
+   * the shared ExoPlayer instance.
    */
   class SharedAudioPlayer {
     public void claim() {

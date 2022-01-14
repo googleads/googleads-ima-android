@@ -1,6 +1,7 @@
 package com.google.ads.interactivemedia.v3.samples.audioplayerexample;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -25,7 +26,7 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,13 +49,13 @@ public final class ImaService
   private final List<VideoAdPlayerCallback> callbacks;
   private final ImaSdkFactory sdkFactory;
   private final ImaSdkSettings imaSdkSettings;
-  private final DefaultDataSourceFactory dataSourceFactory;
+  private final DefaultDataSource.Factory dataSourceFactory;
 
   public ImaVideoAdPlayer imaVideoAdPlayer = new ImaVideoAdPlayer();
 
   ImaService(
       Context context,
-      DefaultDataSourceFactory dataSourceFactory,
+      DefaultDataSource.Factory dataSourceFactory,
       AudioPlayerService.SharedAudioPlayer sharedAudioPlayer) {
     this.context = context;
     this.sharedAudioPlayer = sharedAudioPlayer;
@@ -154,9 +155,9 @@ public final class ImaService
         for (VideoAdPlayerCallback callback : callbacks) {
           callback.onPlay(adMediaInfo);
         }
+        MediaItem mediaItem = new MediaItem.Builder().setUri(Uri.parse(url)).build();
         MediaSource mediaSource =
-            new ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(url));
+            new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem);
         sharedAudioPlayer.prepare(mediaSource);
       }
       exoPlayer.setPlayWhenReady(true);
@@ -210,10 +211,10 @@ public final class ImaService
 
     @Override
     public int getVolume() {
-      if (exoPlayer.getAudioComponent() == null) {
+      if (exoPlayer == null) {
         return -1;
       } else {
-        return (int) (100 * exoPlayer.getAudioComponent().getVolume());
+        return (int) (100 * exoPlayer.getVolume());
       }
     }
   }

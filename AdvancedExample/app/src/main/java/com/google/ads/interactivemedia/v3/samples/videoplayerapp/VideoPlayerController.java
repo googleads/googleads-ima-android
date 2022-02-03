@@ -129,6 +129,10 @@ public class VideoPlayerController {
                   }
                   adsLoader.release();
                   break;
+                case AD_BREAK_FETCH_ERROR:
+                  log("Ad Fetch Error. Resuming content.");
+                  // A CONTENT_RESUME_REQUESTED event should follow to trigger content playback.
+                  break;
                 default:
                   break;
               }

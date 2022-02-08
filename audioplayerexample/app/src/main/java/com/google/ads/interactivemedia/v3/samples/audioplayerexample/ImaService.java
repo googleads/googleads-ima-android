@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import androidx.annotation.Nullable;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
 import com.google.ads.interactivemedia.v3.api.AdEvent;
@@ -194,6 +195,7 @@ public final class ImaService
       callbacks.remove(callback);
     }
 
+    @Nullable
     @Override
     public VideoProgressUpdate getAdProgress() {
       if (currentAd == null) {

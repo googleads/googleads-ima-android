@@ -4,21 +4,21 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.multidex.MultiDex;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
-import com.google.android.exoplayer2.source.MediaSourceFactory;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 /** Main Activity. */
 public class MyActivity extends Activity {
 
-  private PlayerView playerView;
-  private SimpleExoPlayer player;
+  private StyledPlayerView playerView;
+  private ExoPlayer player;
   private ImaAdsLoader adsLoader;
 
   @Override
@@ -93,23 +93,26 @@ public class MyActivity extends Activity {
 
   private void initializePlayer() {
     // Set up the factory for media sources, passing the ads loader and ad view providers.
-    DataSource.Factory dataSourceFactory =
-        new DefaultDataSourceFactory(this, Util.getUserAgent(this, getString(R.string.app_name)));
+    DataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(this);
 
-    MediaSourceFactory mediaSourceFactory =
+    MediaSource.Factory mediaSourceFactory =
         new DefaultMediaSourceFactory(dataSourceFactory)
             .setAdsLoaderProvider(unusedAdTagUri -> adsLoader)
             .setAdViewProvider(playerView);
 
     // Create a SimpleExoPlayer and set it as the player for content and ads.
-    player = new SimpleExoPlayer.Builder(this).setMediaSourceFactory(mediaSourceFactory).build();
+    player = new ExoPlayer.Builder(this).setMediaSourceFactory(mediaSourceFactory).build();
     playerView.setPlayer(player);
     adsLoader.setPlayer(player);
 
     // Create the MediaItem to play, specifying the content URI and ad tag URI.
     Uri contentUri = Uri.parse(getString(R.string.content_url));
     Uri adTagUri = Uri.parse(getString(R.string.ad_tag_url));
-    MediaItem mediaItem = new MediaItem.Builder().setUri(contentUri).setAdTagUri(adTagUri).build();
+    MediaItem mediaItem =
+        new MediaItem.Builder()
+            .setUri(contentUri)
+            .setAdsConfiguration(new MediaItem.AdsConfiguration.Builder(adTagUri).build())
+            .build();
 
     // Prepare the content and ad to be played with the SimpleExoPlayer.
     player.setMediaItem(mediaItem);

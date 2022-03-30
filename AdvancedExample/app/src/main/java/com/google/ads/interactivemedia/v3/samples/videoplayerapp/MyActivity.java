@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.multidex.MultiDex;
 
 /** Main Activity. */
 public class MyActivity extends AppCompatActivity
@@ -24,6 +25,7 @@ public class MyActivity extends AppCompatActivity
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_my);
+    MultiDex.install(this);
 
     // The video list fragment won't exist for phone layouts, so add it dynamically so we can
     // .replace() it once the user selects a video.

@@ -7,7 +7,7 @@
     tools:context=".MyActivity"
     tools:ignore="MergeRootFrame">
 
-    <com.google.android.exoplayer2.ui.PlayerView
+    <com.google.android.exoplayer2.ui.StyledPlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

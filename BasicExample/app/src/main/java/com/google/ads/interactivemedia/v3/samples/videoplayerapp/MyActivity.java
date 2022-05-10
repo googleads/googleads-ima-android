@@ -100,7 +100,7 @@ public class MyActivity extends Activity {
             .setAdsLoaderProvider(unusedAdTagUri -> adsLoader)
             .setAdViewProvider(playerView);
 
-    // Create a SimpleExoPlayer and set it as the player for content and ads.
+    // Create an ExoPlayer and set it as the player for content and ads.
     player = new ExoPlayer.Builder(this).setMediaSourceFactory(mediaSourceFactory).build();
     playerView.setPlayer(player);
     adsLoader.setPlayer(player);

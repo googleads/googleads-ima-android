@@ -30,7 +30,7 @@ jobs:
       - name: Clone Repo
         uses: actions/checkout@v1
 
-      - name: Set commit range (push to the main branch, e.g. merge)
+      - name: Set commit range (push to the main branch, for example, merge)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: echo "COMMIT_RANGE="${{ github.event.before }}.."" >> $GITHUB_ENV
 

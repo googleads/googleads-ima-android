@@ -202,7 +202,7 @@ public class AudioPlayerService extends Service {
         player.setMediaSource(contentMediaSource);
         player.prepare();
         player.setPlayWhenReady(true);
-        // TODO: Seek to where you left off the stream, if desired.
+        // TODO: Seek to where you left off the stream, if needed.
       }
     }
 

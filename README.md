@@ -17,5 +17,5 @@ For more information, see the documentation at https://developers.google.com/int
 
 ### Announcements and Updates
 
-For IMA SDK updates and news, please follow our
+For IMA SDK updates and news, follow our
 [Google Ads Developers blog](https://ads-developers.googleblog.com/)

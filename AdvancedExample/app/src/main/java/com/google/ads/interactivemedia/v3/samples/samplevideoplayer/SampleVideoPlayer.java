@@ -13,7 +13,7 @@ import android.widget.VideoView;
 import java.util.ArrayList;
 import java.util.List;
 
-/** A VideoView that intercepts various methods and reports them back via a PlayerCallback. */
+/** A VideoView that intercepts various methods and reports them back through a PlayerCallback. */
 public class SampleVideoPlayer extends VideoView implements VideoPlayer {
 
   private enum PlaybackState {

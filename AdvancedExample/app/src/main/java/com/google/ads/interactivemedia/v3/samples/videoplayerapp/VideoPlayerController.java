@@ -68,7 +68,7 @@ public class VideoPlayerController {
 
   // Inner class implementation of AdsLoader.AdsLoaderListener.
   private class AdsLoadedListener implements AdsLoader.AdsLoadedListener {
-    /** An event raised when ads are successfully loaded from the ad server via AdsLoader. */
+    /** An event raised when ads are successfully loaded from the ad server through AdsLoader. */
     @Override
     public void onAdsManagerLoaded(AdsManagerLoadedEvent adsManagerLoadedEvent) {
       // Ads were successfully loaded, so get the AdsManager instance. AdsManager has

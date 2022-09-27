@@ -15,14 +15,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
     compileOptions {
         targetCompatibility JavaVersion.VERSION_11
     }
     defaultConfig {
         applicationId "com.google.ads.interactivemedia.v3.samples.audioplayerexample.app"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
     }
@@ -41,11 +41,11 @@ repositories {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'androidx.media:media:1.5.0'
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.17.1'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.17.1'
-    implementation 'com.google.android.exoplayer:extension-mediasession:2.17.1'
+    implementation 'androidx.media:media:1.6.0'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.1'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.18.1'
     implementation 'com.google.guava:guava:28.1-android'
 
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.27.0'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.28.2'
 }

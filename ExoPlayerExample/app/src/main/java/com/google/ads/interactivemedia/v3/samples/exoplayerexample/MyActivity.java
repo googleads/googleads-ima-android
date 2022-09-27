@@ -1,4 +1,4 @@
-package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
+package com.google.ads.interactivemedia.v3.samples.exoplayerexample;
 
 import android.app.Activity;
 import android.net.Uri;
@@ -16,6 +16,13 @@ import com.google.android.exoplayer2.util.Util;
 
 /** Main Activity. */
 public class MyActivity extends Activity {
+
+  private static final String SAMPLE_VIDEO_URL =
+      "https://storage.googleapis.com/gvabox/media/samples/stock.mp4";
+  private static final String SAMPLE_VAST_TAG_URL =
+      "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/"
+          + "single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90"
+          + "&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=";
 
   private StyledPlayerView playerView;
   private ExoPlayer player;
@@ -106,8 +113,8 @@ public class MyActivity extends Activity {
     adsLoader.setPlayer(player);
 
     // Create the MediaItem to play, specifying the content URI and ad tag URI.
-    Uri contentUri = Uri.parse(getString(R.string.content_url));
-    Uri adTagUri = Uri.parse(getString(R.string.ad_tag_url));
+    Uri contentUri = Uri.parse(SAMPLE_VIDEO_URL);
+    Uri adTagUri = Uri.parse(SAMPLE_VAST_TAG_URL);
     MediaItem mediaItem =
         new MediaItem.Builder()
             .setUri(contentUri)

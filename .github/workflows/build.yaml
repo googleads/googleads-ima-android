@@ -19,7 +19,8 @@ jobs:
       matrix:
         regex:
         - "AdvancedExample"
-        - "BasicExample"
+        - "ExoPlayerExample"
+        - "basicexample"
         - "audioplayerexample"
     steps:
       - name: Set up JDK 11

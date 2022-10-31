@@ -54,9 +54,9 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
           @Override
           public void onCompletion(MediaPlayer mediaPlayer) {
             // Reset the MediaPlayer.
+            playbackState = PlaybackState.STOPPED;
             mediaPlayer.reset();
             mediaPlayer.setDisplay(getHolder());
-            playbackState = PlaybackState.STOPPED;
 
             for (PlayerCallback callback : videoPlayerCallbacks) {
               callback.onComplete();

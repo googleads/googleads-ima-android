@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace 'com.google.ads.interactivemedia.v3.samples.videoplayerapp'
     compileSdkVersion 32
 
     // Java 11 required by Gradle 7.0.2
@@ -33,7 +34,7 @@ repositories {
 
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.28.2'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.29.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'

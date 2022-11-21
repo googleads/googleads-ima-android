@@ -15,12 +15,13 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace 'com.google.ads.interactivemedia.v3.samples.audioplayerexample'
     compileSdkVersion 32
     compileOptions {
         targetCompatibility JavaVersion.VERSION_11
     }
     defaultConfig {
-        applicationId "com.google.ads.interactivemedia.v3.samples.audioplayerexample.app"
+        applicationId "com.google.ads.interactivemedia.v3.samples.audioplayerexample"
         minSdkVersion 21
         targetSdkVersion 32
         versionCode 1

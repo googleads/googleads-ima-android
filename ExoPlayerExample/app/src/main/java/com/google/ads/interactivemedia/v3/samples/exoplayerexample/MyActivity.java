@@ -104,8 +104,7 @@ public class MyActivity extends Activity {
 
     MediaSource.Factory mediaSourceFactory =
         new DefaultMediaSourceFactory(dataSourceFactory)
-            .setAdsLoaderProvider(unusedAdTagUri -> adsLoader)
-            .setAdViewProvider(playerView);
+            .setLocalAdInsertionComponents(unusedAdTagUri -> adsLoader, playerView);
 
     // Create an ExoPlayer and set it as the player for content and ads.
     player = new ExoPlayer.Builder(this).setMediaSourceFactory(mediaSourceFactory).build();

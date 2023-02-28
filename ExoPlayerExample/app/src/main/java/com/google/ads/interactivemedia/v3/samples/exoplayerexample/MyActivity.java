@@ -1,9 +1,5 @@
 package com.google.ads.interactivemedia.v3.samples.exoplayerexample;
 
-import android.app.Activity;
-import android.net.Uri;
-import android.os.Bundle;
-import androidx.multidex.MultiDex;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
@@ -13,6 +9,12 @@ import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.util.Util;
+
+import android.app.Activity;
+import android.net.Uri;
+import android.os.Bundle;
+
+import androidx.multidex.MultiDex;
 
 /** Main Activity. */
 public class MyActivity extends Activity {
@@ -121,7 +123,9 @@ public class MyActivity extends Activity {
             .build();
 
     // Prepare the content and ad to be played with the SimpleExoPlayer.
-    player.setMediaItem(mediaItem);
+    DefaultDataSource.Factory defaultDataSourceFactory = new DefaultDataSource.Factory(this.getApplicationContext());
+    MediaSource mediaSource = new DefaultMediaSourceFactory(defaultDataSourceFactory).createMediaSource(mediaItem);
+    player.setMediaSource(mediaSource);
     player.prepare();
 
     // Set PlayWhenReady. If true, content and ads will autoplay.

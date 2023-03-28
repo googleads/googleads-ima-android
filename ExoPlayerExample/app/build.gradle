@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     namespace 'com.google.ads.interactivemedia.v3.samples.exoplayerexample'
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     // Java 11 required by Gradle 7.0.2
     compileOptions {
@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId "com.google.ads.interactivemedia.v3.samples.exoplayerexample"
         minSdkVersion 16
-        targetSdkVersion 32
+        targetSdkVersion 33
         multiDexEnabled true
         versionCode 1
         versionName "1.0"
@@ -33,10 +33,11 @@ repositories {
 
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.android.support.constraint:constraint-layout:2.0.4'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.2'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.2'
 
     // The library adds the IMA ExoPlayer integration for ads.
-    implementation 'com.google.android.exoplayer:extension-ima:2.18.1'
+    implementation 'com.google.android.exoplayer:extension-ima:2.18.2'
 }

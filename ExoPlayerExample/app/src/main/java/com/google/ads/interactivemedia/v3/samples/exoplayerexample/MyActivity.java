@@ -3,7 +3,11 @@ package com.google.ads.interactivemedia.v3.samples.exoplayerexample;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.widget.TextView;
 import androidx.multidex.MultiDex;
+import com.google.ads.interactivemedia.v3.api.AdEvent;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
@@ -23,8 +27,10 @@ public class MyActivity extends Activity {
       "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/"
           + "single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90"
           + "&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=";
+  private static final String LOG_TAG = "ImaExoPlayerExample";
 
   private StyledPlayerView playerView;
+  private TextView logText;
   private ExoPlayer player;
   private ImaAdsLoader adsLoader;
 
@@ -37,7 +43,30 @@ public class MyActivity extends Activity {
     playerView = findViewById(R.id.player_view);
 
     // Create an AdsLoader.
-    adsLoader = new ImaAdsLoader.Builder(/* context= */ this).build();
+    adsLoader =
+        new ImaAdsLoader.Builder(/* context= */ this)
+            .setAdEventListener(buildAdEventListener())
+            .build();
+  }
+
+  public AdEvent.AdEventListener buildAdEventListener() {
+    logText = findViewById(R.id.logText);
+    logText.setMovementMethod(new ScrollingMovementMethod());
+
+    AdEvent.AdEventListener imaAdEventListener =
+        event -> {
+          AdEvent.AdEventType eventType = event.getType();
+          if (eventType == AdEvent.AdEventType.AD_PROGRESS) {
+            return;
+          }
+          String log = "IMA event: " + eventType;
+          if (logText != null) {
+            logText.append(log + "\n");
+          }
+          Log.i(LOG_TAG, log);
+        };
+
+    return imaAdEventListener;
   }
 
   @Override

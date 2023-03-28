@@ -12,4 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <!-- UI element for viewing SDK event log -->
+    <TextView
+        android:id="@+id/logText"
+        android:gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="100"
+        android:scrollbars="vertical"
+        android:textSize="@dimen/font_size">
+    </TextView>
+
 </LinearLayout>

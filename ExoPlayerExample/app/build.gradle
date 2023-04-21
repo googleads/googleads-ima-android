@@ -4,10 +4,10 @@ android {
     namespace 'com.google.ads.interactivemedia.v3.samples.exoplayerexample'
     compileSdkVersion 33
 
-    // Java 11 required by Gradle 7.0.2
+    // Java 17 required by Gradle 8.0.0
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     defaultConfig {

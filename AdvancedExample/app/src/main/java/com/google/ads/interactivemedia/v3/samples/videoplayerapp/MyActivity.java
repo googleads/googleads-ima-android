@@ -1,7 +1,6 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -151,19 +150,15 @@ public class MyActivity extends AppCompatActivity
   }
 
   private void hideStatusBar() {
-    if (Build.VERSION.SDK_INT >= 16) {
-      getWindow()
-          .getDecorView()
-          .setSystemUiVisibility(
-              View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
-      getSupportActionBar().hide();
-    }
+    getWindow()
+        .getDecorView()
+        .setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    getSupportActionBar().hide();
   }
 
   private void showStatusBar() {
-    if (Build.VERSION.SDK_INT >= 16) {
-      getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-      getSupportActionBar().show();
-    }
+    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+    getSupportActionBar().show();
   }
 }

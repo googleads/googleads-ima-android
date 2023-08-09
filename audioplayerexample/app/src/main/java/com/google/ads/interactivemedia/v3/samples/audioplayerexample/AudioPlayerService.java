@@ -1,6 +1,5 @@
 package com.google.ads.interactivemedia.v3.samples.audioplayerexample;
 
-import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.MEDIA_SESSION_TAG;
 import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.PLAYBACK_CHANNEL_ID;
 import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.PLAYBACK_NOTIFICATION_ID;
 
@@ -12,29 +11,26 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.v4.media.MediaDescriptionCompat;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.view.ViewGroup;
 import androidx.annotation.Nullable;
+import androidx.media3.common.C;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.datasource.DefaultDataSource;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.analytics.AnalyticsListener;
+import androidx.media3.exoplayer.source.ConcatenatingMediaSource;
+import androidx.media3.exoplayer.source.MediaSource;
+import androidx.media3.exoplayer.source.ProgressiveMediaSource;
+import androidx.media3.exoplayer.source.ShuffleOrder;
+import androidx.media3.session.MediaSession;
+import androidx.media3.ui.PlayerNotificationManager;
+import androidx.media3.ui.PlayerNotificationManager.BitmapCallback;
+import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter;
+import androidx.media3.ui.PlayerNotificationManager.NotificationListener;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.analytics.AnalyticsListener;
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
-import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.ShuffleOrder;
-import com.google.android.exoplayer2.ui.PlayerNotificationManager;
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.BitmapCallback;
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescriptionAdapter;
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.NotificationListener;
-import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -46,13 +42,13 @@ public class AudioPlayerService extends Service {
   private boolean isAdPlaying;
   private ExoPlayer player;
   private PlayerNotificationManager playerNotificationManager;
-  private MediaSessionCompat mediaSession;
-  private MediaSessionConnector mediaSessionConnector;
+  private MediaSession mediaSession;
   private ImaService imaService;
   private ConcatenatingMediaSource contentMediaSource;
   private final Samples.Sample[] sampleList = Samples.getSamples();
 
   @Override
+  @androidx.media3.common.util.UnstableApi
   public void onCreate() {
     super.onCreate();
     final Context context = this;
@@ -142,24 +138,9 @@ public class AudioPlayerService extends Service {
             .build();
     playerNotificationManager.setPlayer(player);
 
-    mediaSession = new MediaSessionCompat(context, MEDIA_SESSION_TAG);
-    mediaSession.setActive(true);
-    playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
+    mediaSession = new MediaSession.Builder(context, player).build();
 
-    mediaSessionConnector = new MediaSessionConnector(mediaSession);
-    mediaSessionConnector.setQueueNavigator(
-        new TimelineQueueNavigator(mediaSession) {
-          @Override
-          public MediaDescriptionCompat getMediaDescription(Player player, int windowIndex) {
-            if (isAdPlaying) {
-              return new MediaDescriptionCompat.Builder()
-                  .setDescription(getString(R.string.ad_content_title))
-                  .build();
-            }
-            return Samples.getMediaDescription(context, sampleList[windowIndex]);
-          }
-        });
-    mediaSessionConnector.setPlayer(player);
+    playerNotificationManager.setMediaSessionToken(mediaSession.getSessionCompatToken());
 
     imaService = new ImaService(context, dataSourceFactory, new SharedAudioPlayer());
   }
@@ -167,8 +148,7 @@ public class AudioPlayerService extends Service {
   @Override
   public void onDestroy() {
     mediaSession.release();
-    mediaSessionConnector.setPlayer(null);
-    playerNotificationManager.setPlayer(null);
+    mediaSession = null;
     player.release();
     player = null;
 
@@ -196,6 +176,7 @@ public class AudioPlayerService extends Service {
       player.setPlayWhenReady(false);
     }
 
+    @androidx.media3.common.util.UnstableApi
     public void release() {
       if (isAdPlaying) {
         isAdPlaying = false;
@@ -206,6 +187,7 @@ public class AudioPlayerService extends Service {
       }
     }
 
+    @androidx.media3.common.util.UnstableApi
     public void prepare(MediaSource mediaSource) {
       player.setMediaSource(mediaSource);
       player.prepare();

@@ -6,6 +6,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import androidx.annotation.Nullable;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.datasource.DefaultDataSource;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.analytics.AnalyticsListener;
+import androidx.media3.exoplayer.source.MediaSource;
+import androidx.media3.exoplayer.source.ProgressiveMediaSource;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
 import com.google.ads.interactivemedia.v3.api.AdEvent;
@@ -21,13 +28,6 @@ import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.analytics.AnalyticsListener;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +54,7 @@ public final class ImaService
 
   public ImaVideoAdPlayer imaVideoAdPlayer = new ImaVideoAdPlayer();
 
+  @androidx.media3.common.util.UnstableApi
   ImaService(
       Context context,
       DefaultDataSource.Factory dataSourceFactory,
@@ -112,6 +113,7 @@ public final class ImaService
   }
 
   @Override
+  @androidx.media3.common.util.UnstableApi
   public void onAdEvent(AdEvent adEvent) {
     Log.i(LOGGING_TAG, "Event: ".concat(adEvent.getType().toString()));
     switch (adEvent.getType()) {
@@ -144,6 +146,7 @@ public final class ImaService
     }
 
     @Override
+    @androidx.media3.common.util.UnstableApi
     public void playAd(AdMediaInfo adMediaInfo) {
       String url = adMediaInfo.getUrl();
       progressTracker.start();
@@ -222,6 +225,7 @@ public final class ImaService
   }
 
   /** Encapsulates callbacks for ExoPlayer changes, and lets IMA know the state of playback */
+  @androidx.media3.common.util.UnstableApi
   class ImaListener implements AnalyticsListener {
     @Override
     public void onPlaybackStateChanged(EventTime eventTime, int playbackState) {

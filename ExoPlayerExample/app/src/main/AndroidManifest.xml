@@ -3,7 +3,10 @@
 
     <!-- Required permissions for the IMA SDK -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- Required by ExoPlayer when targeting Android 13+ to be able to post notifications. -->
+    <!-- See https://github.com/google/ExoPlayer/issues/10884 for more info. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"

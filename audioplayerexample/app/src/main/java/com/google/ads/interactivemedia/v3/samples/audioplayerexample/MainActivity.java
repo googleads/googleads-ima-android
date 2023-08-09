@@ -15,7 +15,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import com.google.android.exoplayer2.util.Util;
+import androidx.media3.common.util.Util;
 
 /** App featuring an audio playlist and buttons to trigger ad playback. */
 public class MainActivity extends Activity {
@@ -33,6 +33,7 @@ public class MainActivity extends Activity {
   private boolean serviceBound = false;
 
   @Override
+  @androidx.media3.common.util.UnstableApi
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main_activity);

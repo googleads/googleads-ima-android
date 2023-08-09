@@ -6,17 +6,17 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.util.Util;
+import androidx.media3.datasource.DataSource;
+import androidx.media3.datasource.DefaultDataSource;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.ima.ImaAdsLoader;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.exoplayer.source.MediaSource;
+import androidx.media3.ui.PlayerView;
 import androidx.multidex.MultiDex;
 import com.google.ads.interactivemedia.v3.api.AdEvent;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.ext.ima.ImaAdsLoader;
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.ui.StyledPlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSource;
-import com.google.android.exoplayer2.util.Util;
 
 /** Main Activity. */
 public class MyActivity extends Activity {
@@ -29,7 +29,7 @@ public class MyActivity extends Activity {
           + "&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=";
   private static final String LOG_TAG = "ImaExoPlayerExample";
 
-  private StyledPlayerView playerView;
+  private PlayerView playerView;
   private TextView logText;
   private ExoPlayer player;
   private ImaAdsLoader adsLoader;

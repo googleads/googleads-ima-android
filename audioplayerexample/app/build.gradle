@@ -50,5 +50,5 @@ dependencies {
     implementation "androidx.media3:media3-session:$media3_version"
 
     implementation 'com.google.guava:guava:28.1-android'
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.30.2'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.30.3'
 }

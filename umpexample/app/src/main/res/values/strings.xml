@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" translatable="false">IMA UMP Example</string>
+    <string name="action_settings" description="Settings [CHAR_LIMIT=NONE]">Settings</string>
+
+    <!-- Play button description [CHAR LIMIT=50] -->
+    <string name="play_description" description="Description for a play button [CHAR_LIMIT=NONE]">Play button</string>
+    <string name="content_url" translatable="false"><![CDATA[https://storage.googleapis.com/gvabox/media/samples/stock.mp4]]></string>
+    <string name="ad_tag_url" translatable="false"><![CDATA[https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&sz=640x480&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=]]></string>
+    <string name="privacy_button_text" description="Text for the privacy button [CHAR_LIMIT=NONE]">Privacy settings</string>
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.google.ads.interactivemedia.v3.samples.umpimaapp">
+
+  <!-- Required permissions for the IMA SDK -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:taskAffinity="">
+         <!-- The Application ID for the IMA example app. The UMP requires an app ID. -->
+         <!-- See this guide for more details: https://developers.google.com/interactive-media-ads/ump/android/quick-start#add_app_id_to -->
+         <!-- Sample IMA App ID: ca-app-pub-9939518381636264~8191772326 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9939518381636264~8191772326"/>
+        <activity
+            android:name=".MyActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

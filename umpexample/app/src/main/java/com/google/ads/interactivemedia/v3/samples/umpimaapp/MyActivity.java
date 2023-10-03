@@ -50,6 +50,8 @@ public class MyActivity extends AppCompatActivity {
   // AdsManager exposes methods to control ad playback and listen to ad events.
   private AdsManager adsManager;
 
+  private AdDisplayContainer adDisplayContainer;
+
   // The saved content position, used to resumed content following an ad break.
   private int savedPosition = 0;
 
@@ -121,7 +123,7 @@ public class MyActivity extends AppCompatActivity {
   private void initializeImaSdk() {
     sdkFactory = ImaSdkFactory.getInstance();
 
-    AdDisplayContainer adDisplayContainer =
+    adDisplayContainer =
         ImaSdkFactory.createAdDisplayContainer(videoPlayerContainer, videoAdPlayerAdapter);
 
     createAdsLoader();

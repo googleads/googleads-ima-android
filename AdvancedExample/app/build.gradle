@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.google.ads.interactivemedia.v3.samples.videoplayerapp"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 33
         multiDexEnabled true
         versionCode 1

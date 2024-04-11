@@ -3,11 +3,13 @@ package com.google.ads.interactivemedia.v3.samples.audioplayerexample;
 import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.PLAYBACK_CHANNEL_ID;
 import static com.google.ads.interactivemedia.v3.samples.audioplayerexample.Constants.PLAYBACK_NOTIFICATION_ID;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
 import android.os.Binder;
 import android.os.IBinder;
@@ -37,18 +39,20 @@ import com.google.common.collect.ImmutableList;
  * Allows audio playback with hooks for advertisements. This is meant to run as a Foreground Service
  * to enable playback to continue even if the app is minimized or cleaned up.
  */
+@SuppressLint("UnsafeOptInUsageError")
+/* @SuppressLint is needed for new media3 APIs. */
 public class AudioPlayerService extends Service {
 
   private boolean isAdPlaying;
   private ExoPlayer player;
-  private PlayerNotificationManager playerNotificationManager;
   private MediaSession mediaSession;
-  private ImaService imaService;
+  private PlayerNotificationManager playerNotificationManager;
   private ConcatenatingMediaSource contentMediaSource;
+  private ImaService imaService;
+
   private final Samples.Sample[] sampleList = Samples.getSamples();
 
   @Override
-  @androidx.media3.common.util.UnstableApi
   public void onCreate() {
     super.onCreate();
     final Context context = this;
@@ -127,7 +131,10 @@ public class AudioPlayerService extends Service {
                       int notificationId, Notification notification, boolean ongoing) {
                     // This must be called within 5 seconds of the notification being displayed and
                     // before the main app has been killed.
-                    startForeground(notificationId, notification);
+                    startForeground(
+                        notificationId,
+                        notification,
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
                   }
 
                   @Override
@@ -176,7 +183,6 @@ public class AudioPlayerService extends Service {
       player.setPlayWhenReady(false);
     }
 
-    @androidx.media3.common.util.UnstableApi
     public void release() {
       if (isAdPlaying) {
         isAdPlaying = false;
@@ -187,7 +193,6 @@ public class AudioPlayerService extends Service {
       }
     }
 
-    @androidx.media3.common.util.UnstableApi
     public void prepare(MediaSource mediaSource) {
       player.setMediaSource(mediaSource);
       player.prepare();

@@ -1,5 +1,8 @@
 package com.google.ads.interactivemedia.v3.samples.exoplayerexample;
 
+import static android.os.Build.VERSION.SDK_INT;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,7 +10,6 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
 import androidx.media3.common.MediaItem;
-import androidx.media3.common.util.Util;
 import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
@@ -19,6 +21,8 @@ import androidx.multidex.MultiDex;
 import com.google.ads.interactivemedia.v3.api.AdEvent;
 
 /** Main Activity. */
+@SuppressLint("UnsafeOptInUsageError")
+/* @SuppressLint is needed for new media3 APIs. */
 public class MyActivity extends Activity {
 
   private static final String SAMPLE_VIDEO_URL =
@@ -72,7 +76,7 @@ public class MyActivity extends Activity {
   @Override
   public void onStart() {
     super.onStart();
-    if (Util.SDK_INT > 23) {
+    if (SDK_INT > 23) {
       initializePlayer();
       if (playerView != null) {
         playerView.onResume();
@@ -83,7 +87,7 @@ public class MyActivity extends Activity {
   @Override
   public void onResume() {
     super.onResume();
-    if (Util.SDK_INT <= 23 || player == null) {
+    if (SDK_INT <= 23 || player == null) {
       initializePlayer();
       if (playerView != null) {
         playerView.onResume();
@@ -94,7 +98,7 @@ public class MyActivity extends Activity {
   @Override
   public void onPause() {
     super.onPause();
-    if (Util.SDK_INT <= 23) {
+    if (SDK_INT <= 23) {
       if (playerView != null) {
         playerView.onPause();
       }
@@ -105,7 +109,7 @@ public class MyActivity extends Activity {
   @Override
   public void onStop() {
     super.onStop();
-    if (Util.SDK_INT > 23) {
+    if (SDK_INT > 23) {
       if (playerView != null) {
         playerView.onPause();
       }

@@ -20,6 +20,7 @@
 
   <!-- Required for background audio playback. -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
 
   <!-- Required by ExoPlayer when targeting Android 13+ to be able to post notifications. -->
   <!-- See https://github.com/google/ExoPlayer/issues/10884 for more info. -->
@@ -38,6 +39,7 @@
       </intent-filter>
     </activity>
     <service android:name=".AudioPlayerService"
-             android:exported="false"/>
+             android:exported="false"
+             android:foregroundServiceType="mediaPlayback"/>
   </application>
 </manifest>

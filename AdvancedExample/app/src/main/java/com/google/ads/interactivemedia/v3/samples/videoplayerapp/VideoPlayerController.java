@@ -56,6 +56,8 @@ public class VideoPlayerController {
   // player provided to play the video ad.
   private boolean isAdPlaying;
 
+  private boolean isConnectedTvFallbackImageShowing = false;
+
   // View that handles taps to toggle ad pause/resume during video playback.
   private View playPauseToggle;
 
@@ -114,9 +116,22 @@ public class VideoPlayerController {
                   // completed and you should start playing your content.
                   resumeContent();
                   break;
+                case ICON_TAPPED:
+                  isConnectedTvFallbackImageShowing = true;
+                  // videoPlayerWithAdPlayback.disableControls();
+                  adsManager.focus();
+                  break;
                 case PAUSED:
+                  if (isConnectedTvFallbackImageShowing) {
+                    break;
+                  }
                   isAdPlaying = false;
                   videoPlayerWithAdPlayback.enableControls();
+                  break;
+                case ICON_FALLBACK_IMAGE_CLOSED:
+                  adsManager.resume();
+                  isConnectedTvFallbackImageShowing = false;
+                  // videoPlayerWithAdPlayback.disableControls();
                   break;
                 case RESUMED:
                   isAdPlaying = true;

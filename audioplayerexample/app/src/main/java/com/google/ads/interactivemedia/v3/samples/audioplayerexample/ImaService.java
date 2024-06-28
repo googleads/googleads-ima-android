@@ -309,9 +309,9 @@ public final class ImaService
           messageHandler.removeMessages(UPDATE);
           break;
         case UPDATE:
-          // Intentional fallthrough. START message is introduced as a way to differentiate the
-          // beginning (the START of progress event) and progress itself (UPDATE events). Handling
-          // for both the messages are same.
+        // Intentional fallthrough. START message is introduced as a way to differentiate the
+        // beginning (the START of progress event) and progress itself (UPDATE events). Handling
+        // for both the messages are same.
         case START:
           player.sendProgressUpdate();
           messageHandler.removeMessages(UPDATE);

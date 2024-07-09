@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:taskAffinity="">
          <!-- The Application ID for the IMA example app. The UMP requires an app ID. -->
-         <!-- See this guide for more details: https://developers.google.com/interactive-media-ads/ump/android/quick-start#add_app_id_to -->
+         <!-- See this guide for more details: https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/privacy#create_a_message_type -->
          <!-- Sample IMA App ID: ca-app-pub-9939518381636264~8191772326 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.MediaController;
 import android.widget.VideoView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
@@ -61,7 +62,6 @@ public class MyActivity extends AppCompatActivity {
   private VideoView videoPlayer;
   private ViewGroup videoPlayerContainer;
   private MediaController mediaController;
-  private View playButton;
   private VideoAdPlayerAdapter videoAdPlayerAdapter;
   private ConsentManager consentManager;
 
@@ -224,6 +224,8 @@ public class MyActivity extends AppCompatActivity {
                 });
             AdsRenderingSettings adsRenderingSettings =
                 ImaSdkFactory.getInstance().createAdsRenderingSettings();
+            // Add any ads rendering settings here.
+            // This init() only loads the UI rendering settings locally.
             adsManager.init(adsRenderingSettings);
           }
         });
@@ -231,7 +233,7 @@ public class MyActivity extends AppCompatActivity {
 
   private void setUpPlayButton() {
     // When the play button is clicked, request ads and hide the button.
-    playButton = findViewById(R.id.playButton);
+    View playButton = findViewById(R.id.playButton);
     playButton.setOnClickListener(
         view -> {
           videoPlayer.setVideoPath(SAMPLE_VIDEO_URL);
@@ -265,7 +267,7 @@ public class MyActivity extends AppCompatActivity {
         mediaPlayer -> videoAdPlayerAdapter.notifyImaOnContentCompleted());
   }
 
-  private void requestAds(String adTagUrl) {
+  private void requestAds(@NonNull String adTagUrl) {
     // Create the ads request.
     AdsRequest request = sdkFactory.createAdsRequest();
     request.setAdTagUrl(adTagUrl);

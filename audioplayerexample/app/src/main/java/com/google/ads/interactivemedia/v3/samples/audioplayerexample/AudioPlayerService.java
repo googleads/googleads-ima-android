@@ -21,10 +21,8 @@ import androidx.media3.common.Player;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.analytics.AnalyticsListener;
-import androidx.media3.exoplayer.source.ConcatenatingMediaSource;
 import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.exoplayer.source.ProgressiveMediaSource;
-import androidx.media3.exoplayer.source.ShuffleOrder;
 import androidx.media3.session.MediaSession;
 import androidx.media3.ui.PlayerNotificationManager;
 import androidx.media3.ui.PlayerNotificationManager.BitmapCallback;
@@ -34,6 +32,8 @@ import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Allows audio playback with hooks for advertisements. This is meant to run as a Foreground Service
@@ -45,11 +45,9 @@ public class AudioPlayerService extends Service {
 
   private boolean isAdPlaying;
   private ExoPlayer player;
+  private List<MediaSource> contentMediaSources;
   private MediaSession mediaSession;
-  private PlayerNotificationManager playerNotificationManager;
-  private ConcatenatingMediaSource contentMediaSource;
   private ImaService imaService;
-
   private final Samples.Sample[] sampleList = Samples.getSamples();
 
   @Override
@@ -62,19 +60,15 @@ public class AudioPlayerService extends Service {
 
     DefaultDataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(context);
 
-    contentMediaSource =
-        new ConcatenatingMediaSource(
-            /* isAtomic= */ false,
-            /* useLazyPreparation= */ true,
-            new ShuffleOrder.DefaultShuffleOrder(/* length= */ 0));
+    contentMediaSources = new ArrayList<>();
     for (Samples.Sample sample : sampleList) {
       MediaItem mediaItem = new MediaItem.Builder().setUri(sample.uri).build();
       MediaSource mediaSource =
           new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem);
-      contentMediaSource.addMediaSource(mediaSource);
+      contentMediaSources.add(mediaSource);
     }
 
-    player.setMediaSource(contentMediaSource);
+    player.addMediaSources(contentMediaSources);
     player.prepare();
     player.setPlayWhenReady(true);
 
@@ -117,7 +111,7 @@ public class AudioPlayerService extends Service {
           }
         };
 
-    playerNotificationManager =
+    PlayerNotificationManager playerNotificationManager =
         new PlayerNotificationManager.Builder(
                 context,
                 /* notificationId= */ PLAYBACK_NOTIFICATION_ID,
@@ -127,7 +121,8 @@ public class AudioPlayerService extends Service {
             .setChannelDescriptionResourceId(R.string.playback_channel_description)
             .setNotificationListener(
                 new NotificationListener() {
-                  public void onNotificationStarted(
+                  @Override
+                  public void onNotificationPosted(
                       int notificationId, Notification notification, boolean ongoing) {
                     // This must be called within 5 seconds of the notification being displayed and
                     // before the main app has been killed.
@@ -183,16 +178,18 @@ public class AudioPlayerService extends Service {
       player.setPlayWhenReady(false);
     }
 
+    @androidx.media3.common.util.UnstableApi
     public void release() {
       if (isAdPlaying) {
         isAdPlaying = false;
-        player.setMediaSource(contentMediaSource);
+        player.addMediaSources(contentMediaSources);
         player.prepare();
         player.setPlayWhenReady(true);
         // TODO: Seek to where you left off the stream, if needed.
       }
     }
 
+    @androidx.media3.common.util.UnstableApi
     public void prepare(MediaSource mediaSource) {
       player.setMediaSource(mediaSource);
       player.prepare();

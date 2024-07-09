@@ -3,13 +3,14 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.MediaController;
 import android.widget.VideoView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
@@ -72,14 +73,14 @@ public class MyActivity extends AppCompatActivity {
     videoPlayer.setMediaController(mediaController);
 
     // Create an ad display container that uses a ViewGroup to listen to taps.
-    ViewGroup videoPlayerContainer = findViewById(R.id.videoPlayerContainer);
     AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
     videoAdPlayerAdapter = new VideoAdPlayerAdapter(videoPlayer, audioManager);
 
     sdkFactory = ImaSdkFactory.getInstance();
 
     AdDisplayContainer adDisplayContainer =
-        ImaSdkFactory.createAdDisplayContainer(videoPlayerContainer, videoAdPlayerAdapter);
+        ImaSdkFactory.createAdDisplayContainer(
+            findViewById(R.id.videoPlayerContainer), videoAdPlayerAdapter);
 
     // Create an AdsLoader.
     ImaSdkSettings settings = sdkFactory.createImaSdkSettings();
@@ -174,6 +175,8 @@ public class MyActivity extends AppCompatActivity {
                 });
             AdsRenderingSettings adsRenderingSettings =
                 ImaSdkFactory.getInstance().createAdsRenderingSettings();
+            // Add any ads rendering settings here.
+            // This init() only loads the UI rendering settings locally.
             adsManager.init(adsRenderingSettings);
           }
         });
@@ -186,6 +189,23 @@ public class MyActivity extends AppCompatActivity {
           requestAds(SAMPLE_VAST_TAG_URL);
           view.setVisibility(View.GONE);
         });
+    updateVideoDescriptionVisibility();
+  }
+
+  @Override
+  public void onConfigurationChanged(@NonNull Configuration configuration) {
+    super.onConfigurationChanged(configuration);
+    // Hide the extra content when in landscape so the video is as large as possible.
+    updateVideoDescriptionVisibility();
+  }
+
+  private void updateVideoDescriptionVisibility() {
+    int orientation = getResources().getConfiguration().orientation;
+    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+      findViewById(R.id.videoDescription).setVisibility(View.GONE);
+    } else {
+      findViewById(R.id.videoDescription).setVisibility(View.VISIBLE);
+    }
   }
 
   private void pauseContentForAds() {
@@ -213,7 +233,7 @@ public class MyActivity extends AppCompatActivity {
         mediaPlayer -> videoAdPlayerAdapter.notifyImaOnContentCompleted());
   }
 
-  private void requestAds(String adTagUrl) {
+  private void requestAds(@NonNull String adTagUrl) {
     // Create the ads request.
     AdsRequest request = sdkFactory.createAdsRequest();
     request.setAdTagUrl(adTagUrl);

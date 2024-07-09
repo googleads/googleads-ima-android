@@ -141,6 +141,8 @@ public class VideoPlayerController {
       AdsRenderingSettings adsRenderingSettings =
           ImaSdkFactory.getInstance().createAdsRenderingSettings();
       adsRenderingSettings.setPlayAdsAfterTime(playAdsAfterTime);
+      // Add any ads rendering settings here.
+      // This init() only loads the UI rendering settings locally.
       adsManager.init(adsRenderingSettings);
       seek(playAdsAfterTime);
       videoStarted = true;

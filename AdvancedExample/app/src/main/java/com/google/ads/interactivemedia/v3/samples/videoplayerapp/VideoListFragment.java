@@ -2,12 +2,10 @@ package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -18,7 +16,7 @@ import java.util.List;
 /** Fragment for displaying a playlist of video thumbnails that the user can select from to play. */
 public class VideoListFragment extends Fragment {
 
-  private OnVideoSelectedListener selectedCallback;
+  OnVideoSelectedListener selectedCallback;
   LayoutInflater inflater;
   ViewGroup container;
 
@@ -44,16 +42,14 @@ public class VideoListFragment extends Fragment {
       selectedCallback = (OnVideoSelectedListener) context;
     } catch (ClassCastException e) {
       throw new ClassCastException(
-          context.toString() + " must implement " + OnVideoSelectedListener.class.getName());
+          context + " must implement " + OnVideoSelectedListener.class.getName());
     }
 
     try {
       resumeCallback = (OnVideoListFragmentResumedListener) context;
     } catch (ClassCastException e) {
       throw new ClassCastException(
-          context.toString()
-              + " must implement "
-              + OnVideoListFragmentResumedListener.class.getName());
+          context + " must implement " + OnVideoListFragmentResumedListener.class.getName());
     }
   }
 
@@ -64,24 +60,21 @@ public class VideoListFragment extends Fragment {
     this.container = container;
     View rootView = inflater.inflate(R.layout.fragment_video_list, container, false);
 
-    final ListView listView = (ListView) rootView.findViewById(R.id.videoListView);
+    final ListView listView = rootView.findViewById(R.id.videoListView);
     VideoItemAdapter videoItemAdapter =
         new VideoItemAdapter(rootView.getContext(), R.layout.video_item, getVideoItems());
     listView.setAdapter(videoItemAdapter);
 
     listView.setOnItemClickListener(
-        new AdapterView.OnItemClickListener() {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-            if (selectedCallback != null) {
-              VideoItem selectedVideo = (VideoItem) listView.getItemAtPosition(position);
+        (parent, v, position, id) -> {
+          if (selectedCallback != null) {
+            VideoItem selectedVideo = (VideoItem) listView.getItemAtPosition(position);
 
-              // If applicable, prompt the user to input a custom ad tag.
-              if (selectedVideo.getAdTagUrl().equals(getString(R.string.custom_ad_tag_value))) {
-                getCustomAdTag(selectedVideo);
-              } else {
-                selectedCallback.onVideoSelected(selectedVideo);
-              }
+            // If applicable, prompt the user to input a custom ad tag.
+            if (selectedVideo.getAdTagUrl().equals(getString(R.string.custom_ad_tag_value))) {
+              getCustomAdTag(selectedVideo);
+            } else {
+              selectedCallback.onVideoSelected(selectedVideo);
             }
           }
         });
@@ -91,9 +84,9 @@ public class VideoListFragment extends Fragment {
 
   private void getCustomAdTag(VideoItem originalVideoItem) {
     View dialogueView = inflater.inflate(R.layout.custom_ad_tag, container, false);
-    final EditText txtUrl = (EditText) dialogueView.findViewById(R.id.customTag);
+    final EditText txtUrl = dialogueView.findViewById(R.id.customTag);
     txtUrl.setHint("VAST ad tag URL");
-    final CheckBox isVmap = (CheckBox) dialogueView.findViewById(R.id.isVmap);
+    final CheckBox isVmap = dialogueView.findViewById(R.id.isVmap);
     final VideoItem videoItem = originalVideoItem;
 
     new AlertDialog.Builder(this.getActivity())
@@ -101,32 +94,26 @@ public class VideoListFragment extends Fragment {
         .setView(dialogueView)
         .setPositiveButton(
             "OK",
-            new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int whichButton) {
-                String customAdTagUrl = txtUrl.getText().toString();
-                VideoItem customAdTagVideoItem =
-                    new VideoItem(
-                        videoItem.getVideoUrl(),
-                        videoItem.getTitle(),
-                        customAdTagUrl,
-                        videoItem.getImageResource(),
-                        isVmap.isChecked());
+            (dialog, whichButton) -> {
+              String customAdTagUrl = txtUrl.getText().toString();
+              VideoItem customAdTagVideoItem =
+                  new VideoItem(
+                      videoItem.getVideoUrl(),
+                      videoItem.getTitle(),
+                      customAdTagUrl,
+                      videoItem.getImageResource(),
+                      isVmap.isChecked());
 
-                if (selectedCallback != null) {
-                  selectedCallback.onVideoSelected(customAdTagVideoItem);
-                }
+              if (selectedCallback != null) {
+                selectedCallback.onVideoSelected(customAdTagVideoItem);
               }
             })
-        .setNegativeButton(
-            "Cancel",
-            new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int whichButton) {}
-            })
+        .setNegativeButton("Cancel", (dialog, whichButton) -> {})
         .show();
   }
 
   private List<VideoItem> getVideoItems() {
-    final List<VideoItem> videoItems = new ArrayList<VideoItem>();
+    final List<VideoItem> videoItems = new ArrayList<>();
 
     // Iterate through the videos' metadata and add video items to list.
     for (int i = 0; i < VideoMetadata.APP_VIDEOS.size(); i++) {

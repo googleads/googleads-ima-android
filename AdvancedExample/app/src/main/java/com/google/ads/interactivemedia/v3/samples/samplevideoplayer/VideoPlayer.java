@@ -6,7 +6,7 @@ package com.google.ads.interactivemedia.v3.samples.samplevideoplayer;
 public interface VideoPlayer {
 
   /** Interface for alerting caller of major video events. */
-  public interface PlayerCallback {
+  interface PlayerCallback {
 
     /** Called when the current video starts playing from the beginning. */
     void onPlay();

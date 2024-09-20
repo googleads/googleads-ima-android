@@ -82,8 +82,7 @@ public enum VideoMetadata {
   /** If the ad is VMAP. */
   public final boolean isVmap;
 
-  private VideoMetadata(
-      String videoUrl, String title, String adTagUrl, int thumbnail, boolean isVmap) {
+  VideoMetadata(String videoUrl, String title, String adTagUrl, int thumbnail, boolean isVmap) {
     this.videoUrl = videoUrl;
     this.title = title;
     this.adTagUrl = adTagUrl;

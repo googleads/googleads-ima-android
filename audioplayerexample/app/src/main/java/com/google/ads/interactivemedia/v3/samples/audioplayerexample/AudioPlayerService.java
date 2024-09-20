@@ -142,7 +142,7 @@ public class AudioPlayerService extends Service {
 
     mediaSession = new MediaSession.Builder(context, player).build();
 
-    playerNotificationManager.setMediaSessionToken(mediaSession.getSessionCompatToken());
+    playerNotificationManager.setMediaSessionToken(mediaSession.getPlatformToken());
 
     imaService = new ImaService(context, dataSourceFactory, new SharedAudioPlayer());
   }

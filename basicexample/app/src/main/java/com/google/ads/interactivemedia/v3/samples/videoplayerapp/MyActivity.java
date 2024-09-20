@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
@@ -58,7 +57,6 @@ public class MyActivity extends AppCompatActivity {
   // the VideoView.
   private VideoView videoPlayer;
   private MediaController mediaController;
-  private View playButton;
   private VideoAdPlayerAdapter videoAdPlayerAdapter;
 
   @Override
@@ -182,7 +180,7 @@ public class MyActivity extends AppCompatActivity {
         });
 
     // When the play button is clicked, request ads and hide the button.
-    playButton = findViewById(R.id.playButton);
+    View playButton = findViewById(R.id.playButton);
     playButton.setOnClickListener(
         view -> {
           videoPlayer.setVideoPath(SAMPLE_VIDEO_URL);
@@ -193,7 +191,7 @@ public class MyActivity extends AppCompatActivity {
   }
 
   @Override
-  public void onConfigurationChanged(@NonNull Configuration configuration) {
+  public void onConfigurationChanged(Configuration configuration) {
     super.onConfigurationChanged(configuration);
     // Hide the extra content when in landscape so the video is as large as possible.
     updateVideoDescriptionVisibility();
@@ -233,7 +231,7 @@ public class MyActivity extends AppCompatActivity {
         mediaPlayer -> videoAdPlayerAdapter.notifyImaOnContentCompleted());
   }
 
-  private void requestAds(@NonNull String adTagUrl) {
+  private void requestAds(String adTagUrl) {
     // Create the ads request.
     AdsRequest request = sdkFactory.createAdsRequest();
     request.setAdTagUrl(adTagUrl);

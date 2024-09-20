@@ -24,7 +24,6 @@ import com.google.ads.interactivemedia.v3.api.AdsRequest;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo;
-import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
@@ -51,7 +50,6 @@ public final class ImaService
   private final ImaSdkFactory sdkFactory;
   private final ImaSdkSettings imaSdkSettings;
   private final DefaultDataSource.Factory dataSourceFactory;
-
   public ImaVideoAdPlayer imaVideoAdPlayer = new ImaVideoAdPlayer();
 
   @androidx.media3.common.util.UnstableApi
@@ -86,12 +84,7 @@ public final class ImaService
     request.setAdTagUrl(adTagUrl);
     // The ContentProgressProvider is only needed for scheduling ads with VMAP ad requests
     request.setContentProgressProvider(
-        new ContentProgressProvider() {
-          @Override
-          public VideoProgressUpdate getContentProgress() {
-            return new VideoProgressUpdate(exoPlayer.getCurrentPosition(), exoPlayer.getDuration());
-          }
-        });
+        () -> new VideoProgressUpdate(exoPlayer.getCurrentPosition(), exoPlayer.getDuration()));
     adsLoader.requestAds(request);
   }
 
@@ -105,11 +98,7 @@ public final class ImaService
 
   @Override
   public void onAdError(AdErrorEvent adErrorEvent) {
-    if (adErrorEvent.getError().getMessage() != null) {
-      Log.e(LOGGING_TAG, "Ad Error: ".concat(adErrorEvent.getError().getMessage().toString()));
-    } else {
-      Log.e(LOGGING_TAG, "Ad Error: null");
-    }
+    Log.e(LOGGING_TAG, "Ad Error: ".concat(adErrorEvent.getError().getMessage()));
   }
 
   @Override

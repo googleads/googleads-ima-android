@@ -7,11 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -48,23 +44,17 @@ public class MainActivity extends Activity {
     ListView listView = findViewById(R.id.list_view);
     listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, sampleList));
     listView.setOnItemClickListener(
-        new OnItemClickListener() {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (serviceBound) {
-              binder.updateSong(position);
-            }
+        (parent, view, position, id) -> {
+          if (serviceBound) {
+            binder.updateSong(position);
           }
         });
 
     Button requestAdButton = findViewById(R.id.requestAd);
     requestAdButton.setOnClickListener(
-        new OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            if (serviceBound) {
-              binder.requestAd(AD_TAG_URL);
-            }
+        view -> {
+          if (serviceBound) {
+            binder.requestAd(AD_TAG_URL);
           }
         });
   }
@@ -72,9 +62,7 @@ public class MainActivity extends Activity {
   @Override
   public void onDestroy() {
     super.onDestroy();
-    if (connection != null) {
-      unbindService(connection);
-    }
+    unbindService(connection);
   }
 
   /** Defines callbacks for service binding, passed to bindService() */

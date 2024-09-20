@@ -4,7 +4,6 @@ package com.google.ads.interactivemedia.v3.samples.samplevideoplayer;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.util.AttributeSet;
@@ -24,7 +23,7 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
 
   private MediaController mediaController;
   private PlaybackState playbackState;
-  private final List<PlayerCallback> videoPlayerCallbacks = new ArrayList<PlayerCallback>(1);
+  private final List<PlayerCallback> videoPlayerCallbacks = new ArrayList<>(1);
 
   public SampleVideoPlayer(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
@@ -49,36 +48,28 @@ public class SampleVideoPlayer extends VideoView implements VideoPlayer {
 
     // Set OnCompletionListener to notify our callbacks when the video is completed.
     super.setOnCompletionListener(
-        new OnCompletionListener() {
+        mediaPlayer -> {
+          // Reset the MediaPlayer.
+          playbackState = PlaybackState.STOPPED;
+          mediaPlayer.reset();
+          mediaPlayer.setDisplay(getHolder());
 
-          @Override
-          public void onCompletion(MediaPlayer mediaPlayer) {
-            // Reset the MediaPlayer.
-            playbackState = PlaybackState.STOPPED;
-            mediaPlayer.reset();
-            mediaPlayer.setDisplay(getHolder());
-
-            for (PlayerCallback callback : videoPlayerCallbacks) {
-              callback.onComplete();
-            }
+          for (PlayerCallback callback : videoPlayerCallbacks) {
+            callback.onComplete();
           }
         });
 
     // Set OnErrorListener to notify our callbacks if the video errors.
     super.setOnErrorListener(
-        new OnErrorListener() {
-
-          @Override
-          public boolean onError(MediaPlayer mp, int what, int extra) {
-            playbackState = PlaybackState.STOPPED;
-            for (PlayerCallback callback : videoPlayerCallbacks) {
-              callback.onError();
-            }
-
-            // Returning true signals to MediaPlayer that we handled the error. This will
-            // prevent the completion handler from being called.
-            return true;
+        (mp, what, extra) -> {
+          playbackState = PlaybackState.STOPPED;
+          for (PlayerCallback callback : videoPlayerCallbacks) {
+            callback.onError();
           }
+
+          // Returning true signals to MediaPlayer that we handled the error. This will
+          // prevent the completion handler from being called.
+          return true;
         });
   }
 

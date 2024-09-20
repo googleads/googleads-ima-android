@@ -26,7 +26,7 @@ public class VideoPlayerController {
   }
 
   // Container with references to video player and ad UI ViewGroup.
-  private AdDisplayContainer adDisplayContainer;
+  private final AdDisplayContainer adDisplayContainer;
 
   // The AdsLoader instance exposes the requestAds method.
   private final AdsLoader adsLoader;
@@ -35,10 +35,10 @@ public class VideoPlayerController {
   private AdsManager adsManager;
 
   // Factory class for creating SDK objects.
-  private ImaSdkFactory sdkFactory;
+  private final ImaSdkFactory sdkFactory;
 
   // Ad-enabled video player.
-  private VideoPlayerWithAdPlayback videoPlayerWithAdPlayback;
+  private final VideoPlayerWithAdPlayback videoPlayerWithAdPlayback;
 
   // Button the user taps to begin video playback and ad request.
   private View playButton;
@@ -50,17 +50,17 @@ public class VideoPlayerController {
   private String contentVideoUrl;
 
   // ViewGroup to render an associated companion ad into.
-  private ViewGroup companionViewGroup;
+  private final ViewGroup companionViewGroup;
 
   // Tracks if the SDK is playing an ad, since the SDK might not necessarily use the video
   // player provided to play the video ad.
   private boolean isAdPlaying;
 
   // View that handles taps to toggle ad pause/resume during video playback.
-  private View playPauseToggle;
+  private final View playPauseToggle;
 
   // View that we can write log messages to, to display in the UI.
-  private Logger log;
+  private final Logger log;
 
   private double playAdsAfterTime = -1;
 
@@ -188,13 +188,7 @@ public class VideoPlayerController {
     adsLoader.addAdsLoadedListener(new VideoPlayerController.AdsLoadedListener());
 
     // When Play is clicked, request ads and hide the button.
-    playButton.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            requestAndPlayAds(-1);
-          }
-        });
+    playButton.setOnClickListener(view -> requestAndPlayAds(-1));
   }
 
   private void log(String message) {
@@ -226,7 +220,7 @@ public class VideoPlayerController {
 
   /** Request and subsequently play video ads from the ad server. */
   public void requestAndPlayAds(double playAdsAfterTime) {
-    if (currentAdTagUrl == null || currentAdTagUrl == "") {
+    if (currentAdTagUrl == null || currentAdTagUrl.isEmpty()) {
       log("No VAST ad tag URL specified");
       resumeContent();
       return;
@@ -255,19 +249,18 @@ public class VideoPlayerController {
     // Use AdsManager pause/resume methods instead of the video player pause/resume methods
     // in case the SDK is using a different, SDK-created video player for ad playback.
     playPauseToggle.setOnTouchListener(
-        new View.OnTouchListener() {
-          public boolean onTouch(View view, MotionEvent event) {
-            // If an ad is playing, touching it will toggle playback.
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-              if (isAdPlaying) {
-                adsManager.pause();
-              } else {
-                adsManager.resume();
-              }
-              return true;
+        (view, event) -> {
+          view.performClick();
+          // If an ad is playing, touching it will toggle playback.
+          if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (isAdPlaying) {
+              adsManager.pause();
             } else {
-              return false;
+              adsManager.resume();
             }
+            return true;
+          } else {
+            return false;
           }
         });
   }

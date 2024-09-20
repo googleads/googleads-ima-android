@@ -57,20 +57,17 @@ public class MyActivity extends Activity {
     logText = findViewById(R.id.logText);
     logText.setMovementMethod(new ScrollingMovementMethod());
 
-    AdEvent.AdEventListener imaAdEventListener =
-        event -> {
-          AdEvent.AdEventType eventType = event.getType();
-          if (eventType == AdEvent.AdEventType.AD_PROGRESS) {
-            return;
-          }
-          String log = "IMA event: " + eventType;
-          if (logText != null) {
-            logText.append(log + "\n");
-          }
-          Log.i(LOG_TAG, log);
-        };
-
-    return imaAdEventListener;
+    return event -> {
+      AdEvent.AdEventType eventType = event.getType();
+      if (eventType == AdEvent.AdEventType.AD_PROGRESS) {
+        return;
+      }
+      String log = "IMA event: " + eventType;
+      if (logText != null) {
+        logText.append(log + "\n");
+      }
+      Log.i(LOG_TAG, log);
+    };
   }
 
   @Override

@@ -56,8 +56,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
   // ContentProgressProvider interface implementation for the SDK to check content progress.
   private ContentProgressProvider contentProgressProvider;
 
-  private final List<VideoAdPlayer.VideoAdPlayerCallback> adCallbacks =
-      new ArrayList<VideoAdPlayer.VideoAdPlayerCallback>(1);
+  private final List<VideoAdPlayer.VideoAdPlayerCallback> adCallbacks = new ArrayList<>(1);
 
   public VideoPlayerWithAdPlayback(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
@@ -110,8 +109,8 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     contentHasCompleted = false;
     savedAdPosition = 0;
     savedContentPosition = 0;
-    videoPlayer = (VideoPlayer) this.getRootView().findViewById(R.id.videoPlayer);
-    adUiContainer = (ViewGroup) this.getRootView().findViewById(R.id.adUiContainer);
+    videoPlayer = this.getRootView().findViewById(R.id.videoPlayer);
+    adUiContainer = this.getRootView().findViewById(R.id.adUiContainer);
 
     // Define VideoAdPlayer connector.
     videoAdPlayer =
@@ -177,15 +176,12 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
         };
 
     contentProgressProvider =
-        new ContentProgressProvider() {
-          @Override
-          public VideoProgressUpdate getContentProgress() {
-            if (isAdDisplayed || videoPlayer.getDuration() <= 0) {
-              return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
-            }
-            return new VideoProgressUpdate(
-                videoPlayer.getCurrentPosition(), videoPlayer.getDuration());
+        () -> {
+          if (isAdDisplayed || videoPlayer.getDuration() <= 0) {
+            return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
           }
+          return new VideoProgressUpdate(
+              videoPlayer.getCurrentPosition(), videoPlayer.getDuration());
         };
 
     // Set player callbacks for delegating major video events.

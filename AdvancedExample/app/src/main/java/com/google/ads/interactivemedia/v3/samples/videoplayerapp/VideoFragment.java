@@ -23,7 +23,7 @@ public class VideoFragment extends Fragment {
 
   /** Listener called when the fragment's onCreateView is fired. */
   public interface OnVideoFragmentViewCreatedListener {
-    public void onVideoFragmentViewCreated();
+    void onVideoFragmentViewCreated();
   }
 
   @Override
@@ -61,7 +61,7 @@ public class VideoFragment extends Fragment {
 
     // Make the dummyScrollContent height the size of the screen height.
     DisplayMetrics displayMetrics = new DisplayMetrics();
-    getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+    requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
     ConstraintLayout constraintLayout = rootView.findViewById(R.id.constraintLayout);
     ConstraintSet forceHeight = new ConstraintSet();
     forceHeight.clone(constraintLayout);
@@ -72,13 +72,10 @@ public class VideoFragment extends Fragment {
 
     // Provide an implementation of a logger so we can output SDK events to the UI.
     VideoPlayerController.Logger logger =
-        new VideoPlayerController.Logger() {
-          @Override
-          public void log(String message) {
-            Log.i("ImaExample", message);
-            if (logText != null) {
-              logText.append(message);
-            }
+        message -> {
+          Log.i("ImaExample", message);
+          if (logText != null) {
+            logText.append(message);
           }
         };
 
@@ -113,10 +110,6 @@ public class VideoFragment extends Fragment {
     }
   }
 
-  public VideoPlayerController getVideoPlayerController() {
-    return videoPlayerController;
-  }
-
   @Override
   public void onPause() {
     if (videoPlayerController != null) {
@@ -140,9 +133,5 @@ public class VideoFragment extends Fragment {
       videoPlayerController = null;
     }
     super.onDestroy();
-  }
-
-  public boolean isVmap() {
-    return videoItem.getIsVmap();
   }
 }

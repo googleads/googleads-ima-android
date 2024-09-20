@@ -1,7 +1,6 @@
 package com.google.ads.interactivemedia.v3.samples.umpimaapp;
 
 import android.app.Activity;
-import androidx.annotation.NonNull;
 import com.google.android.ump.ConsentDebugSettings;
 import com.google.android.ump.ConsentForm.OnConsentFormDismissedListener;
 import com.google.android.ump.ConsentInformation;
@@ -27,7 +26,7 @@ public class ConsentManager {
   }
 
   /** Constructor */
-  public ConsentManager(@NonNull Activity activity) {
+  public ConsentManager(Activity activity) {
     this.activity = activity;
     this.consentInformation = UserMessagingPlatform.getConsentInformation(activity);
   }
@@ -72,13 +71,8 @@ public class ConsentManager {
         params,
         () ->
             UserMessagingPlatform.loadAndShowConsentFormIfRequired(
-                activity,
-                formError -> {
-                  // Consent has been gathered.
-                  onConsentGatheringCompleteListener.consentGatheringComplete(formError);
-                }),
-        requestConsentError ->
-            onConsentGatheringCompleteListener.consentGatheringComplete(requestConsentError));
+                activity, onConsentGatheringCompleteListener::consentGatheringComplete),
+        onConsentGatheringCompleteListener::consentGatheringComplete);
   }
 
   /** Shows a form to app users for collecting their consent. */

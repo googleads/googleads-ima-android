@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import androidx.annotation.DrawableRes;
+import androidx.core.content.res.ResourcesCompat;
 
 /** Helper to provide a list of sample audio files for the app. */
 public final class Samples {
@@ -76,7 +77,9 @@ public final class Samples {
   }
 
   public static Bitmap getBitmap(Context context, @DrawableRes int bitmapResource) {
-    return ((BitmapDrawable) context.getResources().getDrawable(bitmapResource)).getBitmap();
+    return ((BitmapDrawable)
+            ResourcesCompat.getDrawable(context.getResources(), bitmapResource, context.getTheme()))
+        .getBitmap();
   }
 
   private Samples() {}

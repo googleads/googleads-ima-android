@@ -12,7 +12,7 @@ import java.util.List;
 /** Renders VideoItems into a GridView for displaying videos in a playlist format. */
 public class VideoItemAdapter extends ArrayAdapter<VideoItem> {
 
-  private int layoutResourceId;
+  private final int layoutResourceId;
 
   public VideoItemAdapter(Context context, int layoutResourceId, List<VideoItem> data) {
     super(context, layoutResourceId, data);
@@ -29,8 +29,8 @@ public class VideoItemAdapter extends ArrayAdapter<VideoItem> {
       LayoutInflater inflater = LayoutInflater.from(getContext());
       row = inflater.inflate(layoutResourceId, parent, false);
       videoItemHolder = new VideoItemHolder();
-      videoItemHolder.title = (TextView) row.findViewById(R.id.videoItemText);
-      videoItemHolder.image = (ImageView) row.findViewById(R.id.videoItemImage);
+      videoItemHolder.title = row.findViewById(R.id.videoItemText);
+      videoItemHolder.image = row.findViewById(R.id.videoItemImage);
       row.setTag(videoItemHolder);
     } else {
       videoItemHolder = (VideoItemHolder) row.getTag();
@@ -38,6 +38,7 @@ public class VideoItemAdapter extends ArrayAdapter<VideoItem> {
 
     VideoItem item = getItem(position);
 
+    assert item != null;
     videoItemHolder.title.setText(item.getTitle());
     videoItemHolder.image.setImageResource(item.getImageResource());
 
@@ -45,7 +46,7 @@ public class VideoItemAdapter extends ArrayAdapter<VideoItem> {
   }
 
   /** Holds the UI element equivalents of a VideoItem. */
-  private class VideoItemHolder {
+  private static class VideoItemHolder {
 
     TextView title;
     ImageView image;

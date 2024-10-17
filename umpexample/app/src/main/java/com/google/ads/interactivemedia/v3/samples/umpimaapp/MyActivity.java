@@ -83,6 +83,7 @@ public class MyActivity extends AppCompatActivity {
     Button privacyButton = findViewById(R.id.privacyButton);
 
     consentManager = new ConsentManager(this);
+    // [START can_request_ads]
     consentManager.gatherConsent(
         consentError -> {
           if (consentError != null) {
@@ -99,13 +100,18 @@ public class MyActivity extends AppCompatActivity {
           } else {
             Log.i(LOGTAG, "Consent not available to request ads");
           }
+          // [START_EXCLUDE]
 
+          // [START add_privacy_options]
           // Check ConsentInformation.getPrivacyOptionsRequirementStatus() to see the button should
           // be shown or hidden.
           if (consentManager.areGDPRConsentMessagesRequired()) {
             privacyButton.setVisibility(View.VISIBLE);
           }
+          // [END add_privacy_options]
+          // [END_EXCLUDE]
         });
+    // [END can_request_ads]
 
     privacyButton.setOnClickListener(
         button ->
@@ -118,6 +124,7 @@ public class MyActivity extends AppCompatActivity {
                 }));
   }
 
+  // [START request_ads]
   private void initializeImaSdk() {
     sdkFactory = ImaSdkFactory.getInstance();
 
@@ -127,6 +134,8 @@ public class MyActivity extends AppCompatActivity {
     createAdsLoader();
     setUpPlayButton();
   }
+
+  // [END request_ads]
 
   private void createAdsLoader() {
     // Create an AdsLoader.

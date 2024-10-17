@@ -36,11 +36,14 @@ public class ConsentManager {
     return consentInformation.canRequestAds();
   }
 
+  // [START is_privacy_options_required]
   /** Helper function to determine if GDPR consent messages are required. */
   public boolean areGDPRConsentMessagesRequired() {
     return consentInformation.getPrivacyOptionsRequirementStatus()
         == PrivacyOptionsRequirementStatus.REQUIRED;
   }
+
+  // [END is_privacy_options_required]
 
   /** Load remote updates of consent messages and gather previously cached user consent. */
   public void gatherConsent(OnConsentGatheringCompleteListener onConsentGatheringCompleteListener) {
@@ -65,6 +68,7 @@ public class ConsentManager {
             .setConsentDebugSettings(debugSettings)
             .build();
 
+    // [START gather_consent]
     // Requesting an update to consent information should be called on every app launch.
     consentInformation.requestConsentInfoUpdate(
         activity,
@@ -73,11 +77,14 @@ public class ConsentManager {
             UserMessagingPlatform.loadAndShowConsentFormIfRequired(
                 activity, onConsentGatheringCompleteListener::consentGatheringComplete),
         onConsentGatheringCompleteListener::consentGatheringComplete);
+    // [END gather_consent]
   }
 
   /** Shows a form to app users for collecting their consent. */
   public void showPrivacyOptionsForm(
       Activity activity, OnConsentFormDismissedListener onConsentFormDismissedListener) {
+    // [START present_privacy_options_form]
     UserMessagingPlatform.showPrivacyOptionsForm(activity, onConsentFormDismissedListener);
+    // [END present_privacy_options_form]
   }
 }

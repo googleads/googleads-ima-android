@@ -40,5 +40,5 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.mediarouter:mediarouter:1.7.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.35.0'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.35.1'
 }

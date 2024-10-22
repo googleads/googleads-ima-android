@@ -105,12 +105,17 @@ public class MyActivity extends AppCompatActivity {
           // [START add_privacy_options]
           // Check ConsentInformation.getPrivacyOptionsRequirementStatus() to see the button should
           // be shown or hidden.
-          if (consentManager.areGDPRConsentMessagesRequired()) {
+          if (consentManager.isPrivacyOptionsRequired()) {
             privacyButton.setVisibility(View.VISIBLE);
           }
           // [END add_privacy_options]
           // [END_EXCLUDE]
         });
+
+    // This sample attempts to load ads using consent obtained in the previous session.
+    if (consentManager.canRequestAds()) {
+      initializeImaSdk();
+    }
     // [END can_request_ads]
 
     privacyButton.setOnClickListener(
@@ -126,6 +131,11 @@ public class MyActivity extends AppCompatActivity {
 
   // [START request_ads]
   private void initializeImaSdk() {
+    if (sdkFactory != null) {
+      // If the SDK is already initialized, do nothing.
+      return;
+    }
+
     sdkFactory = ImaSdkFactory.getInstance();
 
     adDisplayContainer =

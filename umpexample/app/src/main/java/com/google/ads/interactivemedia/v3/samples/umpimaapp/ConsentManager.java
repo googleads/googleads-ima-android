@@ -37,8 +37,8 @@ public class ConsentManager {
   }
 
   // [START is_privacy_options_required]
-  /** Helper function to determine if GDPR consent messages are required. */
-  public boolean areGDPRConsentMessagesRequired() {
+  /** Helper function to determine if a privacy options entry point is required. */
+  public boolean isPrivacyOptionsRequired() {
     return consentInformation.getPrivacyOptionsRequirementStatus()
         == PrivacyOptionsRequirementStatus.REQUIRED;
   }

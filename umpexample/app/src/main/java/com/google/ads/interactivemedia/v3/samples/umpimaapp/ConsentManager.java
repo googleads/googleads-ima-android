@@ -68,16 +68,34 @@ public class ConsentManager {
             .setConsentDebugSettings(debugSettings)
             .build();
 
-    // [START gather_consent]
+    // [START request_consent_info_update]
     // Requesting an update to consent information should be called on every app launch.
     consentInformation.requestConsentInfoUpdate(
         activity,
         params,
-        () ->
-            UserMessagingPlatform.loadAndShowConsentFormIfRequired(
-                activity, onConsentGatheringCompleteListener::consentGatheringComplete),
-        onConsentGatheringCompleteListener::consentGatheringComplete);
-    // [END gather_consent]
+        () -> // Called when consent information is successfully updated.
+            // [START_EXCLUDE silent]
+            loadAndShowConsentFormIfRequired(activity, onConsentGatheringCompleteListener),
+        // [END_EXCLUDE]
+        requestConsentError -> // Called when there's an error updating consent information.
+            // [START_EXCLUDE silent]
+            onConsentGatheringCompleteListener.consentGatheringComplete(requestConsentError));
+    // [END_EXCLUDE]
+    // [END request_consent_info_update]
+  }
+
+  private void loadAndShowConsentFormIfRequired(
+      Activity activity, OnConsentGatheringCompleteListener onConsentGatheringCompleteListener) {
+    // [START load_and_show_consent_form]
+    UserMessagingPlatform.loadAndShowConsentFormIfRequired(
+        activity,
+        formError -> {
+          // Consent gathering process is complete.
+          // [START_EXCLUDE silent]
+          onConsentGatheringCompleteListener.consentGatheringComplete(formError);
+          // [END_EXCLUDE]
+        });
+    // [END load_and_show_consent_form]
   }
 
   /** Shows a form to app users for collecting their consent. */

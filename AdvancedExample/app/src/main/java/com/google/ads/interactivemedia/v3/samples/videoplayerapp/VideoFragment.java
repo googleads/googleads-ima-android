@@ -44,7 +44,6 @@ public class VideoFragment extends Fragment {
     }
 
     videoPlayerController.setContentVideo(videoItem.getVideoUrl());
-    videoPlayerController.setAdTagUrl(videoItem.getAdTagUrl());
     videoTitle.setText(videoItem.getTitle());
   }
 

@@ -6,7 +6,6 @@
     <string name="media_route_menu_title">Route</string>
     <string name="other_videos">Suggested Videos</string>
     <string name="companionPlaceholder">Companion Ad Slot</string>
-    <string name="ad_ui_lang">en</string>
     <string name="companion_height">90</string>
     <string name="companion_width">728</string>
     <string name="custom_ad_tag_value">custom</string>

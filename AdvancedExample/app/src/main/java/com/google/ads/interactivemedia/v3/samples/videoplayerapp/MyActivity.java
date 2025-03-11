@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.multidex.MultiDex;
+import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
+import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
+import java.util.Locale;
 
 /** Main Activity. */
 public class MyActivity extends AppCompatActivity
@@ -19,12 +22,17 @@ public class MyActivity extends AppCompatActivity
 
   private static final String VIDEO_PLAYLIST_FRAGMENT_TAG = "video_playlist_fragment_tag";
   private static final String VIDEO_EXAMPLE_FRAGMENT_TAG = "video_example_fragment_tag";
+  private static ImaSdkSettings imaSdkSettings;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_my);
     MultiDex.install(this);
+
+    // Initialize the IMA SDK as early as possible when the app starts.
+    ImaSdkFactory sdkFactory = ImaSdkFactory.getInstance();
+    sdkFactory.initialize(this, MyActivity.getImaSdkSettings());
 
     // The video list fragment won't exist for phone layouts, so add it dynamically so we can
     // .replace() it once the user selects a video.
@@ -159,5 +167,13 @@ public class MyActivity extends AppCompatActivity
   private void showStatusBar() {
     getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     getSupportActionBar().show();
+  }
+
+  public static ImaSdkSettings getImaSdkSettings() {
+    if (imaSdkSettings == null) {
+      imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
+      imaSdkSettings.setLanguage(Locale.getDefault().getLanguage());
+    }
+    return imaSdkSettings;
   }
 }

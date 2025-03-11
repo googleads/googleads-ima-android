@@ -85,7 +85,7 @@ public class VideoFragment extends Fragment {
             videoPlayerWithAdPlayback,
             playButton,
             playPauseToggle,
-            getString(R.string.ad_ui_lang),
+            MyActivity.getImaSdkSettings(),
             companionAdSlot,
             logger);
 

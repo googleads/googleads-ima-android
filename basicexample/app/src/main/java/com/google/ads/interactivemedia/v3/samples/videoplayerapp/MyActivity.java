@@ -57,11 +57,16 @@ public class MyActivity extends AppCompatActivity {
   private VideoView videoPlayer;
   private MediaController mediaController;
   private VideoAdPlayerAdapter videoAdPlayerAdapter;
+  private ImaSdkSettings imaSdkSettings;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_my);
+
+    // Initialize the IMA SDK as early as possible when the app starts.
+    sdkFactory = ImaSdkFactory.getInstance();
+    sdkFactory.initialize(this, getImaSdkSettings());
 
     // Create the UI for controlling the video view.
     mediaController = new MediaController(this);
@@ -73,15 +78,12 @@ public class MyActivity extends AppCompatActivity {
     AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
     videoAdPlayerAdapter = new VideoAdPlayerAdapter(videoPlayer, audioManager);
 
-    sdkFactory = ImaSdkFactory.getInstance();
-
     AdDisplayContainer adDisplayContainer =
         ImaSdkFactory.createAdDisplayContainer(
             findViewById(R.id.videoPlayerContainer), videoAdPlayerAdapter);
 
     // Create an AdsLoader.
-    ImaSdkSettings settings = sdkFactory.createImaSdkSettings();
-    adsLoader = sdkFactory.createAdsLoader(this, settings, adDisplayContainer);
+    adsLoader = sdkFactory.createAdsLoader(this, getImaSdkSettings(), adDisplayContainer);
 
     // Add listeners for when ads are loaded and for errors.
     adsLoader.addAdErrorListener(
@@ -242,5 +244,13 @@ public class MyActivity extends AppCompatActivity {
 
     // Request the ad. After the ad is loaded, onAdsManagerLoaded() will be called.
     adsLoader.requestAds(request);
+  }
+
+  private ImaSdkSettings getImaSdkSettings() {
+    if (imaSdkSettings == null) {
+      imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
+      // Set any IMA SDK settings here.
+    }
+    return imaSdkSettings;
   }
 }

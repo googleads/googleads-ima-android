@@ -19,6 +19,8 @@ import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.ui.PlayerView;
 import androidx.multidex.MultiDex;
 import com.google.ads.interactivemedia.v3.api.AdEvent;
+import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
+import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
 
 /** Main Activity. */
 @SuppressLint("UnsafeOptInUsageError")
@@ -37,6 +39,7 @@ public class MyActivity extends Activity {
   private TextView logText;
   private ExoPlayer player;
   private ImaAdsLoader adsLoader;
+  private ImaSdkSettings imaSdkSettings;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +47,16 @@ public class MyActivity extends Activity {
     setContentView(R.layout.activity_my);
     MultiDex.install(this);
 
+    // Initialize the IMA SDK as early as possible when the app starts.
+    ImaSdkFactory.getInstance().initialize(this, getImaSdkSettings());
+
     playerView = findViewById(R.id.player_view);
 
     // Create an AdsLoader.
     adsLoader =
         new ImaAdsLoader.Builder(/* context= */ this)
             .setAdEventListener(buildAdEventListener())
+            .setImaSdkSettings(getImaSdkSettings())
             .build();
   }
 
@@ -156,5 +163,13 @@ public class MyActivity extends Activity {
 
     // Set PlayWhenReady. If true, content and ads will autoplay.
     player.setPlayWhenReady(false);
+  }
+
+  private ImaSdkSettings getImaSdkSettings() {
+    if (imaSdkSettings == null) {
+      imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
+      // Set any IMA SDK settings here.
+    }
+    return imaSdkSettings;
   }
 }

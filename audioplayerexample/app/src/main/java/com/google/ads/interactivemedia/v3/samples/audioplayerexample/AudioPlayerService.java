@@ -54,6 +54,10 @@ public class AudioPlayerService extends Service {
   public void onCreate() {
     super.onCreate();
     final Context context = this;
+
+    // Initialize the IMA SDK as early as possible when the service starts.
+    ImaService.initializeIMASDK(context);
+
     isAdPlaying = false;
 
     player = new ExoPlayer.Builder(context).build();

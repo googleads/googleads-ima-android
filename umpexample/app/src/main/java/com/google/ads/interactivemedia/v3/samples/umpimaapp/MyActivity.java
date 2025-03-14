@@ -49,6 +49,8 @@ public class MyActivity extends AppCompatActivity {
   // AdsManager exposes methods to control ad playback and listen to ad events.
   private AdsManager adsManager;
 
+  private ImaSdkSettings imaSdkSettings;
+
   private AdDisplayContainer adDisplayContainer;
 
   // The saved content position, used to resumed content following an ad break.
@@ -67,6 +69,10 @@ public class MyActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_my);
+
+    // Initialize the IMA SDK as early as possible when the app starts.
+    sdkFactory = ImaSdkFactory.getInstance();
+    sdkFactory.initialize(this, getImaSdkSettings());
 
     // Create the UI for controlling the video view.
     mediaController = new MediaController(this);
@@ -131,12 +137,10 @@ public class MyActivity extends AppCompatActivity {
 
   // [START request_ads]
   private void initializeImaSdk() {
-    if (sdkFactory != null) {
+    if (adDisplayContainer != null) {
       // If the SDK is already initialized, do nothing.
       return;
     }
-
-    sdkFactory = ImaSdkFactory.getInstance();
 
     adDisplayContainer =
         ImaSdkFactory.createAdDisplayContainer(videoPlayerContainer, videoAdPlayerAdapter);
@@ -149,8 +153,7 @@ public class MyActivity extends AppCompatActivity {
 
   private void createAdsLoader() {
     // Create an AdsLoader.
-    ImaSdkSettings settings = sdkFactory.createImaSdkSettings();
-    adsLoader = sdkFactory.createAdsLoader(this, settings, adDisplayContainer);
+    adsLoader = sdkFactory.createAdsLoader(this, getImaSdkSettings(), adDisplayContainer);
 
     // Add listeners for when ads are loaded and for errors.
     adsLoader.addAdErrorListener(
@@ -297,5 +300,13 @@ public class MyActivity extends AppCompatActivity {
 
     // Request the ad. After the ad is loaded, onAdsManagerLoaded() will be called.
     adsLoader.requestAds(request);
+  }
+
+  private ImaSdkSettings getImaSdkSettings() {
+    if (imaSdkSettings == null) {
+      imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
+      // Set any IMA SDK settings here.
+    }
+    return imaSdkSettings;
   }
 }

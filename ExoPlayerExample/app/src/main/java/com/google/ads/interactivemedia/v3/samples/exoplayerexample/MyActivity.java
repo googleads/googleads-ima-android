@@ -47,7 +47,9 @@ public class MyActivity extends Activity {
     setContentView(R.layout.activity_my);
     MultiDex.install(this);
 
-    // Initialize the IMA SDK as early as possible when the app starts.
+    // Initialize the IMA SDK as early as possible when the app starts. If your app already
+    // overrides Application.onCreate(), call this method inside the onCreate() method.
+    // https://developer.android.com/topic/performance/vitals/launch-time#app-creation
     ImaSdkFactory.getInstance().initialize(this, getImaSdkSettings());
 
     playerView = findViewById(R.id.player_view);

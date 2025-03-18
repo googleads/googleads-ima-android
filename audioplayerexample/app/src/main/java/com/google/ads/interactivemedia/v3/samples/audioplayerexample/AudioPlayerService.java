@@ -55,7 +55,9 @@ public class AudioPlayerService extends Service {
     super.onCreate();
     final Context context = this;
 
-    // Initialize the IMA SDK as early as possible when the service starts.
+    // Initialize the IMA SDK as early as possible when the app starts. If your app already
+    // overrides Application.onCreate(), call this method inside the onCreate() method.
+    // https://developer.android.com/topic/performance/vitals/launch-time#app-creation
     ImaService.initializeIMASDK(context);
 
     isAdPlaying = false;

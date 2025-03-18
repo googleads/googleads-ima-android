@@ -70,7 +70,9 @@ public class MyActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_my);
 
-    // Initialize the IMA SDK as early as possible when the app starts.
+    // Initialize the IMA SDK as early as possible when the app starts. If your app already
+    // overrides Application.onCreate(), call this method inside the onCreate() method.
+    // https://developer.android.com/topic/performance/vitals/launch-time#app-creation
     sdkFactory = ImaSdkFactory.getInstance();
     sdkFactory.initialize(this, getImaSdkSettings());
 

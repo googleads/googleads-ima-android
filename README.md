@@ -1,7 +1,7 @@
 Google Ads Android IMA SDK
 --------------------------
 
-![Build status](//github.com/googleads/googleads-ima-android/actions/workflows/build.yaml/badge.svg)
+![Build status](https://github.com/googleads/googleads-ima-android/actions/workflows/build.yaml/badge.svg)
 
 This project hosts samples for the [Android IMA SDK](https://developers.google.com/interactive-media-ads/docs/sdks/android/v3/).
 

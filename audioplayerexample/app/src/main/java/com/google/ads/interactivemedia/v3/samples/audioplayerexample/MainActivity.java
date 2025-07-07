@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
   private static final String AD_TAG_URL =
       "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/"
           + "audio-preroll&ad_type=audio&sz=1x1&ciu_szs=300x250&gdfp_req=1&output=vast&"
-          + "unviewed_position_start=1&env=vp&impl=s&correlator=";
+          + "unviewed_position_start=1&env=vp&correlator=";
   private final Samples.Sample[] sampleList = Samples.getSamples();
 
   private AudioPlayerService.AudioPlayerServiceBinder binder;

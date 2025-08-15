@@ -1,5 +1,6 @@
 package com.google.ads.interactivemedia.v3.samples.exoplayerexample;
 
+// [START imports]
 import static android.os.Build.VERSION.SDK_INT;
 
 import android.annotation.SuppressLint;
@@ -22,6 +23,9 @@ import com.google.ads.interactivemedia.v3.api.AdEvent;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
 
+// [END imports]
+
+// [START main_activity]
 /** Main Activity. */
 @SuppressLint("UnsafeOptInUsageError")
 /* @SuppressLint is needed for new media3 APIs. */
@@ -41,6 +45,9 @@ public class MyActivity extends Activity {
   private ImaAdsLoader adsLoader;
   private ImaSdkSettings imaSdkSettings;
 
+  // [END main_activity]
+
+  // [START on_create]
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -62,6 +69,9 @@ public class MyActivity extends Activity {
             .build();
   }
 
+  // [END on_create]
+
+  // [START build_ad_event_listener]
   public AdEvent.AdEventListener buildAdEventListener() {
     logText = findViewById(R.id.logText);
     logText.setMovementMethod(new ScrollingMovementMethod());
@@ -79,6 +89,9 @@ public class MyActivity extends Activity {
     };
   }
 
+  // [END build_ad_event_listener]
+
+  // [START player_events]
   @Override
   public void onStart() {
     super.onStart();
@@ -130,6 +143,9 @@ public class MyActivity extends Activity {
     super.onDestroy();
   }
 
+  // [END player_events]
+
+  // [START release_and_initialize_player]
   private void releasePlayer() {
     adsLoader.setPlayer(null);
     playerView.setPlayer(null);
@@ -167,6 +183,9 @@ public class MyActivity extends Activity {
     player.setPlayWhenReady(false);
   }
 
+  // [END release_and_initialize_player]
+
+  // [START get_ima_settings]
   private ImaSdkSettings getImaSdkSettings() {
     if (imaSdkSettings == null) {
       imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
@@ -174,4 +193,5 @@ public class MyActivity extends Activity {
     }
     return imaSdkSettings;
   }
+  // [END get_ima_settings]
 }

@@ -131,44 +131,39 @@ public class MyActivity extends AppCompatActivity {
                   // These are the suggested event types to handle. For full list of
                   // all ad event types, see AdEvent.AdEventType documentation.
                   switch (adEvent.getType()) {
-                    case LOADED:
-                      // AdEventType.LOADED is fired when ads are ready to play.
-
-                      // This sample app uses the sample tag
-                      // single_preroll_skippable_ad_tag_url that requires calling
-                      // AdsManager.start() to start ad playback.
-                      // If you use a different ad tag URL that returns a VMAP or
-                      // an ad rules playlist, the adsManager.init() function will
-                      // trigger ad playback automatically and the IMA SDK will
-                      // ignore the adsManager.start().
-                      // It is safe to always call adsManager.start() in the
-                      // LOADED event.
-                      adsManager.start();
-                      break;
-                    case CONTENT_PAUSE_REQUESTED:
-                      // AdEventType.CONTENT_PAUSE_REQUESTED is fired when you
-                      // should pause your content and start playing an ad.
-                      pauseContentForAds();
-                      break;
-                    case CONTENT_RESUME_REQUESTED:
-                      // AdEventType.CONTENT_RESUME_REQUESTED is fired when the ad
-                      // you should play your content.
-                      resumeContent();
-                      break;
-                    case ALL_ADS_COMPLETED:
+                    case LOADED ->
+                        // AdEventType.LOADED is fired when ads are ready to play.
+                        // This sample app uses the sample tag
+                        // single_preroll_skippable_ad_tag_url that requires calling
+                        // AdsManager.start() to start ad playback.
+                        // If you use a different ad tag URL that returns a VMAP or
+                        // an ad rules playlist, the adsManager.init() function will
+                        // trigger ad playback automatically and the IMA SDK will
+                        // ignore the adsManager.start().
+                        // It is safe to always call adsManager.start() in the
+                        // LOADED event.
+                        adsManager.start();
+                    case CONTENT_PAUSE_REQUESTED ->
+                        // AdEventType.CONTENT_PAUSE_REQUESTED is fired when you
+                        // should pause your content and start playing an ad.
+                        pauseContentForAds();
+                    case CONTENT_RESUME_REQUESTED ->
+                        // AdEventType.CONTENT_RESUME_REQUESTED is fired when the ad
+                        // you should play your content.
+                        resumeContent();
+                    case ALL_ADS_COMPLETED -> {
                       // Calling adsManager.destroy() triggers the function
                       // VideoAdPlayer.release().
                       adsManager.destroy();
                       adsManager = null;
-                      break;
-                    case CLICKED:
+                    }
+                    case CLICKED -> {
                       // When the user clicks on the Learn More button, the IMA SDK fires
                       // this event, pauses the ad, and opens the ad's click-through URL.
                       // When the user returns to the app, the IMA SDK calls the
                       // VideoAdPlayer.playAd() function automatically.
-                      break;
-                    default:
-                      break;
+                    }
+                    default -> {}
                   }
                 }
               });

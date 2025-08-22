@@ -217,7 +217,7 @@ public final class ImaService implements AdErrorListener, AdEventListener, AdsLo
   @UnstableApi
   class ImaListener implements AnalyticsListener {
     @Override
-    public void onPlaybackStateChanged(EventTime eventTime, int playbackState) {
+    public void onPlaybackStateChanged(@NonNull EventTime eventTime, int playbackState) {
       if (currentAd == null) {
         // This may be null if state changes after stopAd for a given mediaInfo
         return;
@@ -244,7 +244,7 @@ public final class ImaService implements AdErrorListener, AdEventListener, AdsLo
 
     @Override
     public void onPlayWhenReadyChanged(
-        EventTime eventTime, boolean playWhenReady, int playbackState) {
+        @NonNull EventTime eventTime, boolean playWhenReady, int playbackState) {
       if (currentAd == null) {
         // This may be null if state changes after stopAd for a given mediaInfo
         return;

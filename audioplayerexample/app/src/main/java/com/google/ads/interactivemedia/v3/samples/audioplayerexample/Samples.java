@@ -30,6 +30,7 @@ public final class Samples {
       this.bitmapResource = bitmapResource;
     }
 
+    @NonNull
     @Override
     public String toString() {
       return title;

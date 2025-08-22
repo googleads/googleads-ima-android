@@ -80,8 +80,9 @@ public class AudioPlayerService extends Service {
 
     MediaDescriptionAdapter descriptionAdapter =
         new MediaDescriptionAdapter() {
+          @NonNull
           @Override
-          public String getCurrentContentTitle(Player player) {
+          public String getCurrentContentTitle(@NonNull Player player) {
             if (isAdPlaying) {
               return getString(R.string.ad_content_title);
             }
@@ -90,13 +91,13 @@ public class AudioPlayerService extends Service {
 
           @Nullable
           @Override
-          public PendingIntent createCurrentContentIntent(Player player) {
+          public PendingIntent createCurrentContentIntent(@NonNull Player player) {
             return null;
           }
 
           @Nullable
           @Override
-          public String getCurrentContentText(Player player) {
+          public String getCurrentContentText(@NonNull Player player) {
             if (isAdPlaying) {
               // Null will remove the extra line for description.
               return null;
@@ -106,7 +107,8 @@ public class AudioPlayerService extends Service {
 
           @Nullable
           @Override
-          public Bitmap getCurrentLargeIcon(Player player, BitmapCallback callback) {
+          public Bitmap getCurrentLargeIcon(
+              @NonNull Player player, @NonNull BitmapCallback callback) {
             // Use null for ad playback unless your ad has an icon to show in the notification
             // menu.
             if (isAdPlaying) {
@@ -129,7 +131,7 @@ public class AudioPlayerService extends Service {
                 new NotificationListener() {
                   @Override
                   public void onNotificationPosted(
-                      int notificationId, Notification notification, boolean ongoing) {
+                      int notificationId, @NonNull Notification notification, boolean ongoing) {
                     // This must be called within 5 seconds of the notification being displayed and
                     // before the main app has been killed.
                     startForeground(

@@ -2,6 +2,7 @@
 
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
+// [START activity_imports]
 import android.content.Context;
 import android.content.res.Configuration;
 import android.media.AudioManager;
@@ -23,6 +24,9 @@ import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
 import java.util.Arrays;
 
+// [END activity_imports]
+
+// [START activity_class_setup]
 /** Main activity. */
 public class MyActivity extends AppCompatActivity {
 
@@ -59,6 +63,9 @@ public class MyActivity extends AppCompatActivity {
   private VideoAdPlayerAdapter videoAdPlayerAdapter;
   private ImaSdkSettings imaSdkSettings;
 
+  // [END activity_class_setup]
+
+  // [START activity_on_create]
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -86,7 +93,9 @@ public class MyActivity extends AppCompatActivity {
 
     // Create an AdsLoader.
     adsLoader = sdkFactory.createAdsLoader(this, getImaSdkSettings(), adDisplayContainer);
+    // [END activity_on_create]
 
+    // [START ads_loader_listeners]
     // Add listeners for when ads are loaded and for errors.
     adsLoader.addAdErrorListener(
         new AdErrorEvent.AdErrorListener() {
@@ -120,6 +129,8 @@ public class MyActivity extends AppCompatActivity {
                   adsManager.discardAdBreak();
                 }
               });
+          // [END ads_loader_listeners]
+          // [START ad_event_listener]
           adsManager.addAdEventListener(
               new AdEvent.AdEventListener() {
                 /** Responds to AdEvents. */
@@ -173,7 +184,9 @@ public class MyActivity extends AppCompatActivity {
           // This init() only loads the UI rendering settings locally.
           adsManager.init(adsRenderingSettings);
         });
+    // [END ad_event_listener]
 
+    // [START play_button_setup]
     // When the play button is clicked, request ads and hide the button.
     View playButton = findViewById(R.id.playButton);
     playButton.setOnClickListener(
@@ -182,6 +195,7 @@ public class MyActivity extends AppCompatActivity {
           requestAds(SAMPLE_VAST_TAG_URL);
           view.setVisibility(View.GONE);
         });
+    // [END play_button_setup]
     updateVideoDescriptionVisibility();
   }
 
@@ -201,6 +215,7 @@ public class MyActivity extends AppCompatActivity {
     }
   }
 
+  // [START handle_ad_content_switch]
   private void pauseContentForAds() {
     Log.i(LOGTAG, "pauseContentForAds");
     savedPosition = videoPlayer.getCurrentPosition();
@@ -226,6 +241,9 @@ public class MyActivity extends AppCompatActivity {
         mediaPlayer -> videoAdPlayerAdapter.notifyImaOnContentCompleted());
   }
 
+  // [END handle_ad_content_switch]
+
+  // [START request_ads]
   private void requestAds(String adTagUrl) {
     // Create the ads request.
     AdsRequest request = sdkFactory.createAdsRequest();
@@ -243,6 +261,9 @@ public class MyActivity extends AppCompatActivity {
     adsLoader.requestAds(request);
   }
 
+  // [END request_ads]
+
+  // [START get_ima_settings]
   private ImaSdkSettings getImaSdkSettings() {
     if (imaSdkSettings == null) {
       imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
@@ -250,4 +271,5 @@ public class MyActivity extends AppCompatActivity {
     }
     return imaSdkSettings;
   }
+  // [END get_ima_settings]
 }

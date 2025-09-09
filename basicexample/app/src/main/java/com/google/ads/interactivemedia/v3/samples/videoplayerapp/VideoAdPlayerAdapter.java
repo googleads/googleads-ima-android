@@ -153,14 +153,11 @@ public class VideoAdPlayerAdapter implements VideoAdPlayer {
     Log.i(LOGTAG, "notifyImaSdkAboutAdError");
 
     switch (errorType) {
-      case MediaPlayer.MEDIA_ERROR_UNSUPPORTED:
-        Log.e(LOGTAG, "notifyImaSdkAboutAdError: MEDIA_ERROR_UNSUPPORTED");
-        break;
-      case MediaPlayer.MEDIA_ERROR_TIMED_OUT:
-        Log.e(LOGTAG, "notifyImaSdkAboutAdError: MEDIA_ERROR_TIMED_OUT");
-        break;
-      default:
-        break;
+      case MediaPlayer.MEDIA_ERROR_UNSUPPORTED ->
+          Log.e(LOGTAG, "notifyImaSdkAboutAdError: MEDIA_ERROR_UNSUPPORTED");
+      case MediaPlayer.MEDIA_ERROR_TIMED_OUT ->
+          Log.e(LOGTAG, "notifyImaSdkAboutAdError: MEDIA_ERROR_TIMED_OUT");
+      default -> {}
     }
     for (VideoAdPlayer.VideoAdPlayerCallback callback : videoAdPlayerCallbacks) {
       callback.onError(loadedAdMediaInfo);

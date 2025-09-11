@@ -2,6 +2,7 @@
 
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
+// [START adapter_setup]
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -39,6 +40,9 @@ public class VideoAdPlayerAdapter implements VideoAdPlayer {
     this.audioManager = audioManager;
   }
 
+  // [END adapter_setup]
+
+  // [START adapter_overrides]
   @Override
   public void addCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
     videoAdPlayerCallbacks.add(videoAdPlayerCallback);
@@ -106,6 +110,9 @@ public class VideoAdPlayerAdapter implements VideoAdPlayer {
         / audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
   }
 
+  // [END adapter_overrides]
+
+  // [START adapter_ad_tracking]
   private void startAdTracking() {
     Log.i(LOGTAG, "startAdTracking");
     if (timer != null) {
@@ -146,14 +153,11 @@ public class VideoAdPlayerAdapter implements VideoAdPlayer {
     Log.i(LOGTAG, "notifyImaSdkAboutAdError");
 
     switch (errorType) {
-      case MediaPlayer.MEDIA_ERROR_UNSUPPORTED:
-        Log.e(LOGTAG, "notifyImaSdkAboutAdError: MEDIA_ERROR_UNSUPPORTED");
-        break;
-      case MediaPlayer.MEDIA_ERROR_TIMED_OUT:
-        Log.e(LOGTAG, "notifyImaSdkAboutAdError: MEDIA_ERROR_TIMED_OUT");
-        break;
-      default:
-        break;
+      case MediaPlayer.MEDIA_ERROR_UNSUPPORTED ->
+          Log.e(LOGTAG, "notifyImaSdkAboutAdError: MEDIA_ERROR_UNSUPPORTED");
+      case MediaPlayer.MEDIA_ERROR_TIMED_OUT ->
+          Log.e(LOGTAG, "notifyImaSdkAboutAdError: MEDIA_ERROR_TIMED_OUT");
+      default -> {}
     }
     for (VideoAdPlayer.VideoAdPlayerCallback callback : videoAdPlayerCallbacks) {
       callback.onError(loadedAdMediaInfo);
@@ -181,4 +185,5 @@ public class VideoAdPlayerAdapter implements VideoAdPlayer {
     long adPosition = videoPlayer.getCurrentPosition();
     return new VideoProgressUpdate(adPosition, adDuration);
   }
+  // [END adapter_ad_tracking]
 }

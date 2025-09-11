@@ -1,5 +1,6 @@
 package com.google.ads.interactivemedia.v3.samples.exoplayerexample;
 
+// [START imports]
 import static android.os.Build.VERSION.SDK_INT;
 
 import android.annotation.SuppressLint;
@@ -19,7 +20,12 @@ import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.ui.PlayerView;
 import androidx.multidex.MultiDex;
 import com.google.ads.interactivemedia.v3.api.AdEvent;
+import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
+import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
 
+// [END imports]
+
+// [START main_activity]
 /** Main Activity. */
 @SuppressLint("UnsafeOptInUsageError")
 /* @SuppressLint is needed for new media3 APIs. */
@@ -30,19 +36,28 @@ public class MyActivity extends Activity {
   private static final String SAMPLE_VAST_TAG_URL =
       "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/"
           + "single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90"
-          + "&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=";
+          + "&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&correlator=";
   private static final String LOG_TAG = "ImaExoPlayerExample";
 
   private PlayerView playerView;
   private TextView logText;
   private ExoPlayer player;
   private ImaAdsLoader adsLoader;
+  private ImaSdkSettings imaSdkSettings;
 
+  // [END main_activity]
+
+  // [START on_create]
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_my);
     MultiDex.install(this);
+
+    // Initialize the IMA SDK as early as possible when the app starts. If your app already
+    // overrides Application.onCreate(), call this method inside the onCreate() method.
+    // https://developer.android.com/topic/performance/vitals/launch-time#app-creation
+    ImaSdkFactory.getInstance().initialize(this, getImaSdkSettings());
 
     playerView = findViewById(R.id.player_view);
 
@@ -50,9 +65,13 @@ public class MyActivity extends Activity {
     adsLoader =
         new ImaAdsLoader.Builder(/* context= */ this)
             .setAdEventListener(buildAdEventListener())
+            .setImaSdkSettings(getImaSdkSettings())
             .build();
   }
 
+  // [END on_create]
+
+  // [START build_ad_event_listener]
   public AdEvent.AdEventListener buildAdEventListener() {
     logText = findViewById(R.id.logText);
     logText.setMovementMethod(new ScrollingMovementMethod());
@@ -70,6 +89,9 @@ public class MyActivity extends Activity {
     };
   }
 
+  // [END build_ad_event_listener]
+
+  // [START player_events]
   @Override
   public void onStart() {
     super.onStart();
@@ -121,6 +143,9 @@ public class MyActivity extends Activity {
     super.onDestroy();
   }
 
+  // [END player_events]
+
+  // [START release_and_initialize_player]
   private void releasePlayer() {
     adsLoader.setPlayer(null);
     playerView.setPlayer(null);
@@ -157,4 +182,16 @@ public class MyActivity extends Activity {
     // Set PlayWhenReady. If true, content and ads will autoplay.
     player.setPlayWhenReady(false);
   }
+
+  // [END release_and_initialize_player]
+
+  // [START get_ima_settings]
+  private ImaSdkSettings getImaSdkSettings() {
+    if (imaSdkSettings == null) {
+      imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
+      // Set any IMA SDK settings here.
+    }
+    return imaSdkSettings;
+  }
+  // [END get_ima_settings]
 }

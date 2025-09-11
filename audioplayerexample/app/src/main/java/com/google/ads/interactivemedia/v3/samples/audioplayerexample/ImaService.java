@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import androidx.annotation.Nullable;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.analytics.AnalyticsListener;
@@ -15,9 +15,12 @@ import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.exoplayer.source.ProgressiveMediaSource;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
+import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener;
 import com.google.ads.interactivemedia.v3.api.AdEvent;
+import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener;
 import com.google.ads.interactivemedia.v3.api.AdPodInfo;
 import com.google.ads.interactivemedia.v3.api.AdsLoader;
+import com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener;
 import com.google.ads.interactivemedia.v3.api.AdsManager;
 import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent;
 import com.google.ads.interactivemedia.v3.api.AdsRequest;
@@ -27,6 +30,7 @@ import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
+import com.google.ads.interactivemedia.v3.samples.audioplayerexample.AudioPlayerService.SharedAudioPlayer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +38,7 @@ import java.util.List;
  * Takes control of audio playback from the AudioPlayerService to play some ads and then returns
  * control afterwards.
  */
-public final class ImaService
-    implements AdErrorEvent.AdErrorListener, AdEvent.AdEventListener, AdsLoader.AdsLoadedListener {
+public final class ImaService implements AdErrorListener, AdEventListener, AdsLoadedListener {
 
   private static final String LOGGING_TAG = "ImaService";
 
@@ -44,25 +47,23 @@ public final class ImaService
   private AdMediaInfo currentAd;
   private ImaProgressTracker progressTracker;
   private final Context context;
-  private final AudioPlayerService.SharedAudioPlayer sharedAudioPlayer;
+  private final SharedAudioPlayer sharedAudioPlayer;
   private final ExoPlayer exoPlayer;
   private final List<VideoAdPlayerCallback> callbacks;
   private final ImaSdkFactory sdkFactory;
-  private final ImaSdkSettings imaSdkSettings;
   private final DefaultDataSource.Factory dataSourceFactory;
   public ImaVideoAdPlayer imaVideoAdPlayer = new ImaVideoAdPlayer();
 
-  @androidx.media3.common.util.UnstableApi
+  @UnstableApi
   ImaService(
       Context context,
       DefaultDataSource.Factory dataSourceFactory,
-      AudioPlayerService.SharedAudioPlayer sharedAudioPlayer) {
+      SharedAudioPlayer sharedAudioPlayer) {
     this.context = context;
     this.sharedAudioPlayer = sharedAudioPlayer;
     this.exoPlayer = sharedAudioPlayer.getPlayer();
     this.callbacks = new ArrayList<>();
     this.sdkFactory = ImaSdkFactory.getInstance();
-    this.imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
     this.dataSourceFactory = dataSourceFactory;
     sharedAudioPlayer.addAnalyticsListener(new ImaListener());
   }
@@ -72,7 +73,7 @@ public final class ImaService
    * from the MainActivity.
    */
   public void init(AdDisplayContainer adDisplayContainer) {
-    adsLoader = sdkFactory.createAdsLoader(context, imaSdkSettings, adDisplayContainer);
+    adsLoader = sdkFactory.createAdsLoader(context, getImaSdkSettings(), adDisplayContainer);
     adsLoader.addAdErrorListener(this);
     adsLoader.addAdsLoadedListener(this);
 
@@ -102,7 +103,7 @@ public final class ImaService
   }
 
   @Override
-  @androidx.media3.common.util.UnstableApi
+  @UnstableApi
   public void onAdEvent(AdEvent adEvent) {
     Log.i(LOGGING_TAG, "Event: ".concat(adEvent.getType().toString()));
     switch (adEvent.getType()) {
@@ -135,7 +136,7 @@ public final class ImaService
     }
 
     @Override
-    @androidx.media3.common.util.UnstableApi
+    @UnstableApi
     public void playAd(AdMediaInfo adMediaInfo) {
       String url = adMediaInfo.getUrl();
       progressTracker.start();
@@ -187,7 +188,6 @@ public final class ImaService
       callbacks.remove(callback);
     }
 
-    @Nullable
     @Override
     public VideoProgressUpdate getAdProgress() {
       if (currentAd == null) {
@@ -214,7 +214,7 @@ public final class ImaService
   }
 
   /** Encapsulates callbacks for ExoPlayer changes, and lets IMA know the state of playback */
-  @androidx.media3.common.util.UnstableApi
+  @UnstableApi
   class ImaListener implements AnalyticsListener {
     @Override
     public void onPlaybackStateChanged(EventTime eventTime, int playbackState) {
@@ -244,7 +244,7 @@ public final class ImaService
 
     @Override
     public void onPlayWhenReadyChanged(
-        AnalyticsListener.EventTime eventTime, boolean playWhenReady, int playbackState) {
+        EventTime eventTime, boolean playWhenReady, int playbackState) {
       if (currentAd == null) {
         // This may be null if state changes after stopAd for a given mediaInfo
         return;
@@ -319,5 +319,15 @@ public final class ImaService
     void stop() {
       messageHandler.sendMessageAtFrontOfQueue(Message.obtain(messageHandler, QUIT));
     }
+  }
+
+  public static void initializeIMASDK(Context context) {
+    ImaSdkFactory.getInstance().initialize(context, getImaSdkSettings());
+  }
+
+  private static ImaSdkSettings getImaSdkSettings() {
+    ImaSdkSettings settings = ImaSdkFactory.getInstance().createImaSdkSettings();
+    // Set any IMA SDK settings here.
+    return settings;
   }
 }

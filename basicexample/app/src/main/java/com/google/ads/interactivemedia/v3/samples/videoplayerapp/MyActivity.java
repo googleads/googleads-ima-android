@@ -2,6 +2,7 @@
 
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
+// [START activity_imports]
 import android.content.Context;
 import android.content.res.Configuration;
 import android.media.AudioManager;
@@ -23,6 +24,9 @@ import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
 import java.util.Arrays;
 
+// [END activity_imports]
+
+// [START activity_class_setup]
 /** Main activity. */
 public class MyActivity extends AppCompatActivity {
 
@@ -37,7 +41,7 @@ public class MyActivity extends AppCompatActivity {
   private static final String SAMPLE_VAST_TAG_URL =
       "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/"
           + "single_preroll_skippable&sz=640x480&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast"
-          + "&unviewed_position_start=1&env=vp&impl=s&correlator=";
+          + "&unviewed_position_start=1&env=vp&correlator=";
 
   // Factory class for creating SDK objects.
   private ImaSdkFactory sdkFactory;
@@ -57,11 +61,21 @@ public class MyActivity extends AppCompatActivity {
   private VideoView videoPlayer;
   private MediaController mediaController;
   private VideoAdPlayerAdapter videoAdPlayerAdapter;
+  private ImaSdkSettings imaSdkSettings;
 
+  // [END activity_class_setup]
+
+  // [START activity_on_create]
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_my);
+
+    // Initialize the IMA SDK as early as possible when the app starts. If your app already
+    // overrides Application.onCreate(), call this method inside the onCreate() method.
+    // https://developer.android.com/topic/performance/vitals/launch-time#app-creation
+    sdkFactory = ImaSdkFactory.getInstance();
+    sdkFactory.initialize(this, getImaSdkSettings());
 
     // Create the UI for controlling the video view.
     mediaController = new MediaController(this);
@@ -73,16 +87,15 @@ public class MyActivity extends AppCompatActivity {
     AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
     videoAdPlayerAdapter = new VideoAdPlayerAdapter(videoPlayer, audioManager);
 
-    sdkFactory = ImaSdkFactory.getInstance();
-
     AdDisplayContainer adDisplayContainer =
         ImaSdkFactory.createAdDisplayContainer(
             findViewById(R.id.videoPlayerContainer), videoAdPlayerAdapter);
 
     // Create an AdsLoader.
-    ImaSdkSettings settings = sdkFactory.createImaSdkSettings();
-    adsLoader = sdkFactory.createAdsLoader(this, settings, adDisplayContainer);
+    adsLoader = sdkFactory.createAdsLoader(this, getImaSdkSettings(), adDisplayContainer);
+    // [END activity_on_create]
 
+    // [START ads_loader_listeners]
     // Add listeners for when ads are loaded and for errors.
     adsLoader.addAdErrorListener(
         new AdErrorEvent.AdErrorListener() {
@@ -116,6 +129,8 @@ public class MyActivity extends AppCompatActivity {
                   adsManager.discardAdBreak();
                 }
               });
+          // [END ads_loader_listeners]
+          // [START ad_event_listener]
           adsManager.addAdEventListener(
               new AdEvent.AdEventListener() {
                 /** Responds to AdEvents. */
@@ -127,44 +142,39 @@ public class MyActivity extends AppCompatActivity {
                   // These are the suggested event types to handle. For full list of
                   // all ad event types, see AdEvent.AdEventType documentation.
                   switch (adEvent.getType()) {
-                    case LOADED:
-                      // AdEventType.LOADED is fired when ads are ready to play.
-
-                      // This sample app uses the sample tag
-                      // single_preroll_skippable_ad_tag_url that requires calling
-                      // AdsManager.start() to start ad playback.
-                      // If you use a different ad tag URL that returns a VMAP or
-                      // an ad rules playlist, the adsManager.init() function will
-                      // trigger ad playback automatically and the IMA SDK will
-                      // ignore the adsManager.start().
-                      // It is safe to always call adsManager.start() in the
-                      // LOADED event.
-                      adsManager.start();
-                      break;
-                    case CONTENT_PAUSE_REQUESTED:
-                      // AdEventType.CONTENT_PAUSE_REQUESTED is fired when you
-                      // should pause your content and start playing an ad.
-                      pauseContentForAds();
-                      break;
-                    case CONTENT_RESUME_REQUESTED:
-                      // AdEventType.CONTENT_RESUME_REQUESTED is fired when the ad
-                      // you should play your content.
-                      resumeContent();
-                      break;
-                    case ALL_ADS_COMPLETED:
+                    case LOADED ->
+                        // AdEventType.LOADED is fired when ads are ready to play.
+                        // This sample app uses the sample tag
+                        // single_preroll_skippable_ad_tag_url that requires calling
+                        // AdsManager.start() to start ad playback.
+                        // If you use a different ad tag URL that returns a VMAP or
+                        // an ad rules playlist, the adsManager.init() function will
+                        // trigger ad playback automatically and the IMA SDK will
+                        // ignore the adsManager.start().
+                        // It is safe to always call adsManager.start() in the
+                        // LOADED event.
+                        adsManager.start();
+                    case CONTENT_PAUSE_REQUESTED ->
+                        // AdEventType.CONTENT_PAUSE_REQUESTED is fired when you
+                        // should pause your content and start playing an ad.
+                        pauseContentForAds();
+                    case CONTENT_RESUME_REQUESTED ->
+                        // AdEventType.CONTENT_RESUME_REQUESTED is fired when the ad
+                        // you should play your content.
+                        resumeContent();
+                    case ALL_ADS_COMPLETED -> {
                       // Calling adsManager.destroy() triggers the function
                       // VideoAdPlayer.release().
                       adsManager.destroy();
                       adsManager = null;
-                      break;
-                    case CLICKED:
+                    }
+                    case CLICKED -> {
                       // When the user clicks on the Learn More button, the IMA SDK fires
                       // this event, pauses the ad, and opens the ad's click-through URL.
                       // When the user returns to the app, the IMA SDK calls the
                       // VideoAdPlayer.playAd() function automatically.
-                      break;
-                    default:
-                      break;
+                    }
+                    default -> {}
                   }
                 }
               });
@@ -174,7 +184,9 @@ public class MyActivity extends AppCompatActivity {
           // This init() only loads the UI rendering settings locally.
           adsManager.init(adsRenderingSettings);
         });
+    // [END ad_event_listener]
 
+    // [START play_button_setup]
     // When the play button is clicked, request ads and hide the button.
     View playButton = findViewById(R.id.playButton);
     playButton.setOnClickListener(
@@ -183,6 +195,7 @@ public class MyActivity extends AppCompatActivity {
           requestAds(SAMPLE_VAST_TAG_URL);
           view.setVisibility(View.GONE);
         });
+    // [END play_button_setup]
     updateVideoDescriptionVisibility();
   }
 
@@ -202,6 +215,7 @@ public class MyActivity extends AppCompatActivity {
     }
   }
 
+  // [START handle_ad_content_switch]
   private void pauseContentForAds() {
     Log.i(LOGTAG, "pauseContentForAds");
     savedPosition = videoPlayer.getCurrentPosition();
@@ -227,6 +241,9 @@ public class MyActivity extends AppCompatActivity {
         mediaPlayer -> videoAdPlayerAdapter.notifyImaOnContentCompleted());
   }
 
+  // [END handle_ad_content_switch]
+
+  // [START request_ads]
   private void requestAds(String adTagUrl) {
     // Create the ads request.
     AdsRequest request = sdkFactory.createAdsRequest();
@@ -243,4 +260,16 @@ public class MyActivity extends AppCompatActivity {
     // Request the ad. After the ad is loaded, onAdsManagerLoaded() will be called.
     adsLoader.requestAds(request);
   }
+
+  // [END request_ads]
+
+  // [START get_ima_settings]
+  private ImaSdkSettings getImaSdkSettings() {
+    if (imaSdkSettings == null) {
+      imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
+      // Set any IMA SDK settings here.
+    }
+    return imaSdkSettings;
+  }
+  // [END get_ima_settings]
 }

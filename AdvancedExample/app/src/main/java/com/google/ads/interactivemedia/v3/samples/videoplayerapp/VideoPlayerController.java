@@ -43,7 +43,7 @@ public class VideoPlayerController {
   private final VideoPlayerWithAdPlayback videoPlayerWithAdPlayback;
 
   // Button the user taps to begin video playback and ad request.
-  private View playButton;
+  private final View playButton;
 
   // URL of content video.
   private String contentVideoUrl;
@@ -161,7 +161,7 @@ public class VideoPlayerController {
       VideoPlayerWithAdPlayback videoPlayerWithAdPlayback,
       View playButton,
       View playPauseToggle,
-      String language,
+      ImaSdkSettings imaSdkSettings,
       ViewGroup companionViewGroup,
       Logger log) {
     this.videoPlayerWithAdPlayback = videoPlayerWithAdPlayback;
@@ -173,8 +173,6 @@ public class VideoPlayerController {
 
     // Create an AdsLoader and optionally set the language.
     sdkFactory = ImaSdkFactory.getInstance();
-    ImaSdkSettings imaSdkSettings = sdkFactory.createImaSdkSettings();
-    imaSdkSettings.setLanguage(language);
 
     adDisplayContainer =
         ImaSdkFactory.createAdDisplayContainer(

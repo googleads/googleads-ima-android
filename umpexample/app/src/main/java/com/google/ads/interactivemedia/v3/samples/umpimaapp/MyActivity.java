@@ -38,7 +38,7 @@ public class MyActivity extends AppCompatActivity {
   private static final String SAMPLE_VAST_TAG_URL =
       "https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/"
           + "single_preroll_skippable&sz=640x480&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast"
-          + "&unviewed_position_start=1&env=vp&impl=s&correlator=";
+          + "&unviewed_position_start=1&env=vp&correlator=";
 
   // Factory class for creating SDK objects.
   private ImaSdkFactory sdkFactory;
@@ -48,6 +48,8 @@ public class MyActivity extends AppCompatActivity {
 
   // AdsManager exposes methods to control ad playback and listen to ad events.
   private AdsManager adsManager;
+
+  private ImaSdkSettings imaSdkSettings;
 
   private AdDisplayContainer adDisplayContainer;
 
@@ -67,6 +69,12 @@ public class MyActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_my);
+
+    // Initialize the IMA SDK as early as possible when the app starts. If your app already
+    // overrides Application.onCreate(), call this method inside the onCreate() method.
+    // https://developer.android.com/topic/performance/vitals/launch-time#app-creation
+    sdkFactory = ImaSdkFactory.getInstance();
+    sdkFactory.initialize(this, getImaSdkSettings());
 
     // Create the UI for controlling the video view.
     mediaController = new MediaController(this);
@@ -131,12 +139,10 @@ public class MyActivity extends AppCompatActivity {
 
   // [START request_ads]
   private void initializeImaSdk() {
-    if (sdkFactory != null) {
+    if (adDisplayContainer != null) {
       // If the SDK is already initialized, do nothing.
       return;
     }
-
-    sdkFactory = ImaSdkFactory.getInstance();
 
     adDisplayContainer =
         ImaSdkFactory.createAdDisplayContainer(videoPlayerContainer, videoAdPlayerAdapter);
@@ -149,8 +155,7 @@ public class MyActivity extends AppCompatActivity {
 
   private void createAdsLoader() {
     // Create an AdsLoader.
-    ImaSdkSettings settings = sdkFactory.createImaSdkSettings();
-    adsLoader = sdkFactory.createAdsLoader(this, settings, adDisplayContainer);
+    adsLoader = sdkFactory.createAdsLoader(this, getImaSdkSettings(), adDisplayContainer);
 
     // Add listeners for when ads are loaded and for errors.
     adsLoader.addAdErrorListener(
@@ -297,5 +302,13 @@ public class MyActivity extends AppCompatActivity {
 
     // Request the ad. After the ad is loaded, onAdsManagerLoaded() will be called.
     adsLoader.requestAds(request);
+  }
+
+  private ImaSdkSettings getImaSdkSettings() {
+    if (imaSdkSettings == null) {
+      imaSdkSettings = ImaSdkFactory.getInstance().createImaSdkSettings();
+      // Set any IMA SDK settings here.
+    }
+    return imaSdkSettings;
   }
 }

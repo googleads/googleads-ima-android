@@ -23,6 +23,9 @@ import java.util.List;
 /** Ads logic for handling the IMA SDK integration code and events. */
 public class VideoPlayerController {
 
+  private final AdsLoadedListener adsLoadedListener;
+  private final AdErrorEvent.AdErrorListener adErrorListener;
+
   /** Log interface, so we can output the log commands to the UI or similar. */
   public interface Logger {
     void log(String logMessage);
@@ -32,7 +35,7 @@ public class VideoPlayerController {
   private final AdDisplayContainer adDisplayContainer;
 
   // The AdsLoader instance exposes the requestAds method.
-  private final AdsLoader adsLoader;
+  private static AdsLoader adsLoader;
 
   private final List<AdItem> adsToPlay = new ArrayList<>();
 
@@ -178,25 +181,27 @@ public class VideoPlayerController {
         ImaSdkFactory.createAdDisplayContainer(
             videoPlayerWithAdPlayback.getAdUiContainer(),
             videoPlayerWithAdPlayback.getVideoAdPlayer());
-    adsLoader = sdkFactory.createAdsLoader(context, imaSdkSettings, adDisplayContainer);
 
-    adsLoader.addAdErrorListener(
-        new AdErrorEvent.AdErrorListener() {
-          /** An event raised when there is an error loading or playing ads. */
-          @Override
-          public void onAdError(AdErrorEvent adErrorEvent) {
-            log("Ad Error: " + adErrorEvent.getError().getMessage());
-            resumeContent();
-          }
-        });
+    if(adsLoader == null){
+      adsLoader = sdkFactory.createAdsLoader(context, imaSdkSettings, adDisplayContainer);
+    }
+    adErrorListener = new AdErrorEvent.AdErrorListener() {
+      /** An event raised when there is an error loading or playing ads. */
+      @Override
+      public void onAdError(AdErrorEvent adErrorEvent) {
+        log("Ad Error: " + adErrorEvent.getError().getMessage());
+        resumeContent();
+      }
+    };
+    adsLoader.addAdErrorListener(adErrorListener);
 
-    adsLoader.addAdsLoadedListener(new VideoPlayerController.AdsLoadedListener());
+    adsLoadedListener = new AdsLoadedListener();
+    adsLoader.addAdsLoadedListener(adsLoadedListener);
 
     // When Play is clicked, request ads and hide the button.
     playButton.setOnClickListener(view -> {
       // add two ads to the queue that both will be played in sequence
       requestAndPlayAds(VideoMetadata.PRE_ROLL_NO_SKIP.adTagUrl);
-      requestAndPlayAds(VideoMetadata.PRE_ROLL_SKIP.adTagUrl);
     });
   }
 
@@ -320,6 +325,8 @@ public class VideoPlayerController {
   }
 
   public void destroy() {
+    adsLoader.removeAdsLoadedListener(adsLoadedListener);
+    adsLoader.removeAdErrorListener(adErrorListener);
     for (AdItem adItem : adsToPlay) {
       if (adItem.adsManager != null) {
         adItem.adsManager.destroy();

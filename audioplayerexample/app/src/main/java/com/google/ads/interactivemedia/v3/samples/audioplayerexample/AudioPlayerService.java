@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import android.os.Binder;
 import android.os.IBinder;
 import android.view.ViewGroup;
-import androidx.annotation.Nullable;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
@@ -34,6 +33,7 @@ import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Allows audio playback with hooks for advertisements. This is meant to run as a Foreground Service
@@ -88,15 +88,13 @@ public class AudioPlayerService extends Service {
             return sampleList[player.getCurrentMediaItemIndex()].title;
           }
 
-          @Nullable
           @Override
-          public PendingIntent createCurrentContentIntent(Player player) {
+          public @Nullable PendingIntent createCurrentContentIntent(Player player) {
             return null;
           }
 
-          @Nullable
           @Override
-          public String getCurrentContentText(Player player) {
+          public @Nullable String getCurrentContentText(Player player) {
             if (isAdPlaying) {
               // Null will remove the extra line for description.
               return null;
@@ -104,9 +102,8 @@ public class AudioPlayerService extends Service {
             return sampleList[player.getCurrentMediaItemIndex()].description;
           }
 
-          @Nullable
           @Override
-          public Bitmap getCurrentLargeIcon(Player player, BitmapCallback callback) {
+          public @Nullable Bitmap getCurrentLargeIcon(Player player, BitmapCallback callback) {
             // Use null for ad playback unless your ad has an icon to show in the notification
             // menu.
             if (isAdPlaying) {
@@ -163,9 +160,8 @@ public class AudioPlayerService extends Service {
     super.onDestroy();
   }
 
-  @Nullable
   @Override
-  public IBinder onBind(Intent intent) {
+  public @Nullable IBinder onBind(Intent intent) {
     return new AudioPlayerServiceBinder();
   }
 

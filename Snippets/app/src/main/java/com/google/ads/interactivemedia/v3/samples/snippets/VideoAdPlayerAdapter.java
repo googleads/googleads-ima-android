@@ -8,9 +8,15 @@ import com.google.ads.interactivemedia.v3.api.AdPodInfo;
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Example implementation of IMA's VideoAdPlayer interface. */
 public class VideoAdPlayerAdapter implements VideoAdPlayer {
+
+  private final VideoView videoPlayer;
+  private final AudioManager audioManager;
+  private final List<VideoAdPlayerCallback> videoAdPlayerCallbacks = new ArrayList<>();
 
   public VideoAdPlayerAdapter(VideoView videoPlayer, AudioManager audioManager) {
     this.videoPlayer = videoPlayer;

@@ -39,18 +39,19 @@ public class MyActivity extends AppCompatActivity {
     setContentView(R.layout.activity_my);
 
     // Create the IMA class and interface objects used in the snippets.
-    imaSdkFactory = new ImaSdkFactory.getInstance();
+    imaSdkFactory = ImaSdkFactory.getInstance();
     AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+    VideoAdPlayerAdapter videoAdPlayerAdapter =
+        new VideoAdPlayerAdapter(findViewById(R.id.videoView), audioManager);
 
     adDisplayContainer =
         ImaSdkFactory.createAdDisplayContainer(
-            findViewById(R.id.videoPlayerContainer),
-            new VideoAdPlayerAdapter(findViewById(R.id.videoView), audioManager));
+            findViewById(R.id.videoPlayerContainer), videoAdPlayerAdapter);
   }
 
   private void openMeasurementSnippet() {
     // [START open_measurement_snippet]
-    ViewGroup transparentTapOverlay = (ViewGroup) findViewById(R.id.transparentOverlay);
+    ViewGroup myTransparentTapOverlay = (ViewGroup) findViewById(R.id.transparentOverlay);
     ImageButton myPauseButton = (ImageButton) findViewById(R.id.pauseButton);
     // Substitute "myTransparentTapOverlay" and "myPauseButton" with the
     // elements you want to register as video controls overlays.

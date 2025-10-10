@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">IMA SDK Document Snippets</string>
+    <string name="app_description">
+        This app contains code snippets for IMA Android client-side documentation.
+        This app has no other functionality.
+    </string>
+
+</resources>

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "com.google.ads.interactivemedia.v3.samples.snippets"
-    compileSdk = 36
+    compileSdk 36
 
     // Java 17 required by Gradle 8+
     compileOptions {
@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.google.ads.interactivemedia.v3.samples.snippets"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 36
         versionCode 1
         versionName "1.0"

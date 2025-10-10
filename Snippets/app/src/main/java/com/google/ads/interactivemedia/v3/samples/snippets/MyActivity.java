@@ -50,7 +50,7 @@ public class MyActivity extends AppCompatActivity {
 
   private void openMeasurementSnippet() {
     // [START open_measurement_snippet]
-    ViewGroup transparentTapOverlay = (ViewGroup) findViewById(R.id.transparentOverlay);
+    ViewGroup myTransparentTapOverlay = (ViewGroup) findViewById(R.id.transparentOverlay);
     ImageButton myPauseButton = (ImageButton) findViewById(R.id.pauseButton);
     // Substitute "myTransparentTapOverlay" and "myPauseButton" with the
     // elements you want to register as video controls overlays.

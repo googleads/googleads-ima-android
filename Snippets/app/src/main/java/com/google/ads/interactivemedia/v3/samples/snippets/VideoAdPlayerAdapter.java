@@ -1,6 +1,6 @@
 // Copyright 2025 Google LLC
 
-package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
+package com.google.ads.interactivemedia.v3.samples.snippets;
 
 import android.media.AudioManager;
 import android.widget.VideoView;

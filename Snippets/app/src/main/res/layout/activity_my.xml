@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MyActivity"
+    tools:ignore="MergeRootFrame">
+
+    <TextView
+        android:id="@+id/appDescription"
+        android:text="@string/app_description"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:textSize="@dimen/font_size" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="0"
+        android:id="@+id/videoPlayerContainer" >
+
+        <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+    </RelativeLayout>
+
+    <ViewGroup android:id="@+id/transparentOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+    <ImageButton
+        android:id="@+id/pauseButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+
+</LinearLayout>

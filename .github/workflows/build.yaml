@@ -20,6 +20,7 @@ jobs:
         regex:
         - "AdvancedExample"
         - "ExoPlayerExample"
+        - "Snippets"
         - "basicexample"
         - "audioplayerexample"
         - "umpexample"

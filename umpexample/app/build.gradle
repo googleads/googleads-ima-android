@@ -42,5 +42,5 @@ dependencies {
     implementation 'androidx.browser:browser:1.9.0'
     implementation 'androidx.media:media:1.7.1'
     implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.38.0'
-    implementation 'com.google.android.ump:user-messaging-platform:3.2.0'
+    implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
 }

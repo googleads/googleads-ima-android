@@ -21,12 +21,17 @@ android {
     }
   }
   compileOptions {
+    // Required by IMA SDK v3.37.0+
+    isCoreLibraryDesugaringEnabled = true
+
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
   }
 }
 
 dependencies {
+  coreLibraryDesugaring(libs.desugar)
   implementation(libs.appcompat)
   implementation(libs.material)
+  implementation(libs.interactivemedia)
 }

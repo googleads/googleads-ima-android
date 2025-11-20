@@ -1,6 +1,8 @@
 package com.google.ads.interactivemedia.v3.samples.umpimaapp;
 
 import android.app.Activity;
+import com.google.android.gms.appset.AppSet;
+import com.google.android.gms.appset.AppSetIdClient;
 import com.google.android.ump.ConsentDebugSettings;
 import com.google.android.ump.ConsentForm.OnConsentFormDismissedListener;
 import com.google.android.ump.ConsentInformation;
@@ -58,30 +60,44 @@ public class ConsentManager {
             .addTestDeviceHashedId("TEST-DEVICE-HASHED-ID")
             .build();
 
-    // Set up parameters for this sample app to download a consent request form. If your app has
-    // different consent requirements, change this parameter to make appropriate consent requests.
-    ConsentRequestParameters params =
-        new ConsentRequestParameters.Builder()
-            // Set the following tag to false to indicate that your app users are not under the
-            // age of consent.
-            .setTagForUnderAgeOfConsent(false)
-            .setConsentDebugSettings(debugSettings)
-            .build();
+    // Example fetching App Set ID to identify the user across apps.
+    // Set ConsentRequestParameters for this sample app to download a consent request form.
+    // If your app has different consent requirements, change the parameters to make appropriate
+    // consent requests.
+    // [START build_consent_request_parameters]]
+    AppSetIdClient client = AppSet.getClient(activity);
+    client
+        .getAppSetIdInfo()
+        .addOnSuccessListener(
+            info -> {
+              String appSetId = info.getId();
 
-    // [START request_consent_info_update]
-    // Requesting an update to consent information should be called on every app launch.
-    consentInformation.requestConsentInfoUpdate(
-        activity,
-        params,
-        () -> // Called when consent information is successfully updated.
-            // [START_EXCLUDE silent]
-            loadAndShowConsentFormIfRequired(activity, onConsentGatheringCompleteListener),
-        // [END_EXCLUDE]
-        requestConsentError -> // Called when there's an error updating consent information.
-            // [START_EXCLUDE silent]
-            onConsentGatheringCompleteListener.consentGatheringComplete(requestConsentError));
-    // [END_EXCLUDE]
-    // [END request_consent_info_update]
+              ConsentRequestParameters consentRequestParameters =
+                  new ConsentRequestParameters.Builder()
+                      .setTagForUnderAgeOfConsent(false)
+                      .setConsentDebugSettings(debugSettings)
+                      .setConsentSyncId(appSetId)
+                      .build();
+              // [END build_consent_request_parameters]
+
+              // [START request_consent_info_update]
+              // Requesting an update to consent information should be called on every app launch.
+              consentInformation.requestConsentInfoUpdate(
+                  activity,
+                  consentRequestParameters,
+                  () -> // Called when consent information is successfully updated.
+                      // [START_EXCLUDE silent]
+                      loadAndShowConsentFormIfRequired(
+                          activity, onConsentGatheringCompleteListener),
+                  // [END_EXCLUDE]
+                  // Called when there's an error updating consent information.
+                  requestConsentError ->
+                      // [START_EXCLUDE silent]
+                      onConsentGatheringCompleteListener.consentGatheringComplete(
+                          requestConsentError));
+              // [END_EXCLUDE]
+              // [END request_consent_info_update]
+            });
   }
 
   private void loadAndShowConsentFormIfRequired(

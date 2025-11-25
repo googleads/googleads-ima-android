@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer;
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent;
@@ -200,7 +201,7 @@ public class MyActivity extends AppCompatActivity {
   }
 
   @Override
-  public void onConfigurationChanged(Configuration configuration) {
+  public void onConfigurationChanged(@NonNull Configuration configuration) {
     super.onConfigurationChanged(configuration);
     // Hide the extra content when in landscape so the video is as large as possible.
     updateVideoDescriptionVisibility();

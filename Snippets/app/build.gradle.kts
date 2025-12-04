@@ -32,6 +32,7 @@ android {
 dependencies {
   coreLibraryDesugaring(libs.desugar)
   implementation(libs.appcompat)
-  implementation(libs.material)
   implementation(libs.interactivemedia)
+  implementation(libs.material)
+  implementation(libs.media3.exoplayer.ima)
 }

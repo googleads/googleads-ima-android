@@ -1,6 +1,9 @@
 package com.google.ads.interactivemedia.v3.samples.umpimaapp;
 
 import android.app.Activity;
+import android.util.Log;
+import com.google.android.gms.appset.AppSet;
+import com.google.android.gms.appset.AppSetIdClient;
 import com.google.android.ump.ConsentDebugSettings;
 import com.google.android.ump.ConsentForm.OnConsentFormDismissedListener;
 import com.google.android.ump.ConsentInformation;
@@ -17,6 +20,7 @@ import com.google.android.ump.UserMessagingPlatform;
  * Google consent management requirements for serving ads in the EEA and UK.
  */
 public class ConsentManager {
+  private static final String LOGTAG = "ImaUmpSample";
   private final Activity activity;
   private final ConsentInformation consentInformation;
 
@@ -58,30 +62,66 @@ public class ConsentManager {
             .addTestDeviceHashedId("TEST-DEVICE-HASHED-ID")
             .build();
 
-    // Set up parameters for this sample app to download a consent request form. If your app has
-    // different consent requirements, change this parameter to make appropriate consent requests.
-    ConsentRequestParameters params =
-        new ConsentRequestParameters.Builder()
-            // Set the following tag to false to indicate that your app users are not under the
-            // age of consent.
-            .setTagForUnderAgeOfConsent(false)
-            .setConsentDebugSettings(debugSettings)
-            .build();
+    // Set ConsentRequestParameters for this sample app to download a consent request form.
+    // If your app has different consent requirements, change the parameters to make appropriate
+    // consent requests.
+    // [START build_consent_request_parameters]
+    // Example fetching App Set ID to identify the user across apps.
+    AppSetIdClient client = AppSet.getClient(activity);
+    client
+        .getAppSetIdInfo()
+        .addOnSuccessListener(
+            info -> {
+              String appSetId = info.getId();
+              ConsentRequestParameters consentRequestParameters =
+                  new ConsentRequestParameters.Builder()
+                      .setTagForUnderAgeOfConsent(false)
+                      .setConsentDebugSettings(debugSettings)
+                      .setConsentSyncId(appSetId)
+                      .build();
+              // [END build_consent_request_parameters]
 
-    // [START request_consent_info_update]
-    // Requesting an update to consent information should be called on every app launch.
-    consentInformation.requestConsentInfoUpdate(
-        activity,
-        params,
-        () -> // Called when consent information is successfully updated.
-            // [START_EXCLUDE silent]
-            loadAndShowConsentFormIfRequired(activity, onConsentGatheringCompleteListener),
-        // [END_EXCLUDE]
-        requestConsentError -> // Called when there's an error updating consent information.
-            // [START_EXCLUDE silent]
-            onConsentGatheringCompleteListener.consentGatheringComplete(requestConsentError));
-    // [END_EXCLUDE]
-    // [END request_consent_info_update]
+              // [START request_consent_info_update]
+              // Requesting an update to consent information should be called on every app launch.
+              consentInformation.requestConsentInfoUpdate(
+                  activity,
+                  consentRequestParameters,
+                  () -> // Called when consent information is successfully updated.
+                      // [START_EXCLUDE silent]
+                      loadAndShowConsentFormIfRequired(
+                          activity, onConsentGatheringCompleteListener),
+                  // [END_EXCLUDE]
+                  // Called when there's an error updating consent information.
+                  requestConsentError ->
+                      // [START_EXCLUDE silent]
+                      onConsentGatheringCompleteListener.consentGatheringComplete(
+                          requestConsentError));
+              // [END_EXCLUDE]
+              // [END request_consent_info_update]
+            })
+        .addOnFailureListener(
+            exception -> {
+              String exceptionMessage = exception.getMessage();
+              if (exceptionMessage != null) {
+                Log.i(LOGTAG, "Failed to fetch App Set ID: " + exceptionMessage);
+              }
+              // If fetching App Set ID fails, the app proceeds without a consent syncing.
+              ConsentRequestParameters consentRequestParameters =
+                  new ConsentRequestParameters.Builder()
+                      .setTagForUnderAgeOfConsent(false)
+                      .setConsentDebugSettings(debugSettings)
+                      .build();
+
+              consentInformation.requestConsentInfoUpdate(
+                  activity,
+                  consentRequestParameters,
+                  () ->
+                      loadAndShowConsentFormIfRequired(
+                          activity, onConsentGatheringCompleteListener),
+                  requestConsentError ->
+                      onConsentGatheringCompleteListener.consentGatheringComplete(
+                          requestConsentError));
+            });
   }
 
   private void loadAndShowConsentFormIfRequired(

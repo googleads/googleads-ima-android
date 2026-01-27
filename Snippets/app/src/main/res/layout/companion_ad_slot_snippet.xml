@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+  <!--  [START companion_ad_slot]-->
+  <LinearLayout
+      android:id="@+id/companionAdSlot"
+      android:layout_width="match_parent"
+      android:layout_height="250dp"
+      android:layout_gravity="center_horizontal"
+      android:gravity="center"
+      android:orientation="vertical"
+      android:textAlignment="center" />
+  <!--  [END companion_ad_slot]-->
+
+</LinearLayout>

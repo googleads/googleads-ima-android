@@ -7,9 +7,11 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.widget.VideoView;
 import com.google.ads.interactivemedia.v3.api.AdPodInfo;
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo;
+import com.google.ads.interactivemedia.v3.api.player.ResizablePlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /** Example implementation of IMA's VideoAdPlayer interface. */
-public class VideoAdPlayerAdapter implements VideoAdPlayer {
+public class VideoAdPlayerAdapter implements VideoAdPlayer, ResizablePlayer {
 
   private static final String LOGTAG = "IMABasicSample";
   private static final long POLLING_TIME_MS = 250;
@@ -185,5 +187,24 @@ public class VideoAdPlayerAdapter implements VideoAdPlayer {
     long adPosition = videoPlayer.getCurrentPosition();
     return new VideoProgressUpdate(adPosition, adDuration);
   }
+
   // [END adapter_ad_tracking]
+  @Override
+  public void resize(int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
+    if (videoPlayer == null) {
+      return;
+    }
+    ViewGroup.LayoutParams layoutParams = videoPlayer.getLayoutParams();
+    if (layoutParams instanceof ViewGroup.MarginLayoutParams marginLayoutParams) {
+      marginLayoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+      videoPlayer.setLayoutParams(marginLayoutParams);
+    } else if (layoutParams != null) {
+      ViewGroup.MarginLayoutParams newMarginsLayoutParams =
+          new ViewGroup.MarginLayoutParams(layoutParams);
+      newMarginsLayoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+      videoPlayer.setLayoutParams(newMarginsLayoutParams);
+    } else {
+      Log.w(LOGTAG, "Unable to resize video player; layoutParams is null.");
+    }
+  }
 }

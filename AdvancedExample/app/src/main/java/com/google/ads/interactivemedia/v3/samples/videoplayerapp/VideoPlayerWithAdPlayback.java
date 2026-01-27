@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import com.google.ads.interactivemedia.v3.api.AdPodInfo;
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo;
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider;
+import com.google.ads.interactivemedia.v3.api.player.ResizablePlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer;
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate;
 import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.VideoPlayer;
@@ -113,67 +114,7 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
     adUiContainer = this.getRootView().findViewById(R.id.adUiContainer);
 
     // Define VideoAdPlayer connector.
-    videoAdPlayer =
-        new VideoAdPlayer() {
-          @Override
-          public int getVolume() {
-            return videoPlayer.getVolume();
-          }
-
-          @Override
-          public void playAd(AdMediaInfo info) {
-            startTracking();
-            if (isAdDisplayed) {
-              videoPlayer.resume();
-            } else {
-              isAdDisplayed = true;
-              videoPlayer.play();
-            }
-          }
-
-          @Override
-          public void loadAd(AdMediaInfo info, AdPodInfo api) {
-            adMediaInfo = info;
-            isAdDisplayed = false;
-            videoPlayer.setVideoPath(info.getUrl());
-          }
-
-          @Override
-          public void stopAd(AdMediaInfo info) {
-            stopTracking();
-            videoPlayer.stopPlayback();
-          }
-
-          @Override
-          public void pauseAd(AdMediaInfo info) {
-            stopTracking();
-            videoPlayer.pause();
-          }
-
-          @Override
-          public void release() {
-            // any clean up that needs to be done
-          }
-
-          @Override
-          public void addCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
-            adCallbacks.add(videoAdPlayerCallback);
-          }
-
-          @Override
-          public void removeCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
-            adCallbacks.remove(videoAdPlayerCallback);
-          }
-
-          @Override
-          public VideoProgressUpdate getAdProgress() {
-            if (!isAdDisplayed || videoPlayer.getDuration() <= 0) {
-              return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
-            }
-            return new VideoProgressUpdate(
-                videoPlayer.getCurrentPosition(), videoPlayer.getDuration());
-          }
-        };
+    videoAdPlayer = new VideoAdPlayerImpl();
 
     contentProgressProvider =
         () -> {
@@ -354,5 +295,87 @@ public class VideoPlayerWithAdPlayback extends RelativeLayout {
 
   public void disableControls() {
     videoPlayer.disablePlaybackControls();
+  }
+
+  /** IMA SDK video ad player implementation. */
+  private class VideoAdPlayerImpl implements VideoAdPlayer, ResizablePlayer {
+    @Override
+    public int getVolume() {
+      return videoPlayer.getVolume();
+    }
+
+    @Override
+    public void playAd(AdMediaInfo info) {
+      startTracking();
+      if (isAdDisplayed) {
+        videoPlayer.resume();
+      } else {
+        isAdDisplayed = true;
+        videoPlayer.play();
+      }
+    }
+
+    @Override
+    public void loadAd(AdMediaInfo info, AdPodInfo api) {
+      adMediaInfo = info;
+      isAdDisplayed = false;
+      videoPlayer.setVideoPath(info.getUrl());
+    }
+
+    @Override
+    public void stopAd(AdMediaInfo info) {
+      stopTracking();
+      videoPlayer.stopPlayback();
+    }
+
+    @Override
+    public void pauseAd(AdMediaInfo info) {
+      stopTracking();
+      videoPlayer.pause();
+    }
+
+    @Override
+    public void release() {
+      // any clean up that needs to be done
+    }
+
+    @Override
+    public void addCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
+      adCallbacks.add(videoAdPlayerCallback);
+    }
+
+    @Override
+    public void removeCallback(VideoAdPlayerCallback videoAdPlayerCallback) {
+      adCallbacks.remove(videoAdPlayerCallback);
+    }
+
+    @Override
+    public VideoProgressUpdate getAdProgress() {
+      if (!isAdDisplayed || videoPlayer.getDuration() <= 0) {
+        return VideoProgressUpdate.VIDEO_TIME_NOT_READY;
+      }
+      return new VideoProgressUpdate(videoPlayer.getCurrentPosition(), videoPlayer.getDuration());
+    }
+
+    @Override
+    public void resize(int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
+      if (videoPlayer == null) {
+        return;
+      }
+      ViewGroup.LayoutParams layoutParams = videoPlayer.getLayoutParams();
+      if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+        ViewGroup.MarginLayoutParams marginLayoutParams =
+            (ViewGroup.MarginLayoutParams) layoutParams;
+        marginLayoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+        videoPlayer.setLayoutParams(marginLayoutParams);
+      } else if (layoutParams != null) {
+        ViewGroup.MarginLayoutParams newMarginsLayoutParams =
+            new ViewGroup.MarginLayoutParams(layoutParams);
+        newMarginsLayoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+        videoPlayer.setLayoutParams(newMarginsLayoutParams);
+      } else {
+        Log.w("ImaExample", "Unable to resize video player; layoutParams is null.");
+      }
+    }
   }
 }

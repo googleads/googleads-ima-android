@@ -18,7 +18,6 @@ import androidx.media3.exoplayer.ima.ImaAdsLoader;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.ui.PlayerView;
-import androidx.multidex.MultiDex;
 import com.google.ads.interactivemedia.v3.api.AdEvent;
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory;
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings;
@@ -52,7 +51,6 @@ public class MyActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_my);
-    MultiDex.install(this);
 
     // Initialize the IMA SDK as early as possible when the app starts. If your app already
     // overrides Application.onCreate(), call this method inside the onCreate() method.

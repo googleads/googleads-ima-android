@@ -1,27 +1,29 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'com.google.ads.interactivemedia.v3.samples.exoplayerexample'
-    compileSdk 36
+    namespace = 'com.google.ads.interactivemedia.v3.samples.exoplayerexample'
+    compileSdk = 36
 
-    // Java 17 required by Gradle 8+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        // Required by IMA SDK v3.37.0+
+        coreLibraryDesugaringEnabled = true
+
+        // Java 17 required by Gradle 8+
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     defaultConfig {
-        applicationId "com.google.ads.interactivemedia.v3.samples.exoplayerexample"
-        minSdkVersion 23
-        targetSdkVersion 36
-        multiDexEnabled true
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.google.ads.interactivemedia.v3.samples.exoplayerexample"
+        minSdkVersion(23)
+        targetSdkVersion(36)
+        versionCode = 1
+        versionName = "1.0"
     }
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled = true
+            proguardFiles(getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro')
         }
     }
 }
@@ -32,12 +34,11 @@ repositories {
 }
 
 dependencies {
-    def media3_version = "1.8.0"
-    implementation "androidx.media3:media3-ui:$media3_version"
-    implementation "androidx.media3:media3-exoplayer:$media3_version"
+    def media3_version = "1.9.1"
+    coreLibraryDesugaring('com.android.tools:desugar_jdk_libs:2.1.5')
+    implementation("androidx.media3:media3-ui:$media3_version")
+    implementation("androidx.media3:media3-exoplayer:$media3_version")
 
     // The library adds the IMA ExoPlayer integration for ads.
-    implementation "androidx.media3:media3-exoplayer-ima:$media3_version"
-
-    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation("androidx.media3:media3-exoplayer-ima:$media3_version")
 }

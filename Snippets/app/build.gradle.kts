@@ -35,4 +35,5 @@ dependencies {
   implementation(libs.interactivemedia)
   implementation(libs.material)
   implementation(libs.media3.exoplayer.ima)
+  implementation(libs.user.messaging.platform)
 }

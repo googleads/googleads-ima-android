@@ -5,6 +5,7 @@ desugar = "2.1.5"
 interactivemedia = "3.39.0"
 material = "1.13.0"
 media3ExoplayerIma = "1.9.1"
+ump = "4.0.0"
 
 [libraries]
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -12,6 +13,7 @@ desugar = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 interactivemedia = { group = "com.google.ads.interactivemedia.v3", name = "interactivemedia", version.ref = "interactivemedia" }
 media3-exoplayer-ima = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3ExoplayerIma" }
+user-messaging-platform = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "ump" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

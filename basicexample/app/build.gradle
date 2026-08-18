@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.google.ads.interactivemedia.v3.samples.videoplayerapp"
-        minSdkVersion(23)
+        minSdkVersion(24)
         targetSdkVersion(36)
         versionCode = 1
         versionName = "1.0"

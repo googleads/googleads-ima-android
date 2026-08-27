@@ -1,10 +1,10 @@
 [versions]
 agp = "9.0.0"
-appcompat = "1.7.1"
+appcompat = "1.8.0"
 desugar = "2.1.5"
-interactivemedia = "3.39.0"
-material = "1.13.0"
-media3ExoplayerIma = "1.9.1"
+interactivemedia = "3.40.0"
+material = "1.14.0"
+media3ExoplayerIma = "1.11.0"
 ump = "4.0.0"
 
 [libraries]

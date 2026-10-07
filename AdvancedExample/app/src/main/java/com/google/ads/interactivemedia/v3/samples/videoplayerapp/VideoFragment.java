@@ -1,5 +1,6 @@
 package com.google.ads.interactivemedia.v3.samples.videoplayerapp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -18,12 +19,32 @@ public class VideoFragment extends Fragment {
   private VideoPlayerController videoPlayerController;
   private VideoItem videoItem;
   private TextView videoTitle;
-  private ScrollView videoExampleLayout;
+  private ConstraintLayout constraintLayout;
   private OnVideoFragmentViewCreatedListener viewCreatedCallback;
 
   /** Listener called when the fragment's onCreateView is fired. */
   public interface OnVideoFragmentViewCreatedListener {
     void onVideoFragmentViewCreated();
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    try {
+      viewCreatedCallback = (OnVideoFragmentViewCreatedListener) context;
+    } catch (ClassCastException e) {
+      ClassCastException exception =
+          new ClassCastException(
+              context + " must implement " + OnVideoFragmentViewCreatedListener.class.getName());
+      exception.initCause(e);
+      throw exception;
+    }
+  }
+
+  @Override
+  public void onDetach() {
+    viewCreatedCallback = null;
+    super.onDetach();
   }
 
   @Override
@@ -55,14 +76,14 @@ public class VideoFragment extends Fragment {
     View playPauseToggle = rootView.findViewById(R.id.videoContainer);
     ViewGroup companionAdSlot = rootView.findViewById(R.id.companionAdSlot);
     videoTitle = rootView.findViewById(R.id.video_title);
-    videoExampleLayout = rootView.findViewById(R.id.videoExampleLayout);
+    ScrollView videoExampleLayout = rootView.findViewById(R.id.videoExampleLayout);
     videoExampleLayout.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
     videoExampleLayout.setSmoothScrollingEnabled(true);
 
     // Make the dummyScrollContent height the size of the screen height.
     DisplayMetrics displayMetrics = new DisplayMetrics();
     requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-    ConstraintLayout constraintLayout = rootView.findViewById(R.id.constraintLayout);
+    constraintLayout = rootView.findViewById(R.id.constraintLayout);
     ConstraintSet forceHeight = new ConstraintSet();
     forceHeight.clone(constraintLayout);
     forceHeight.constrainHeight(R.id.dummyScrollContent, displayMetrics.heightPixels);
@@ -97,8 +118,12 @@ public class VideoFragment extends Fragment {
 
   /** Shows or hides all non-video UI elements to make the video as large as possible. */
   public void makeFullscreen(boolean isFullscreen) {
-    for (int i = 0; i < videoExampleLayout.getChildCount(); i++) {
-      View view = videoExampleLayout.getChildAt(i);
+    if (constraintLayout == null) {
+      return;
+    }
+
+    for (int i = 0; i < constraintLayout.getChildCount(); i++) {
+      View view = constraintLayout.getChildAt(i);
       // If it's not the video element, hide or show it, depending on fullscreen status.
       if (view.getId() != R.id.videoContainer) {
         if (isFullscreen) {

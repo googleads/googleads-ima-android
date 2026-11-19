@@ -5,9 +5,14 @@ on:
   push:
     branches:
     - main
+    tags:
+    - "*"
   pull_request:
     branches:
     - main
+
+permissions:
+  contents: read
 
 jobs:
   # Step 2: Build the samples
@@ -26,12 +31,12 @@ jobs:
         - "umpexample"
     steps:
       - name: Set up JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@0f62d2ad8407a414cddd4790bed06fd9ebda0f56 # v1
         with:
           java-version: 17
 
       - name: Clone Repo
-        uses: actions/checkout@v1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Set commit range (push to the main branch, for example, merge)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -47,3 +52,73 @@ jobs:
         env:
           COMMIT_RANGE: ${{ env.COMMIT_RANGE }}
           REGEX: ${{ matrix.regex }}
+
+  oss-exit-gate-release:
+    name: Publish GitHub Release via OSS Exit Gate
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Authenticate to Google Cloud (OSS Exit Gate)
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: 'projects/305452601764/locations/global/workloadIdentityPools/builders/providers/github'
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+      - name: Clean up failed staging attempt for this exact version (if any)
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          VERSION="${TAG_NAME#v}"
+          if gcloud artifacts versions describe "${VERSION}" \
+            --package="googleads-ima-android" \
+            --project="oss-exit-gate-prod" \
+            --location="us" \
+            --repository="googleads-ima-android--githubreleases" >/dev/null 2>&1; then
+            gcloud artifacts versions delete "${VERSION}" \
+              --package="googleads-ima-android" \
+              --project="oss-exit-gate-prod" \
+              --location="us" \
+              --repository="googleads-ima-android--githubreleases" \
+              --quiet
+          fi
+      - name: Stage release archive and upload manifest to OSS Exit Gate
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          VERSION="${TAG_NAME#v}"
+          ARCHIVE="googleads-ima-android-${VERSION}.tar.gz"
+          git archive --format=tar.gz -o "${ARCHIVE}" HEAD
+          gcloud artifacts generic upload \
+            --project="oss-exit-gate-prod" \
+            --location="us" \
+            --repository="googleads-ima-android--githubreleases" \
+            --package="googleads-ima-android" \
+            --version="${VERSION}" \
+            --source="${ARCHIVE}"
+          cat <<EOF > manifest.json
+          {
+            "publish_all": false,
+            "publishing_groups": [
+              {
+                "packages": [
+                  {
+                    "name": "googleads-ima-android",
+                    "version": "${VERSION}"
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
+          gcloud storage cp manifest.json \
+            "gs://oss-exit-gate-prod-projects-bucket/googleads-ima-android/githubreleases/manifests/manifest-${VERSION}-${RUN_ID}-${RUN_ATTEMPT}.json"
